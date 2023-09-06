@@ -1,0 +1,17 @@
+{
+    "name": "com.naverlabs.arpg",
+    "version": "1.1.0",
+    "displayName": "ARPG",
+    "description": "ARPG project",
+    "unity": "2021.3",
+    "dependencies": {
+      "com.unity.xr.arfoundation": "4.2.8",
+      "com.unity.xr.arcore": "4.2.8",
+      "com.unity.xr.arkit": "4.2.8",
+      "com.unity.nuget.newtonsoft-json": "3.0.1"
+    },
+    "author": {
+      "name": "NAVER LABS"
+    }
+  }
+  
