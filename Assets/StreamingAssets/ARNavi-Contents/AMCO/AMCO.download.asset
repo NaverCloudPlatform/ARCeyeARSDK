@@ -1,0 +1,120 @@
+{
+    "assets": [
+        {
+            "checksum": 2083727431,
+            "path": "AMCO.amproj"
+        },
+        {
+            "checksum": 1024346985,
+            "path": "1F/Maps/1F.glb"
+        },
+        {
+            "checksum": 2482607523,
+            "path": "PBR/Hyundai_Outdoor.ktx"
+        },
+        {
+            "checksum": 455240238,
+            "path": "Contents/Test/Seafood_Shrimp.glb"
+        },
+        {
+            "checksum": 299117614,
+            "path": "Contents/Test/Financier.glb"
+        },
+        {
+            "checksum": 3914995857,
+            "path": "Contents/Test/Promotion_Firebell.glb"
+        },
+        {
+            "checksum": 2930376036,
+            "path": "Contents/Test/Pastry.glb"
+        },
+        {
+            "checksum": 2258542382,
+            "path": "Contents/Test/SoftCone.glb"
+        },
+        {
+            "checksum": 2863511783,
+            "path": "Contents/Test/DTwin_Ambidex_Short.glb"
+        },
+        {
+            "checksum": 3059886719,
+            "path": "Contents/Test/labs.glb"
+        },
+        {
+            "checksum": 3420354883,
+            "path": "Contents/Image/gontran.png"
+        },
+        {
+            "checksum": 2851109596,
+            "path": "Contents/Image/meatball.jpeg"
+        },
+        {
+            "checksum": 893783895,
+            "path": "Contents/Indicator/TurnSpot_G_Front.glb"
+        },
+        {
+            "checksum": 2174099364,
+            "path": "Contents/Indicator/TurnSpot_G_Rear.glb"
+        },
+        {
+            "checksum": 4208570150,
+            "path": "Contents/Indicator/TurnSpot_L.glb"
+        },
+        {
+            "checksum": 1855313238,
+            "path": "Contents/Indicator/TurnSpot_R.glb"
+        },
+        {
+            "checksum": 1222734799,
+            "path": "Contents/Indicator/TurnSpot_S.glb"
+        },
+        {
+            "checksum": 1435874513,
+            "path": "Contents/Indicator/TurnSpot_Up.glb"
+        },
+        {
+            "checksum": 775668953,
+            "path": "Contents/Indicator/TurnSpot_Down.glb"
+        },
+        {
+            "checksum": 861018455,
+            "path": "Contents/Indicator/TurnSpot_Destination.glb"
+        },
+        {
+            "checksum": 2055154113,
+            "path": "Contents/Indicator/Indoor/Route_Arrow.glb"
+        },
+        {
+            "checksum": 2958565760,
+            "path": "Contents/Indicator/Indoor/Route_Branch.glb"
+        },
+        {
+            "checksum": 2884152121,
+            "path": "Contents/Indicator/Indoor/Arrow_Left.glb"
+        },
+        {
+            "checksum": 3037247693,
+            "path": "Contents/Indicator/Indoor/Destination.glb"
+        },
+        {
+            "checksum": 1253823788,
+            "path": "Contents/Indicator/NextStep_Arrow.glb"
+        },
+        {
+            "checksum": 2219012232,
+            "path": "Contents/Indicator/NextStep_Dot.glb"
+        },
+        {
+            "checksum": 3357638202,
+            "path": "Contents/Indicator/NextStep_Text.glb"
+        },
+        {
+            "checksum": 3981286792,
+            "path": "Contents/Guide/Popup/UI_Scanning.glb"
+        },
+        {
+            "checksum": 1127107378,
+            "path": "Contents/Guide/Popup/UI_VL_Pass.glb"
+        }
+    ]
+}
