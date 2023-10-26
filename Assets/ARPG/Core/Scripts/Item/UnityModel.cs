@@ -22,6 +22,7 @@ namespace ARCeye
         }
 
         private Material[] m_Materials;
+        private Renderer[] m_Renderers;
         private Dictionary<Material, bool> m_OpaqueMaterials;
         private bool m_UseBillboard = false;
         protected Billboard.RotationMode m_BillboardRotationMode = Billboard.RotationMode.AXIS_Y;
@@ -41,6 +42,8 @@ namespace ARCeye
             m_OpaqueMaterials = new Dictionary<Material, bool>();
 
             gameObject.name = GetType().ToString();
+
+            m_Renderers = GetComponentsInChildren<Renderer>();
 
             StopAnimation();
             FindMaterials();
@@ -192,7 +195,13 @@ namespace ARCeye
         {
             float value = 0.1f;
 
+            if(anim == null) {
+                // Debug.LogWarning("UnityModel.AnimationDuration no anim");
+                return 0.1f;
+            }
+
             AnimationClip clip = anim.GetClip(animName);
+
             if(clip == null)
             {
                 // Debug.LogWarning($"{name} - No animation with name : " + animName);
@@ -234,6 +243,11 @@ namespace ARCeye
 
             bool isFinished = false;
             float accumTime = 0;
+
+            if(fadeIn)
+            {
+                EnableAllRenderers(true);
+            }
 
             foreach(var material in m_Materials)
             {
@@ -294,6 +308,11 @@ namespace ARCeye
             {
                 onComplete.Invoke();
             }
+
+            if(!fadeIn)
+            {
+                EnableAllRenderers(false);
+            }
         }
 
         public virtual void SetOpacity(float opacity)
@@ -311,16 +330,25 @@ namespace ARCeye
                 material.color = new Color(baseColor.r, baseColor.g, baseColor.b, opacity);
             }
 
-            if(opacity == 1.0f)
+            if(opacity == 0.0f)
             {
-                foreach(var material in m_Materials)
+                EnableAllRenderers(false);
+            }
+            else
+            {
+                EnableAllRenderers(true);
+
+                if(opacity == 1.0f)
                 {
-                    if(m_OpaqueMaterials[material]) {
-                        BuiltInMaterialGenerator.SetOpaqueMode(material);
-                    } else {
-                        BuiltInMaterialGenerator.SetAlphaModeBlend(material);
-                    }
-                }   
+                    foreach(var material in m_Materials)
+                    {
+                        if(m_OpaqueMaterials[material]) {
+                            BuiltInMaterialGenerator.SetOpaqueMode(material);
+                        } else {
+                            BuiltInMaterialGenerator.SetAlphaModeBlend(material);
+                        }
+                    }   
+                }
             }
         }
 
@@ -331,6 +359,14 @@ namespace ARCeye
         private IEnumerator RunCoroutineInternal(System.Action action, float delay) {
             yield return new WaitForSeconds(delay);
             action.Invoke();
+        }
+
+        private void EnableAllRenderers(bool value)
+        {
+            foreach(var elem in m_Renderers)
+            {
+                elem.enabled = value;
+            }
         }
     }
 }

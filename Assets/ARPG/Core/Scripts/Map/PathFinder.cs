@@ -12,7 +12,7 @@ namespace ARCeye
     }
     
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public class LoadNavigationParams {
+    public struct LoadNavigationParams {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public float[] endPoints;
         public string endFloor; 

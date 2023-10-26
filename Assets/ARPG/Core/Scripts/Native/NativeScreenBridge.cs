@@ -31,10 +31,6 @@ namespace ARCeye
         [DllImport(dll)] private static extern void SetActivateScreenFuncNative(IB_Func func);
         [DllImport(dll)] private static extern void SetIsScreenActivatedFuncNative(I_BFunc func);
 
-        [DllImport(dll)] private static extern void SetEnableModelFuncNative(B_Func func);
-        [DllImport(dll)] private static extern void SetEnableMapFuncNative(B_Func func);
-        [DllImport(dll)] private static extern void SetOnScanningViewFuncNative(B_Func func);
-
 
         private void Awake()
         {
@@ -42,9 +38,6 @@ namespace ARCeye
 
             SetActivateScreenFuncNative( ActivateScreen );
             SetIsScreenActivatedFuncNative( IsScreenActivated );
-            SetEnableModelFuncNative(EnableModel);
-            SetEnableMapFuncNative(EnableMap);
-            SetOnScanningViewFuncNative(OnScanningView);
         }
 
 
@@ -87,24 +80,6 @@ namespace ARCeye
                     return false;
                 }
             }
-        }
-
-        [MonoPInvokeCallback(typeof(B_Func))]
-        private static void EnableModel(bool value)
-        {
-            
-        }
-        
-        [MonoPInvokeCallback(typeof(B_Func))]
-        private static void EnableMap(bool value)
-        {
-            
-        }
-
-        [MonoPInvokeCallback(typeof(B_Func))]
-        private static void OnScanningView(bool value)
-        {
-            
         }
     }
 }

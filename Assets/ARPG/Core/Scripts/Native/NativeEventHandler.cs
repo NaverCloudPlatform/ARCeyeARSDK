@@ -153,9 +153,9 @@ namespace ARCeye
 
                 int entranceCount = nativeItem.coord_count/3;
                 for(int j=0 ; j < entranceCount ; j++) {
-                    float x = -entrance[j + 0];
-                    float y =  entrance[j + 1];
-                    float z =  entrance[j + 2];
+                    float x = entrance[j + 0];
+                    float y = entrance[j + 1];
+                    float z = entrance[j + 2];
                     item.entrance.Add(new Vector3(x, y, z));
                 }
 

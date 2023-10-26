@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace ARCeye
 {
     [StructLayout(LayoutKind.Sequential)]
-    public class UnityFrame
+    public struct UnityFrame
     {
         public long timestamp;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]

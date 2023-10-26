@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -104,7 +104,7 @@ NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +117,7 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
     maxJobWorkers: 0
     preserveTilesOutsideBounds: 0
     debug:
@@ -153,6 +153,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Camera: {fileID: 1734510473}
+  m_OriginBaseGameObject: {fileID: 136492374}
+  m_CameraFloorOffsetObject: {fileID: 0}
+  m_RequestedTrackingOriginMode: 0
+  m_CameraYOffset: 1.1176
 --- !u!4 &136492376
 Transform:
   m_ObjectHideFlags: 0
@@ -208,6 +212,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 464519651}
     m_Modifications:
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
@@ -220,178 +225,314 @@ PrefabInstance:
       objectReference: {fileID: 1937242862616383070, guid: 38bd91d3028fb4a6c8ae5f0c9609399a, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.size
-      value: 21
+      value: 38
       objectReference: {fileID: 0}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.size
-      value: 21
+      value: 38
       objectReference: {fileID: 0}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[0]
       value: 
-      objectReference: {fileID: 21300000, guid: 874bb0c4bc4b845d6b0a368bb5e6c22d, type: 3}
+      objectReference: {fileID: 21300000, guid: 64134fd390a2843e08495052c130ff59, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[1]
       value: 
-      objectReference: {fileID: 21300000, guid: 32e27b7251e0a4663a51ba56cdb1de3a, type: 3}
+      objectReference: {fileID: 21300000, guid: 8f1f40a4d8c3945e7b46145d340cfd60, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[2]
       value: 
-      objectReference: {fileID: 21300000, guid: eaaf6da8cccad490681164d475c4b351, type: 3}
+      objectReference: {fileID: 21300000, guid: a17022233c4a447d8a981b6bd8c4a789, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[3]
       value: 
-      objectReference: {fileID: 21300000, guid: ff8cd848703964b75973c22ecf9c05c4, type: 3}
+      objectReference: {fileID: 21300000, guid: 18137b7a3bf20457893922725620bb40, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[4]
       value: 
-      objectReference: {fileID: 21300000, guid: 323fee7b1f4e346dea29867a10f310e4, type: 3}
+      objectReference: {fileID: 21300000, guid: cdc952e445d8b4f7496c4ba028565695, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[5]
       value: 
-      objectReference: {fileID: 21300000, guid: 67e2a1e70aad845bc9dea2fc307461d4, type: 3}
+      objectReference: {fileID: 21300000, guid: 4bb62744707174f0f9fbb94b6ad7cbc4, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[6]
       value: 
-      objectReference: {fileID: 21300000, guid: 45ea481d3609043b3925101aee2c7e9d, type: 3}
+      objectReference: {fileID: 21300000, guid: 874bb0c4bc4b845d6b0a368bb5e6c22d, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[7]
       value: 
-      objectReference: {fileID: 21300000, guid: 427747eeccfb14fcab6f2ef75f424743, type: 3}
+      objectReference: {fileID: 21300000, guid: 86bf0c5a3493d451596f63e9ae879396, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[8]
       value: 
-      objectReference: {fileID: 21300000, guid: d9fc3cb0eb773491781a55e968d6b893, type: 3}
+      objectReference: {fileID: 21300000, guid: cdda4e55b961d4934a078f18a9565975, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[9]
       value: 
-      objectReference: {fileID: 21300000, guid: 5c187070ec0dc4950a016d2f79e3caf6, type: 3}
+      objectReference: {fileID: 21300000, guid: 07836b0508d9b4e2ebd117512f718310, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[0]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: d9b87de38b9a247838429df7da8df084, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: fcefa4a687a4f4a809fdef4e77b080ee, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[1]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: a6f3fdc6655a845b3ab1afa091306781, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: 57265e0b0f4fc4ae4a58a17596d9572d, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[2]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: e57f75f8a4ff74b798f7fbb03143c1c1, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: 155374bb772854a5ca500b9be692179e, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[3]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 6cf7580da0bb2483b91ab0024391f8f4, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: af8930b6d3aff4fc597d439a89310d17, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[4]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 3830f56ff53c64458afa2474c90624d9, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: 01165f16a1cb64b618734f117ea98aa8, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[5]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 1750b1ea1dba1477491b2fe47ead7177, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: 60ba4b2a61a2a4c94bc4727f5386542e, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[6]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: c50b350deca3e4949b43f0d0f61c8091, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: d9b87de38b9a247838429df7da8df084, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[7]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: d5f0e0e7ed14c427f88379ff129dba12, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: a77da0f03fe764cc187aafd78cab617e, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[8]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 81d83d40e53f04deea3b904b93b0f85e, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: 20566a17762a44e8eb9fc661c17f3a38, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[9]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 4440027982a554c349ebc9d33fc9c435, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: d9ce2f852645f4c9c977e1d28def64b9, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[10]
       value: 
-      objectReference: {fileID: 21300000, guid: d8f88368048be4005bf83c1dc5ee637d, type: 3}
+      objectReference: {fileID: 21300000, guid: b38324b18d2ed459bac32b9741b69e85, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[11]
       value: 
-      objectReference: {fileID: 21300000, guid: 57a49b3ba7aa34ab0b2b5b0eac7078ff, type: 3}
+      objectReference: {fileID: 21300000, guid: d19ab6742f5a24a76be8c0a6d18d6e06, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[12]
       value: 
-      objectReference: {fileID: 21300000, guid: bf1aa32d4016441fdbf140bf48793d4d, type: 3}
+      objectReference: {fileID: 21300000, guid: 32e27b7251e0a4663a51ba56cdb1de3a, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[13]
       value: 
-      objectReference: {fileID: 21300000, guid: 6e9cb7e0568ba44deb5fbe207eedbc0b, type: 3}
+      objectReference: {fileID: 21300000, guid: 6f4289ac87e7f4c4487200a780047dae, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[14]
       value: 
-      objectReference: {fileID: 21300000, guid: c169a25f834f9478b8c4247170fcdbdd, type: 3}
+      objectReference: {fileID: 21300000, guid: bf5328ab0088547fa903797905779ed4, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[15]
       value: 
-      objectReference: {fileID: 21300000, guid: 00dfc5aefd74a4bf5aa6c5f37891e6e8, type: 3}
+      objectReference: {fileID: 21300000, guid: 610c2ba8be5644449834858731aafb7b, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[16]
       value: 
-      objectReference: {fileID: 21300000, guid: 291cf0d97520b42a181715aab71b27ad, type: 3}
+      objectReference: {fileID: 21300000, guid: 323fee7b1f4e346dea29867a10f310e4, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[17]
       value: 
-      objectReference: {fileID: 21300000, guid: bc6fb638215eb4d69a40d69ea6094d78, type: 3}
+      objectReference: {fileID: 21300000, guid: 427747eeccfb14fcab6f2ef75f424743, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[18]
       value: 
-      objectReference: {fileID: 21300000, guid: 47e076814f77641059ced06e6ddad2ac, type: 3}
+      objectReference: {fileID: 21300000, guid: d9fc3cb0eb773491781a55e968d6b893, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[19]
       value: 
-      objectReference: {fileID: 21300000, guid: 452b5d8dab2bd42cf81c4f984762030a, type: 3}
+      objectReference: {fileID: 21300000, guid: 059d3868d9535452195d5c04639fb7af, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIIconSprites.Array.data[20]
+      value: 
+      objectReference: {fileID: 21300000, guid: 3734826800a284f6fade68ea074c82c3, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[21]
+      value: 
+      objectReference: {fileID: 21300000, guid: 5c187070ec0dc4950a016d2f79e3caf6, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[22]
+      value: 
+      objectReference: {fileID: 21300000, guid: 82c0d4f9daf7a4fe7a8d129b1815ffbc, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[23]
+      value: 
+      objectReference: {fileID: 21300000, guid: 4a9858ecdede94dbd81cbacba18fda18, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[24]
+      value: 
+      objectReference: {fileID: 21300000, guid: 57a49b3ba7aa34ab0b2b5b0eac7078ff, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[25]
+      value: 
+      objectReference: {fileID: 21300000, guid: b64521a6c4c1e4abd8b08e93c692201f, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[26]
+      value: 
+      objectReference: {fileID: 21300000, guid: a232015f0c3244179ad96fed658b43ce, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[27]
+      value: 
+      objectReference: {fileID: 21300000, guid: 358a2e1dea9204cad90442f6cf789d4e, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[28]
+      value: 
+      objectReference: {fileID: 21300000, guid: 66bf6ef15617b4f3994ae4c735538cc6, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[29]
+      value: 
+      objectReference: {fileID: 21300000, guid: 1bdb1ed6ad5824ba1af08352ebb4228a, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[30]
+      value: 
+      objectReference: {fileID: 21300000, guid: 8fe0c6ad8e0b745f28e47a0b5dd3c18d, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[31]
+      value: 
+      objectReference: {fileID: 21300000, guid: 6e9cb7e0568ba44deb5fbe207eedbc0b, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[32]
+      value: 
+      objectReference: {fileID: 21300000, guid: 00dfc5aefd74a4bf5aa6c5f37891e6e8, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[33]
+      value: 
+      objectReference: {fileID: 21300000, guid: 291cf0d97520b42a181715aab71b27ad, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[34]
+      value: 
+      objectReference: {fileID: 21300000, guid: bc6fb638215eb4d69a40d69ea6094d78, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[35]
+      value: 
+      objectReference: {fileID: 21300000, guid: 47e076814f77641059ced06e6ddad2ac, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[36]
+      value: 
+      objectReference: {fileID: 21300000, guid: 452b5d8dab2bd42cf81c4f984762030a, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_MapPOIIconSprites.Array.data[37]
       value: 
       objectReference: {fileID: 21300000, guid: e1d56a0ffb8824b539e001efe0976d0b, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[10]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: ff8cd2dd11b874a0ea49957d1210b272, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: b35e1eb549e5c46a981c285e57b8bd20, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[11]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: f83a7438061184cffaaa81e9cfa8dbeb, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: 33dc74f38a3974f48a9a01187f1e7114, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[12]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: b3ff4523e9279457f8edda02090167c3, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: a6f3fdc6655a845b3ab1afa091306781, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[13]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 5d7d8d7b9a7754cbf876ecf02ef349c3, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: d04224cb7c4074c86ac667219b28137f, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[14]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 8db304a8434dd44c29a6b3fb2da07c6f, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: d5e1d8e4461ce4bd695cd424f8b6c2a3, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[15]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: cfd7e8665526e48e689df5bfd86ddac2, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: d0919b4c1bdcb4afca5ea247da8ae07c, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[16]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 598b0cfbae96841e5bb6022882569bad, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: 3830f56ff53c64458afa2474c90624d9, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[17]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 18ddccc71a1dd404eaaaeee31aca8dcd, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: d5f0e0e7ed14c427f88379ff129dba12, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[18]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 2832af10484104198b8b36acfd3d5464, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: 81d83d40e53f04deea3b904b93b0f85e, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[19]
       value: 
-      objectReference: {fileID: 2107409826236812522, guid: 0c9c26b8f8cb64290be4338f0065c115, type: 3}
+      objectReference: {fileID: 2107409826236812522, guid: 01460b23a830e44719b1219812111bcf, type: 3}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_SignPOIIconModels.Array.data[20]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 74c7d1b1c285843bb81ad80bad1b1179, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[21]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 4440027982a554c349ebc9d33fc9c435, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[22]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: c393c2b39f89e438c978c2a7df9acda0, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[23]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 2e16fed94b0b549b392dfbcc696ae523, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[24]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: f83a7438061184cffaaa81e9cfa8dbeb, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[25]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: df6a38c3b0fb44a089b3adf0ffc8b842, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[26]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 7b6846d5ae51345c296fe8124477d01a, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[27]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 64013d13e09764dc8b98b9c86d0f5cb3, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[28]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: bf1839ab828f34ec1a619d9026d00e84, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[29]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 34bfaacdbf823424fa1ba1e7a5a291a3, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[30]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 62554394160854fd1a1a784c1733e74e, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[31]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 5d7d8d7b9a7754cbf876ecf02ef349c3, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[32]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: cfd7e8665526e48e689df5bfd86ddac2, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[33]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 598b0cfbae96841e5bb6022882569bad, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[34]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 18ddccc71a1dd404eaaaeee31aca8dcd, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[35]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 2832af10484104198b8b36acfd3d5464, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[36]
+      value: 
+      objectReference: {fileID: 2107409826236812522, guid: 0c9c26b8f8cb64290be4338f0065c115, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_SignPOIIconModels.Array.data[37]
       value: 
       objectReference: {fileID: 2107409826236812522, guid: 17b3556c8881c423095730883cd99889, type: 3}
     - target: {fileID: 3216815866985024129, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
@@ -462,7 +603,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemGenerator
       objectReference: {fileID: 0}
+    - target: {fileID: 5952151847712425795, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_InfoPanelPrefab
+      value: 
+      objectReference: {fileID: 1960847637419038591, guid: ca309a3b4bd4c4b118a442965d896bec, type: 3}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
 --- !u!4 &727220699 stripped
 Transform:
@@ -474,6 +622,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 464519651}
     m_Modifications:
     - target: {fileID: 4963871252345228624, guid: bade52f6789d74c1c92db19d505c02be, type: 3}
@@ -525,6 +674,9 @@ PrefabInstance:
       value: MapCameraRig
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bade52f6789d74c1c92db19d505c02be, type: 3}
 --- !u!4 &792935173 stripped
 Transform:
@@ -638,32 +790,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 714792e97ea2f4620b4bf8d17531ed5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_PlayOnAwake: 0
   m_Settings: {fileID: 11400000, guid: 4a679e3463abc49ad833706890dd9833, type: 2}
   m_OnStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_OnLocationChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnBuildingChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnFloorChanged:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1452147349}
-        m_TargetAssemblyTypeName: ExampleVLSDK, Assembly-CSharp
-        m_MethodName: OnFloorChanged
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_OnRegionCodeChanged:
+  m_OnLayerInfoChanged:
     m_PersistentCalls:
       m_Calls: []
   m_OnPoseUpdated:
@@ -888,7 +1020,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -957,6 +1091,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 464519651}
     m_Modifications:
     - target: {fileID: 5451198551273644277, guid: 412767673ec604349b507b6860ee5c26, type: 3}
@@ -1012,6 +1147,9 @@ PrefabInstance:
       value: ARPlayGround
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 412767673ec604349b507b6860ee5c26, type: 3}
 --- !u!4 &1409909560 stripped
 Transform:
@@ -1151,7 +1289,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -1295,7 +1435,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1650495946}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 2b642812a710c834385adf8e5664e686, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 2ea1c4f0d383240e7aaf6410b775adb4, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -1306,6 +1446,7 @@ VideoPlayer:
   m_RenderMode: 2
   m_AspectRatio: 2
   m_DataSource: 0
+  m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 2
   m_TargetAudioSources: []
@@ -1370,9 +1511,17 @@ Camera:
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -1430,6 +1579,7 @@ MonoBehaviour:
   m_AutoFocus: 1
   m_LightEstimation: 0
   m_FacingDirection: 1
+  m_RenderMode: 0
 --- !u!114 &1734510476
 MonoBehaviour:
   m_ObjectHideFlags: 0

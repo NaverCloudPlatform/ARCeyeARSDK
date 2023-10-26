@@ -68,16 +68,7 @@ public class ARNaviExample : MonoBehaviour
 
     public void SetStage(string stageName)
     {
-        if(stageName == "066")
-        {
-            stageName = "1F";
-        }
-
         m_ARPlayGround.SetStage(stageName);
-
-        // 스테이지가 할당되면 MapView를 활성화.
-        m_MapViewController.Show(true, false);
-        m_UIViewController.SetStageName(stageName);
     }
 
     void OnApplicationPause(bool pauseStatus)
@@ -100,6 +91,9 @@ public class ARNaviExample : MonoBehaviour
         {
             m_UIViewController.UpdateScanView(false);
             m_UIViewController.UpdateAroundView(true);
+
+            m_MapViewController.Show(true, false);
+            m_UIViewController.SetStageName(m_ARPlayGround.GetStageName());
         }
         else if(state == TrackerState.INITIAL)
         {

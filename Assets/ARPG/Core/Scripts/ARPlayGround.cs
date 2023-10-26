@@ -12,7 +12,7 @@ namespace ARCeye
 {
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.1.0";
+        const string PLUGIN_VERSION = "1.2.0";
 
         #if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
@@ -70,6 +70,7 @@ namespace ARCeye
 
         private Camera m_MainCamera;
 
+        private LayerInfoConverter m_LayerInfoConverter;
         private PathFinder m_PathFinder;
         private NetworkController m_NetworkController;
         private NativeLogger m_NativeLogger;
@@ -149,6 +150,7 @@ namespace ARCeye
         {
             m_NetworkController = GetComponent<NetworkController>();
             m_PathFinder = GetComponent<PathFinder>();
+            m_LayerInfoConverter = GetComponent<LayerInfoConverter>();
 
             m_NativeEventHandler = GetComponent<NativeEventHandler>();
             m_NativeEventHandler.m_OnPOIList = m_OnPOIList;
@@ -223,6 +225,16 @@ namespace ARCeye
             SetStageNative(stageName);
         }
 
+        /// <summary>
+        /// VL에서 전달 받은 LayerInfo 값과 매칭되는 Stage를 로드한다.
+        /// </summary>
+        /// <param name="layerInfo"></param>
+        public void SetLayerInfo(string layerInfo)
+        {
+            string stageName = m_LayerInfoConverter.Convert(layerInfo);
+            SetStage(stageName);
+        }
+
         public void OnStageChanged(string stage)
         {
             var stageCodes = stage.Split('_');
@@ -253,14 +265,12 @@ namespace ARCeye
 
         public void LoadNavigation(LayerPOIItem poiItem, ConnectionType connectionType = ConnectionType.Default)
         {
-             LoadNavigationParams param = new LoadNavigationParams();
-
-            var stageCodes = poiItem.stageName.Split('_');
-            var endCode = stageCodes.Length == 0 ? "" : stageCodes[stageCodes.Length - 1];
+            LoadNavigationParams param = new LoadNavigationParams();
+             
             var coord = poiItem.entrance[0];
 
-            param.endFloor = endCode;
-            param.endPoints = new float[]{ (float) -coord[0], (float) coord[1], (float) coord[2] };
+            param.endFloor = poiItem.stageName;
+            param.endPoints = new float[]{ (float) coord[0], (float) coord[1], (float) coord[2] };
             param.connectionType = connectionType;
             
             m_PathFinder.LoadNavigation(param);

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5451198551273644277}
   - component: {fileID: 5451198551273644278}
+  - component: {fileID: 4031693856957110526}
   - component: {fileID: 4906040656490709302}
   - component: {fileID: 5451198551273644276}
   - component: {fileID: 8513705081441293160}
@@ -73,6 +74,19 @@ MonoBehaviour:
   m_OnTransitMovingEnded:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4031693856957110526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5451198551273644282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d9d15a91df37407da3711a891d6ce09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LayerInfoSetting: {fileID: 11400000, guid: 1bfe950fe611b41ebb8a5733673b116c, type: 2}
 --- !u!114 &4906040656490709302
 MonoBehaviour:
   m_ObjectHideFlags: 0

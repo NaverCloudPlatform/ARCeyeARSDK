@@ -345,18 +345,17 @@ namespace ARCeye
         static public void SetMatrixModel(IntPtr itemPtr, IntPtr matrix)
         {
             Matrix4x4 rhm = PoseHelper.UnmanagedToMatrix4x4(matrix);
-            Matrix4x4 modelMatrix = PoseHelper.FlipX(rhm);
+            Matrix4x4 lhm = PoseHelper.ConvertLHRH(rhm);
 
-            Quaternion rotation = Quaternion.LookRotation(
-                modelMatrix.GetColumn(2),
-                modelMatrix.GetColumn(1)
-            );
-
-            Vector4 translate = modelMatrix.GetColumn(3);
-            Vector3 pos = new Vector3(translate[0], translate[1], translate[2]);
+            Matrix4x4 modelMatrix = lhm;
 
             GameObject item = Unwrap<GameObject>(itemPtr);
-            item.transform.SetPositionAndRotation(pos, rotation);
+
+            item.transform.localPosition = modelMatrix.GetPosition();
+            item.transform.localRotation = modelMatrix.rotation;
+            item.transform.localScale = modelMatrix.lossyScale;
+
+            item.transform.Rotate(0, 180, 0);
         }
 
         // Background thread에서 실행
@@ -392,9 +391,17 @@ namespace ARCeye
         static public float AnimationDuration(IntPtr itemPtr, IntPtr animNamePtr)
         {
             GameObject item = Unwrap<GameObject>(itemPtr);
-            string animName = Marshal.PtrToStringAnsi(animNamePtr);
+            if(item == null) {
+                return 0.0f;
+            }
 
-            float value = item.GetComponent<UnityModel>().AnimationDuration(animName);
+            string animName = Marshal.PtrToStringAnsi(animNamePtr);
+            UnityModel unityModel = item.GetComponent<UnityModel>();
+
+            if(unityModel == null) {
+                return 0.0f;
+            }
+            float value = unityModel.AnimationDuration(animName);
             // Debug.Log($"{item.name} AnimationDuration : " + value);
             return value;
         }

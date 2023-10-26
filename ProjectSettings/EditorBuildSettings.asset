@@ -5,12 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/ARPG/Example/Scenes/3.example_arnavi.unity
     guid: a7a6d158eb72f4668b7f626a47eb6c51
+  - enabled: 1
+    path: Assets/ARPG/Example/Scenes/1.example_navigation.unity
+    guid: a4dc3764cc3a44467a6a06c4549f3314
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 147f6a570a4694f729aa3132cbfdb7f8, type: 2}
     UnityEditor.XR.ARKit.ARKitSettings: {fileID: 11400000, guid: 8e50b5fa7ddd943cda1549b1980f627a, type: 2}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 6bf97828f85fd4eef9d774ca20aa63a2, type: 2}
     com.unity.xr.magicleap.magic_leap_settings: {fileID: 11400000, guid: 8bd3fc4d5d1a14c12ba29c8db7c6dd0d, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: db337d92b77f14ae992c8758a0bbfd12, type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 8dbfbf35b62ac44efbfc90dd68b5b880, type: 2}
