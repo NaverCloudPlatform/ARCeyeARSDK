@@ -1,27 +1,28 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using UnityEngine;
 
 public class ImageUtility
 {
     static private Texture2D m_PreviewTexture = null;
     static private RenderTexture m_RenderTexture = null;
+    static private Material m_PreviewRotater;
 
-    static private Color32[] m_Rotated;
-    static private Texture2D m_RotatedTexture;
 
     static public Texture2D ConvertToTexture2D(Texture texture)
     {
         Texture mainTexture = texture;
-        if (m_PreviewTexture == null)
+        if (m_PreviewTexture == null || mainTexture.width != m_PreviewTexture.width)
         {
             m_PreviewTexture = new Texture2D(mainTexture.width, mainTexture.height, TextureFormat.RGBA32, false);
         }
 
         RenderTexture currentRT = RenderTexture.active;
-        if (m_RenderTexture == null)
+        if (m_RenderTexture == null || m_RenderTexture.width != mainTexture.width)
         {
-            m_RenderTexture = new RenderTexture(mainTexture.width, mainTexture.height, 32);
+            m_RenderTexture = new RenderTexture(mainTexture.width, mainTexture.height, 24);
         }
 
         Graphics.Blit(mainTexture, m_RenderTexture);
@@ -35,34 +36,56 @@ public class ImageUtility
         return m_PreviewTexture;
     }
 
-    static public Texture2D RotateTexture(Texture2D originalTexture, bool clockwise)
+    static public Texture2D RotateTexture(Texture originalTexture, Matrix4x4 texMatrix)
     {
-        Color32[] original = originalTexture.GetPixels32();
-        int w = originalTexture.width;
-        int h = originalTexture.height;
-
-        if(m_Rotated == null)
-            m_Rotated = new Color32[original.Length];
-
-        if(m_RotatedTexture == null)
-            m_RotatedTexture = new Texture2D(h, w);
-
-        int iRotated, iOriginal;
-
-        for (int j = 0; j < h; ++j)
+        if(m_PreviewRotater == null)
         {
-            for (int i = 0; i < w; ++i)
+            Shader shader = Shader.Find("VLSDK/PreviewRotation");
+            if(shader == null)
             {
-                iRotated = (i + 1) * h - j - 1;
-                iOriginal = clockwise ? original.Length - 1 - (j * w + i) : j * w + i;
-                m_Rotated[iRotated] = original[iOriginal];
+                Debug.LogError("[ImageUtility] Shader 'VLSDK/PreviewRotation'를 찾을 수 없음");
+                return null;
+            }
+            m_PreviewRotater = new Material(shader);
+        }
+
+        if(m_PreviewRotater == null)
+        {
+            Debug.LogError("[ImageUtility] Preview를 회전시킬 material을 찾을 수 없음");
+            return null;
+        }
+
+        // RenderTexture 생성.
+        RenderTexture currentRT = RenderTexture.active;
+        if (m_RenderTexture == null)
+        {
+            m_RenderTexture = new RenderTexture(originalTexture.width, originalTexture.height, 24);
+        }
+        else
+        {
+            if(Mathf.Abs(texMatrix.m00) == 1) 
+            {
+                m_RenderTexture = new RenderTexture(originalTexture.width, originalTexture.height, 24);
+            }
+            else
+            {
+                m_RenderTexture = new RenderTexture(originalTexture.height, originalTexture.width, 24);   
             }
         }
 
-        m_RotatedTexture.SetPixels32(m_Rotated);
-        m_RotatedTexture.Apply();
+        RenderTexture.active = m_RenderTexture;
 
-        return m_RotatedTexture;
+        // RenderTexture 실행.
+        m_PreviewRotater.SetTexture("_MainTex", originalTexture);
+        m_PreviewRotater.SetMatrix("_TransformMatrix", texMatrix);
+
+        Graphics.Blit(originalTexture, m_RenderTexture, m_PreviewRotater);
+
+        Texture2D result = ConvertToTexture2D(m_RenderTexture);
+
+        RenderTexture.active = currentRT;
+
+        return result;
     }
 
     static public void Save(string filenameNoExt, byte[] data)

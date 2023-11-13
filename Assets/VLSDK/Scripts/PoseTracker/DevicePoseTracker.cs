@@ -20,10 +20,6 @@ public class DevicePoseTracker : PoseTracker
     private float[] m_DisplayMatrix = new float[9];
     private bool m_IsPortrait;
 
-#if UNITY_ANDROID
-    Matrix4x4 k_AndroidFlipYMatrix = Matrix4x4.identity;
-#endif // UNITY_ANDROID
-
     protected const float DEFAULT_FX = 474.457672f;
     protected const float DEFAULT_FY = 474.457672f;
     protected const float DEFAULT_CX = 240.000000f;
@@ -50,11 +46,6 @@ public class DevicePoseTracker : PoseTracker
 
         // m_Config = config;
         Initialize(config);
-
-#if UNITY_ANDROID
-            k_AndroidFlipYMatrix[1,1] = -1.0f;
-            k_AndroidFlipYMatrix[2,1] = 1.0f;
-#endif // UNITY_ANDROID
 
         int t = m_Config.tracker.previewWidth;
         m_Config.tracker.previewWidth = m_Config.tracker.previewHeight;
@@ -192,12 +183,24 @@ public class DevicePoseTracker : PoseTracker
 
     unsafe private void AssignResizedPreviewToBufferOfTexture(XRCpuImage image, NativeArray<byte> buffer)
     {
+        XRCpuImage.Transformation transformation;
+        // iOS 환경
+        if(m_DisplayMatrix[1] == -1 && m_DisplayMatrix[3] == -1) 
+        {
+            transformation = XRCpuImage.Transformation.None;
+        }
+        // Android 환경. 
+        else 
+        {
+            transformation = XRCpuImage.Transformation.MirrorY;
+        }
+
         var conversionParams = new XRCpuImage.ConversionParams
         {
             inputRect = new RectInt(0, 0, image.width, image.height),
             outputDimensions = new Vector2Int(m_Config.tracker.previewWidth, m_Config.tracker.previewHeight),
             outputFormat = TextureFormat.BGRA32,
-            transformation = XRCpuImage.Transformation.MirrorY
+            transformation = transformation
         };
 
         image.Convert(conversionParams, new IntPtr(buffer.GetUnsafePtr()), buffer.Length);    
@@ -219,7 +222,6 @@ public class DevicePoseTracker : PoseTracker
         affineBasisY = new Vector2(rawDispRotMatrix[1, 0], rawDispRotMatrix[1, 1]);
         affineTranslation = new Vector2(rawDispRotMatrix[0, 2], rawDispRotMatrix[1, 2]);
 #endif
-
         affineBasisX = affineBasisX.normalized;
         affineBasisY = affineBasisY.normalized;
         deviceDisplayMatrix = Matrix4x4.identity;
@@ -229,11 +231,6 @@ public class DevicePoseTracker : PoseTracker
         deviceDisplayMatrix[1,1] = affineBasisY.y;
         deviceDisplayMatrix[2,0] = Mathf.Round(affineTranslation.x);
         deviceDisplayMatrix[2,1] = Mathf.Round(affineTranslation.y);
-
-#if UNITY_ANDROID
-        deviceDisplayMatrix = k_AndroidFlipYMatrix * deviceDisplayMatrix;
-
-#endif // UNITY_ANDROID
         
         for(int i=0 ; i<3 ; i++) 
         {

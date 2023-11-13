@@ -1,120 +1,139 @@
 {
     "assets": [
         {
-            "checksum": 2083727431,
-            "path": "AMCO.amproj"
+            "checksum": 3068236389,
+            "path": "AMCO.amproj",
+            "size": 1013258
         },
         {
             "checksum": 1024346985,
-            "path": "1F/Maps/1F.glb"
+            "path": "1F/Maps/1F.glb",
+            "size": 887144
         },
         {
-            "checksum": 2482607523,
-            "path": "PBR/Hyundai_Outdoor.ktx"
+            "checksum": 3165345477,
+            "path": "PBR/Hyundai_Outdoor.ktx",
+            "size": 2095476
         },
         {
-            "checksum": 455240238,
-            "path": "Contents/Test/Seafood_Shrimp.glb"
+            "checksum": 4053124871,
+            "path": "Contents/Test/Seafood_Shrimp.glb",
+            "size": 4789668
         },
         {
-            "checksum": 299117614,
-            "path": "Contents/Test/Financier.glb"
+            "checksum": 1823076963,
+            "path": "Contents/Test/Financier.glb",
+            "size": 4794764
         },
         {
-            "checksum": 3914995857,
-            "path": "Contents/Test/Promotion_Firebell.glb"
+            "checksum": 2932188028,
+            "path": "Contents/Test/Promotion_Firebell.glb",
+            "size": 4208140
         },
         {
-            "checksum": 2930376036,
-            "path": "Contents/Test/Pastry.glb"
+            "checksum": 265953000,
+            "path": "Contents/Test/Pastry.glb",
+            "size": 4044284
         },
         {
             "checksum": 2258542382,
-            "path": "Contents/Test/SoftCone.glb"
+            "path": "Contents/Test/SoftCone.glb",
+            "size": 6688376
         },
         {
             "checksum": 2863511783,
-            "path": "Contents/Test/DTwin_Ambidex_Short.glb"
+            "path": "Contents/Test/DTwin_Ambidex_Short.glb",
+            "size": 15136920
         },
         {
             "checksum": 3059886719,
-            "path": "Contents/Test/labs.glb"
+            "path": "Contents/Test/labs.glb",
+            "size": 1495920
         },
         {
-            "checksum": 3420354883,
-            "path": "Contents/Image/gontran.png"
+            "checksum": 2088905696,
+            "path": "Contents/Image/gontran.png",
+            "size": 290634
         },
         {
-            "checksum": 2851109596,
-            "path": "Contents/Image/meatball.jpeg"
+            "checksum": 206411848,
+            "path": "Contents/Image/meatball.jpeg",
+            "size": 122708
         },
         {
             "checksum": 893783895,
-            "path": "Contents/Indicator/TurnSpot_G_Front.glb"
+            "path": "Contents/Indicator/TurnSpot_G_Front.glb",
+            "size": 63952
         },
         {
-            "checksum": 2174099364,
-            "path": "Contents/Indicator/TurnSpot_G_Rear.glb"
+            "checksum": 3033517495,
+            "path": "Contents/Indicator/TurnSpot_G_Rear.glb",
+            "size": 36780
         },
         {
-            "checksum": 4208570150,
-            "path": "Contents/Indicator/TurnSpot_L.glb"
+            "checksum": 392244230,
+            "path": "Contents/Indicator/TurnSpot_L.glb",
+            "size": 283404
         },
         {
             "checksum": 1855313238,
-            "path": "Contents/Indicator/TurnSpot_R.glb"
+            "path": "Contents/Indicator/TurnSpot_R.glb",
+            "size": 283496
         },
         {
             "checksum": 1222734799,
-            "path": "Contents/Indicator/TurnSpot_S.glb"
+            "path": "Contents/Indicator/TurnSpot_S.glb",
+            "size": 162576
         },
         {
             "checksum": 1435874513,
-            "path": "Contents/Indicator/TurnSpot_Up.glb"
+            "path": "Contents/Indicator/TurnSpot_Up.glb",
+            "size": 283504
         },
         {
             "checksum": 775668953,
-            "path": "Contents/Indicator/TurnSpot_Down.glb"
+            "path": "Contents/Indicator/TurnSpot_Down.glb",
+            "size": 283480
         },
         {
-            "checksum": 861018455,
-            "path": "Contents/Indicator/TurnSpot_Destination.glb"
+            "checksum": 872643445,
+            "path": "Contents/Indicator/TurnSpot_Destination.glb",
+            "size": 161604
         },
         {
-            "checksum": 2055154113,
-            "path": "Contents/Indicator/Indoor/Route_Arrow.glb"
+            "checksum": 857718903,
+            "path": "Contents/Indicator/Indoor/Route_Arrow.glb",
+            "size": 26764
         },
         {
             "checksum": 2958565760,
-            "path": "Contents/Indicator/Indoor/Route_Branch.glb"
+            "path": "Contents/Indicator/Indoor/Route_Branch.glb",
+            "size": 93096
         },
         {
             "checksum": 2884152121,
-            "path": "Contents/Indicator/Indoor/Arrow_Left.glb"
+            "path": "Contents/Indicator/Indoor/Arrow_Left.glb",
+            "size": 59640
         },
         {
             "checksum": 3037247693,
-            "path": "Contents/Indicator/Indoor/Destination.glb"
+            "path": "Contents/Indicator/Indoor/Destination.glb",
+            "size": 63576
         },
         {
             "checksum": 1253823788,
-            "path": "Contents/Indicator/NextStep_Arrow.glb"
+            "path": "Contents/Indicator/NextStep_Arrow.glb",
+            "size": 203360
         },
         {
             "checksum": 2219012232,
-            "path": "Contents/Indicator/NextStep_Dot.glb"
+            "path": "Contents/Indicator/NextStep_Dot.glb",
+            "size": 59744
         },
         {
-            "checksum": 3357638202,
-            "path": "Contents/Indicator/NextStep_Text.glb"
-        },
-        {
-            "checksum": 3981286792,
-            "path": "Contents/Guide/Popup/UI_Scanning.glb"
-        },
-        {
-            "checksum": 1127107378,
-            "path": "Contents/Guide/Popup/UI_VL_Pass.glb"
+            "checksum": 2168559500,
+            "path": "Contents/Indicator/NextStep_Text.glb",
+            "size": 72428
         }
     ]
 }

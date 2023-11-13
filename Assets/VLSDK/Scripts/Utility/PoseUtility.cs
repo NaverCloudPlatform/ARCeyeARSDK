@@ -31,6 +31,18 @@ namespace ARCeye
             );
         }
 
+        static public Matrix4x4 UnmanagedToMatrix4x4From3x3(IntPtr ptr)
+        {
+            float[] m = new float[9];
+            Marshal.Copy(ptr, m, 0, 9);
+            return new Matrix4x4(
+                new Vector4(m[0], m[1], m[2], 0),
+                new Vector4(m[3], m[4], m[5], 0),
+                new Vector4(m[6], m[7], m[8], 0),
+                new Vector4(0, 0, 0, 1)
+            );
+        }
+
         static public Matrix4x4 FloarArrayToMatrix4x4(float[] arr)
         {
             return new Matrix4x4(

@@ -17,7 +17,7 @@ public class ChangedRegionCodeEvent : UnityEvent<string> {}
 [System.Serializable]
 public class ChangedLayerInfoEvent : UnityEvent<string> {}
 [System.Serializable]
-public class UpdatedPoseEvent : UnityEvent<Matrix4x4, Matrix4x4> {}
+public class UpdatedPoseEvent : UnityEvent<Matrix4x4, Matrix4x4, Matrix4x4> {}
 [System.Serializable]
 public class UpdatedGeoCoordEvent : UnityEvent<double, double> {}
 [System.Serializable]

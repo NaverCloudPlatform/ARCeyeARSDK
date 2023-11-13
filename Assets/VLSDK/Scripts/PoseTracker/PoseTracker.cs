@@ -458,7 +458,9 @@ public abstract class PoseTracker
 
         Matrix4x4 projectionMatrix = PoseUtility.UnmanagedToMatrix4x4(pm);
 
-        s_Instance.onPoseUpdated?.Invoke(localizedViewMatrix, projectionMatrix);
+        Matrix4x4 texMatrix = PoseUtility.UnmanagedToMatrix4x4From3x3(tx);
+
+        s_Instance.onPoseUpdated?.Invoke(localizedViewMatrix, projectionMatrix, texMatrix);
     }
 
     [MonoPInvokeCallback(typeof(DetectObjectDelegate))]

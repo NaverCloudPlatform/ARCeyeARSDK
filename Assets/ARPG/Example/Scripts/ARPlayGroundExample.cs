@@ -43,6 +43,8 @@ public class ARPlayGroundExample : MonoBehaviour
     [SerializeField]
     private Text m_NaviMessageText;
 
+    private string m_CurrStage;
+
 
     private void Awake()
     {
@@ -61,6 +63,8 @@ public class ARPlayGroundExample : MonoBehaviour
 
         // 스테이지가 할당되면 MapView를 활성화.
         m_MapViewController.Show(true, false);
+
+        m_CurrStage = stageName;
     }
 
 
@@ -127,7 +131,15 @@ public class ARPlayGroundExample : MonoBehaviour
 
     public void LoadNavigation(LayerPOIItem poiItem)
     {
-        m_ARPlayGround.LoadNavigation(poiItem);
+        if(m_CurrStage == poiItem.stageName)
+        {
+            m_ARPlayGround.LoadNavigation(poiItem, ConnectionType.Default);
+        }
+        else
+        {
+            Debug.Log("다른 층의 목적지를 선택. 사용자에게 이동 수단을 선택하는 UI를 출력하거나 지정된 수단으로 경로 탐색");
+            m_ARPlayGround.LoadNavigation(poiItem, ConnectionType.Elevator);
+        }
     }
 
     public void UnloadNavigation()
@@ -143,6 +155,18 @@ public class ARPlayGroundExample : MonoBehaviour
         HideDestRect();
     }
 
+    public void OnNavigationEnded()
+    {
+        Debug.Log("Navigation is ended");
+        m_DistanceText.gameObject.SetActive(false);
+        m_NaviMessageText.gameObject.SetActive(false);
+    }
+
+    public void OnNavigationReSearched()
+    {
+        Debug.Log("Navigation is re-searched");
+    }
+
     public void UpdateRemainingDistance(float distance)
     {
         m_DistanceText.text = string.Format("Distance : {0} m", distance.ToString("N1"));
@@ -156,16 +180,9 @@ public class ARPlayGroundExample : MonoBehaviour
         m_NaviMessageText.text = "목적지 도착!";
     }
 
-    public void OnNavigationEnded()
+    public void OnTransitMovingStarted(ConnectionType transitType, string destStageName)
     {
-        Debug.Log("Navigation is ended");
-        m_DistanceText.gameObject.SetActive(false);
-        m_NaviMessageText.gameObject.SetActive(false);
-    }
-
-    public void OnTransitMovingStarted(int transitType)
-    {
-        Debug.Log("Transit moving started : " + transitType);
+        Debug.Log("Transit moving started : " + transitType + ", " + destStageName);
         m_MapViewController.Hide();
     }
 

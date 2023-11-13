@@ -10,9 +10,10 @@ using UnityEngine.UI;
 
 namespace ARCeye
 {
+    [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.2.0";
+        const string PLUGIN_VERSION = "1.2.3";
 
         #if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
@@ -31,7 +32,7 @@ namespace ARCeye
         private static extern void PrintNativePluginBuiltTime();
 
         [DllImport(dll)]
-        private static extern IntPtr GetVersionNative();
+        private static extern IntPtr ARPG_GetVersionNative();
 
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void LoadNative(string amprojFilePath);
@@ -89,12 +90,16 @@ namespace ARCeye
         public UnityEvent<List<LayerPOIItem>> m_OnPOIList;
 
         [Header("Navigation")]
-        public UnityEvent        m_OnNavigationStarted;
-        public UnityEvent<float> m_OnDistanceUpdated;
-        public UnityEvent        m_OnDestinationArrived;
-        public UnityEvent        m_OnNavigationEnded;
-        public UnityEvent<int>   m_OnTransitMovingStarted;
-        public UnityEvent        m_OnTransitMovingEnded;
+        public UnityEvent              m_OnNavigationStarted;
+        public UnityEvent              m_OnNavigationEnded;
+        public UnityEvent              m_OnNavigationReSearched;
+        public UnityEvent<float>       m_OnDistanceUpdated;
+        public UnityEvent              m_OnDestinationArrived;
+        public UnityEvent<ConnectionType, string> m_OnTransitMovingStarted;
+        public UnityEvent              m_OnTransitMovingEnded;
+
+        [Header("Debug")]
+        public LogLevel                m_LogLevel = LogLevel.WARNING;
 
 
         private void Awake()
@@ -158,6 +163,7 @@ namespace ARCeye
             m_NativeEventHandler.m_OnStageChanged = m_OnStageChanged;
             m_NativeEventHandler.m_OnNavigationStarted = m_OnNavigationStarted;
             m_NativeEventHandler.m_OnNavigationEnded = m_OnNavigationEnded;
+            m_NativeEventHandler.m_OnNavigationReSearched = m_OnNavigationReSearched;
             m_NativeEventHandler.m_OnDestinationArrived = m_OnDestinationArrived;
             m_NativeEventHandler.m_OnTransitMovingStarted = m_OnTransitMovingStarted;
             m_NativeEventHandler.m_OnTransitMovingEnded = m_OnTransitMovingEnded;
@@ -167,6 +173,7 @@ namespace ARCeye
         {
             m_NativeLogger = new NativeLogger();
             m_NativeLogger.Initialize();
+            m_NativeLogger.SetLogLevel(m_LogLevel);   
         }
 
         private void InitMainCamera()
@@ -191,7 +198,7 @@ namespace ARCeye
 
         public string GetVersion()
         {
-            IntPtr versionPtr = GetVersionNative();
+            IntPtr versionPtr = ARPG_GetVersionNative();
             return Marshal.PtrToStringAnsi(versionPtr);
         }
 

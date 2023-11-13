@@ -32,7 +32,9 @@ namespace ARCeye
         [HideInInspector]
         public UnityEvent m_OnNavigationEnded;
         [HideInInspector]
-        public UnityEvent<int> m_OnTransitMovingStarted;
+        public UnityEvent m_OnNavigationReSearched;
+        [HideInInspector]
+        public UnityEvent<ConnectionType, string> m_OnTransitMovingStarted;
         [HideInInspector]
         public UnityEvent m_OnTransitMovingEnded;
 
@@ -48,6 +50,7 @@ namespace ARCeye
         public delegate void V_Func();
         public delegate void B_Func(bool b);
         public delegate void I_Func(int i);
+        public delegate void IS_Func(int i, string s);
         public delegate void F_Func(float f);
         public delegate void S_Func(string f);
         public delegate void III_Func(int i1, int i2, int i3);
@@ -68,7 +71,8 @@ namespace ARCeye
         [DllImport(dll)] private static extern void SetOnRemainDistanceFuncNative(F_Func func);
         [DllImport(dll)] private static extern void SetOnDestinationArrivedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnNavigationEndedFuncNative(V_Func func);
-        [DllImport(dll)] private static extern void SetOnTransitMovingStartedFuncNative(I_Func func);
+        [DllImport(dll)] private static extern void SetOnNavigationReSearchedFuncNative(V_Func func);
+        [DllImport(dll)] private static extern void SetOnTransitMovingStartedFuncNative(IS_Func func);
         [DllImport(dll)] private static extern void SetOnTransitMovingEndedFuncNative(V_Func func);
 
 
@@ -85,6 +89,7 @@ namespace ARCeye
             SetOnStageChangedFuncNative(OnStageChanged);
             SetOnNavigationStartedFuncNative(OnNavigationStarted);
             SetOnNavigationEndedFuncNative(OnNavigationEnded);
+            SetOnNavigationReSearchedFuncNative(OnNavigationReSearched);
             SetOnDestinationArrivedFuncNative(OnDestinationArrived);
             SetOnTransitMovingStartedFuncNative(OnTransitMovingStarted);
             SetOnTransitMovingEndedFuncNative(OnTransitMovingEnded);
@@ -195,9 +200,14 @@ namespace ARCeye
             s_Instance.m_OnNavigationEnded.Invoke();
         }
 
-        [MonoPInvokeCallback(typeof(I_Func))]
-        private static void OnTransitMovingStarted(int transitType) {
-            s_Instance.m_OnTransitMovingStarted.Invoke(transitType);
+        [MonoPInvokeCallback(typeof(V_Func))]
+        private static void OnNavigationReSearched() {
+            s_Instance.m_OnNavigationReSearched.Invoke();
+        }
+
+        [MonoPInvokeCallback(typeof(IS_Func))]
+        private static void OnTransitMovingStarted(int transitType, string destFloor) {
+            s_Instance.m_OnTransitMovingStarted.Invoke((ConnectionType) transitType, destFloor);
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]

@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using UnityEditor.Graphs;
 using UnityEngine;
 
 namespace ARCeye
@@ -11,11 +9,11 @@ namespace ARCeye
     public class LayerInfoConverter : MonoBehaviour
     {
         [SerializeField]
-        private LayerInfoSetting m_LayerInfoSetting;
+        protected LayerInfoSetting m_LayerInfoSetting;
 
-        private Dictionary<string, string> m_StageNameByLayerName = new Dictionary<string, string>();
+        protected Dictionary<string, string> m_StageNameByLayerName = new Dictionary<string, string>();
 
-        private void Awake()
+        protected virtual void Awake()
         {
             Layer rootLayer = m_LayerInfoSetting.layer;
             rootLayer.parent = null;
@@ -29,7 +27,7 @@ namespace ARCeye
         /// <summary>
         ///   LayerInfoSetting의 값을 이용하여 스테이지 
         /// </summary>
-        private void FindStageName(Layer layer)
+        protected virtual void FindStageName(Layer layer)
         {
             if(layer.parent == null)
             {
@@ -97,7 +95,7 @@ namespace ARCeye
             return result;
         }
 
-        private void PrintMatches()
+        protected virtual void PrintMatches()
         {
             StringBuilder sb = new StringBuilder();
 
@@ -109,7 +107,7 @@ namespace ARCeye
             Debug.Log("LayerInfo\n" + sb.ToString());
         }
 
-        private void CheckError()
+        protected virtual void CheckError()
         {
             if(m_StageNameByLayerName.Count == 0)
             {

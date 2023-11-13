@@ -27,7 +27,7 @@ public class ExampleVLSDK : MonoBehaviour
     {
         if(floorName == "066")
         {
-            floorName = "1F";
+            floorName = "ground";
         }
 
         m_ARPlayGround.SetStage(floorName);

@@ -13,5 +13,11 @@ namespace ARCeye
             get => m_TextureToSend;
             set => m_TextureToSend = value;
         }
+
+        private Matrix4x4 m_TexMatrix = Matrix4x4.identity;
+        public Matrix4x4 texMatrix {
+            get => m_TexMatrix;
+            set => m_TexMatrix = value;
+        }
     }
 }

@@ -34,9 +34,12 @@ namespace ARCeye
         #endif
 
         [DllImport(dll)]
-        private static extern void SetDebugLogFuncNative(DebugLogFuncDelegate func);
+        private static extern void ARPG_SetDebugLogFuncNative(DebugLogFuncDelegate func);
         [DllImport(dll)]
-        private static extern void ReleaseLoggerNative();
+        private static extern void ARPG_ReleaseLoggerNative();
+        [DllImport(dll)]
+        private static extern void ARPG_SetDebugLogLevelNative(LogLevel logLevel);
+
 
         static private int s_MaxLogsCount = 100;
         static private LinkedList<LogElem> s_LogList = new LinkedList<LogElem>();
@@ -51,12 +54,17 @@ namespace ARCeye
         public void Initialize()
         {
             s_LogList = new LinkedList<LogElem>();
-            SetDebugLogFuncNative(DebugLog);
+            ARPG_SetDebugLogFuncNative(DebugLog);
         }
 
         public void Release()
         {
-            ReleaseLoggerNative();
+            ARPG_ReleaseLoggerNative();
+        }
+
+        public void SetLogLevel(LogLevel logLevel)
+        {
+            ARPG_SetDebugLogLevelNative(logLevel);
         }
 
         [MonoPInvokeCallback(typeof(DebugLogFuncDelegate))]
@@ -98,7 +106,7 @@ namespace ARCeye
                 }
                 case LogLevel.ERROR: {
                     msg = "[Error] " + msg;
-                    Debug.LogWarning(msg);
+                    Debug.LogError(msg);
                     break;
                 }
                 case LogLevel.FATAL: {

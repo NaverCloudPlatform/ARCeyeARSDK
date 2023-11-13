@@ -30,15 +30,21 @@ namespace ARCeye
             m_MeterArea = transform.Find(rootPath + "Meter_Root");
             m_DistanceArea = transform.Find(rootPath + "Distance_Root");
 
-            GameObject meterTextGO = new GameObject("MeterText");
-            meterTextGO.transform.parent = m_MeterArea;
-            MeterText meterText = meterTextGO.AddComponent<MeterText>();
-            m_MeterText = meterText.textMesh;
+            if(m_MeterArea != null)
+            {
+                GameObject meterTextGO = new GameObject("MeterText");
+                meterTextGO.transform.parent = m_MeterArea;
+                MeterText meterText = meterTextGO.AddComponent<MeterText>();
+                m_MeterText = meterText.textMesh;
+            }
 
-            GameObject distanceTextGO = new GameObject("DistanceText");
-            distanceTextGO.transform.parent = m_DistanceArea;
-            DistanceText distanceText = distanceTextGO.AddComponent<DistanceText>();
-            m_DistanceText = distanceText.textMesh;
+            if(m_DistanceArea != null)
+            {
+                GameObject distanceTextGO = new GameObject("DistanceText");
+                distanceTextGO.transform.parent = m_DistanceArea;
+                DistanceText distanceText = distanceTextGO.AddComponent<DistanceText>();
+                m_DistanceText = distanceText.textMesh;
+            }
         }
 
         private string GetRootPath() {
@@ -61,7 +67,7 @@ namespace ARCeye
             } else if(isS) {
                 return rootSPath;
             } else {
-                Debug.LogError("[UnityTurnSpot] GetRootPath : Failed to find the text root of TurnSpot");
+                // Debug.LogError("[UnityTurnSpot] GetRootPath : Failed to find the text root of TurnSpot");
                 return "";
             }
         }

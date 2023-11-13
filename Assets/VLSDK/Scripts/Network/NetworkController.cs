@@ -6,10 +6,12 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Networking;
 using AOT;
+using ARCeye;
 
 public class NetworkController : MonoBehaviour
 {
     private static NetworkController s_Instance;
+    private static TextureProvider s_TextureProvider;
 
     public delegate void RequestVLDelegate(ARCeye.RequestVLInfo requestInfo);
     
@@ -53,6 +55,7 @@ public class NetworkController : MonoBehaviour
     private void Awake()
     {
         s_Instance = this;
+        s_TextureProvider = GetComponent<TextureProvider>();
     }
 
     public void Initialize()
@@ -221,7 +224,7 @@ public class NetworkController : MonoBehaviour
 
         // 모바일 디바이스의 raw image를 CCW90로 회전.
 #if !UNITY_EDITOR 
-        previewTex = ImageUtility.RotateTexture(previewTex, false);
+       previewTex = ImageUtility.RotateTexture(previewTex, s_TextureProvider.texMatrix);
 #endif        
 
         byte[] data = ImageConversion.EncodeToJPG(previewTex, 85);

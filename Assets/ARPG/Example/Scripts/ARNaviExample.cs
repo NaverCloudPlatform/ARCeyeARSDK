@@ -227,9 +227,9 @@ public class ARNaviExample : MonoBehaviour
         m_MapViewController.Show(true);
     }
 
-    public void OnTransitMovingStarted(int transitType)
+    public void OnTransitMovingStarted(int transitType, string destStageName)
     {
-        Debug.Log("Transit moving started : " + transitType);
+        Debug.Log("Transit moving started : " + transitType + ", " + destStageName);
 
         // Update UI
         string currStage = m_ARPlayGround.GetStageName();

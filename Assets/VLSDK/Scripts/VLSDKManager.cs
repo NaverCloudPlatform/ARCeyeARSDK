@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
+using UnityEngine.UI;
 
 namespace ARCeye
 {
@@ -11,6 +12,7 @@ namespace ARCeye
         private PoseTracker m_PoseTracker;
         private NetworkController m_NetworkController;
         private GeoCoordProvider m_GeoCoordProvider;
+        private TextureProvider m_TextureProvider;
 
 
 #if UNITY_IOS
@@ -229,6 +231,11 @@ namespace ARCeye
                 m_GeoCoordProvider = GetComponent<GeoCoordProvider>();
             }
 
+            if(m_TextureProvider == null)
+            {
+                m_TextureProvider = GetComponent<TextureProvider>();
+            }
+
             m_PoseTracker.SetGeoCoordProvider(m_GeoCoordProvider);
             m_PoseTracker.Initialize(m_ARCamera, m_Config);
         }
@@ -291,7 +298,7 @@ namespace ARCeye
             m_PoseTracker.Release();
         }
 
-        private void UpdateOriginPose(Matrix4x4 localizedViewMatrix, Matrix4x4 projectionMatrix)
+        private void UpdateOriginPose(Matrix4x4 localizedViewMatrix, Matrix4x4 projectionMatrix, Matrix4x4 texMatrix)
         {
             // VL 수신 결과의 WC Transform Matrix 계산.
             Matrix4x4 localizedPoseMatrix = Matrix4x4.Inverse(localizedViewMatrix);
@@ -302,6 +309,8 @@ namespace ARCeye
 
             // 위의 두 Matrix를 이용하여 AR Session Origin의 WC Transform Matrix 계산.
             Matrix4x4 originModelMatrix = localizedPoseMatrix * Matrix4x4.Inverse(lhCamModelMatrix);
+
+            m_TextureProvider.texMatrix = texMatrix;
 
             // 계산 된 Origin의 Transform Matrix를 이용해 OriginTransform의 position, rotation 설정.
             if(originModelMatrix.ValidTRS()) {

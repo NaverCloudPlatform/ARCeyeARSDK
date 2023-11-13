@@ -26,7 +26,7 @@ MonoBehaviour:
     - data:
         layerName: GND
         linkToStage: 1
-        stageName: 1F
+        stageName: ground
         depth: 1
         layerInfoCode: AMCOHERITZ_GND
         foldout: 1

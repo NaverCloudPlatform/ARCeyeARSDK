@@ -45,9 +45,6 @@ namespace ARCeye
         [SerializeField]
         private bool m_ShowDebugUI = true;
 
-        [SerializeField]
-        private bool m_ShowARCoord = true;
-
 
         ///// GUI Layout /////
         private float m_TargetScreenWidth = 720.0f * 1.0f;
@@ -110,7 +107,7 @@ namespace ARCeye
             m_LayerInfo = layerInfo;
         }
 
-        public void OnPoseUpdated(Matrix4x4 matrix, Matrix4x4 projMatrix) {
+        public void OnPoseUpdated(Matrix4x4 matrix, Matrix4x4 projMatrix, Matrix4x4 texMatrix) {
             Matrix4x4 poseMatrix = matrix.inverse;
 
             Quaternion rotation = Quaternion.LookRotation(poseMatrix.GetColumn(2), poseMatrix.GetColumn(1));
@@ -190,12 +187,6 @@ namespace ARCeye
 
             m_PrevGUIMat = GUI.matrix;
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, m_GUIScale);
-
-            m_ShowARCoord = GUILayout.Toggle(m_ShowARCoord, "Show AR Coord");
-            if(GUI.changed) {
-                m_ARCoordRoot.gameObject.SetActive(m_ShowARCoord);
-                GUI.changed = false;
-            }
 
             m_ShowDebugUI = GUILayout.Toggle(m_ShowDebugUI, "Show Debug View");
             GUI.changed = false; // 이 처리를 하지 않으면 아래의 ChangeLocation이 항상 실행.
