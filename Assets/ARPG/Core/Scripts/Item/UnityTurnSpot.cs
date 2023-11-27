@@ -67,7 +67,7 @@ namespace ARCeye
             } else if(isS) {
                 return rootSPath;
             } else {
-                // Debug.LogError("[UnityTurnSpot] GetRootPath : Failed to find the text root of TurnSpot");
+                NativeLogger.Print(LogLevel.VERBOSE, "[UnityTurnSpot] GetRootPath : Failed to find the text root of TurnSpot");
                 return "";
             }
         }

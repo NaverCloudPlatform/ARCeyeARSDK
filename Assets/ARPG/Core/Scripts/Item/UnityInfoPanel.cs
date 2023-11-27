@@ -248,7 +248,7 @@ namespace ARCeye
         {
             if(string.IsNullOrEmpty(path))
             {
-                Debug.LogError("[UnityInfoPanel] 이미지 경로가 비어있음");
+                NativeLogger.Print(LogLevel.ERROR, "[UnityInfoPanel] 이미지 경로가 비어있음");
                 yield break;
             }
 
@@ -264,7 +264,7 @@ namespace ARCeye
 
                     if (www.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
                     {
-                        Debug.LogError("Failed to load the file: " + www.error);
+                        NativeLogger.Print(LogLevel.ERROR, "Failed to load the file: " + www.error);
                         yield break;
                     }
 
@@ -329,8 +329,6 @@ namespace ARCeye
             if(!gameObject.activeSelf) {
                 return;
             }
-
-            // Debug.Log("[UnityInfoPanel] Fade : " + fadeIn);
         }
     }
 }

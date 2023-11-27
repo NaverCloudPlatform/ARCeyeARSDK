@@ -14,7 +14,7 @@ namespace ARCeye
 
             if (layerIndex == -1)
             {
-                Debug.LogError("Layer 'MapArrow' not found!");
+                NativeLogger.Print(LogLevel.ERROR, "Layer 'MapArrow' not found!");
             }
             else
             {

@@ -134,6 +134,8 @@ namespace ARCeye
             s_POIGenerator = GetComponent<POIGenerator>();
             s_InfoPanelGenerator = GetComponent<InfoPanelGenerator>();
 
+            InitScene();
+
             CreateMaterials();
 
             SetCreateFuncNative(Create);
@@ -181,6 +183,16 @@ namespace ARCeye
             SetSetInfoPanelImageFuncNative(SetInfoPanelImage);
         }
 
+        private void InitScene()
+        {
+            if(m_Scene != null)
+            {
+                m_Scene.position = Vector3.zero;
+                m_Scene.rotation = Quaternion.identity;
+                m_Scene.localScale = Vector3.one;
+            }
+        }
+
         private void CreateMaterials()
         {
             Shader poiTextShader = FindShader("ARPG/POI Text");
@@ -196,7 +208,7 @@ namespace ARCeye
 
             if (shader == null)
             {
-                Debug.LogError($"[ARPlayGround] Fail to find '{shaderName}' shader");
+                NativeLogger.Print(LogLevel.ERROR, $"[ARPlayGround] Fail to find '{shaderName}' shader");
                 return null;
             }
 
@@ -261,6 +273,8 @@ namespace ARCeye
             string className = Marshal.PtrToStringAnsi(classNamePtr);
             string filePath = Marshal.PtrToStringAnsi(filePathPtr);
 
+            filePath = PathUtil.Validate(filePath);
+
             bool useNextStep = FindObjectOfType<NextStep>() != null;
             if(className == nameof(UnityNextStepDot) || className == nameof(UnityNextStepArrow) || className == nameof(UnityNextStepText)) {
                 if(!useNextStep) {
@@ -277,14 +291,22 @@ namespace ARCeye
             // 각 Item별 적당한 root로 이동.
             SetParentToModel(go, modelType);
 
-            // glb 모델 로드.
-            var gltf = go.GetComponent<PostEventGltfAsset>();            
-            gltf.PostEvent = (success) => {
-                var item = go.GetComponent<UnityModel>();
-                item.Initialize(gltf);
-                OnLoadingCompleteNative(nativeModelPtr);
-            };
-            gltf.Load(filePath);
+            // glb 파일이 없는 Item인지 확인. filesystem을 사용하지 않는 Android 환경에서 호출된다.
+            if(NativeFileSystemHelper.IsGLBNotAssigned(filePath))
+            {
+                NativeLogger.Print(LogLevel.WARNING, $"glb model file is not assigned to an instance of {className}");
+            }
+            else
+            {
+                // glb 모델 로드.
+                var gltf = go.GetComponent<PostEventGltfAsset>();
+                gltf.PostEvent = (success) => {
+                    var item = go.GetComponent<UnityModel>();
+                    item.Initialize(gltf);
+                    OnLoadingCompleteNative(nativeModelPtr);
+                };
+                gltf.Load(filePath);
+            }
 
             return Wrap(go);
         }
@@ -306,7 +328,7 @@ namespace ARCeye
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 Destroy(item);
             } catch (Exception e) {
-                Debug.LogWarning(e.ToString());
+                NativeLogger.Print(LogLevel.WARNING, e.ToString());
             }
         }
 
@@ -319,7 +341,7 @@ namespace ARCeye
                     string name = Marshal.PtrToStringAnsi(namePtr);
                     item.name = name;
                 } catch (Exception e) {
-                    Debug.LogWarning(e.ToString());
+                    NativeLogger.Print(LogLevel.WARNING, e.ToString());
                     return;
                 }
             });
@@ -366,10 +388,7 @@ namespace ARCeye
                 GameObject item = Unwrap<GameObject>(itemPtr);
 
                 string animName = Marshal.PtrToStringAnsi(animNamePtr);
-                // Debug.Log($"{item.name} Play animation animName : " + animName);
-
                 string playMode = Marshal.PtrToStringAnsi(playModePtr);
-                // Debug.Log($"{item.name} Play animation playMode : " + playMode);
 
                 item.GetComponent<UnityModel>().PlayAnimation(animName, playMode);
             });
@@ -402,7 +421,6 @@ namespace ARCeye
                 return 0.0f;
             }
             float value = unityModel.AnimationDuration(animName);
-            // Debug.Log($"{item.name} AnimationDuration : " + value);
             return value;
         }
 
@@ -424,7 +442,7 @@ namespace ARCeye
                     return;
                 }
                 
-                Debug.LogWarning($"[ItemGenerator] Fade - {item.name} doesn't have a UnityModel component");
+                NativeLogger.Print(LogLevel.WARNING, $"[ItemGenerator] Fade - {item.name} doesn't have a UnityModel component");
             });
         }
 
@@ -439,7 +457,7 @@ namespace ARCeye
                         OnFadingCompleteNative(nativeModelPtr);
                     });
                 } else {
-                    Debug.LogWarning($"[ItemGenerator] Fade - {item.name} doesn't have a UnityModel component");
+                    NativeLogger.Print(LogLevel.WARNING, $"[ItemGenerator] Fade - {item.name} doesn't have a UnityModel component");
                 }
             });
         }
@@ -455,7 +473,7 @@ namespace ARCeye
                 if(unityModel != null) {
                     unityModel.SetOpacity(opacity);
                 } else {
-                    Debug.LogWarning($"[ItemGenerator] SetOpacity - {item.name} doesn't have a UnityModel component");
+                    NativeLogger.Print(LogLevel.WARNING, $"[ItemGenerator] SetOpacity - {item.name} doesn't have a UnityModel component");
                 }
             });
         }
@@ -475,7 +493,7 @@ namespace ARCeye
                     return;
                 }
                     
-                Debug.LogWarning($"[ItemGenerator] SetBillboard - {item.name} doesn't have a UnityTurnSpot component");
+                NativeLogger.Print(LogLevel.WARNING, $"[ItemGenerator] SetBillboard - {item.name} doesn't have a UnityTurnSpot component");
             });
         }
 
@@ -518,7 +536,7 @@ namespace ARCeye
             try {
                 GCHandle.FromIntPtr(ptr);
             } catch (Exception e) {
-                Debug.LogWarning(e.ToString());
+                NativeLogger.Print(LogLevel.WARNING, e.ToString());
                 return;
             }
 

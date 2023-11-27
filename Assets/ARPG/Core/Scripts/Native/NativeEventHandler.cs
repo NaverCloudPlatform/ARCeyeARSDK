@@ -60,12 +60,9 @@ namespace ARCeye
         public delegate void LayerPOIItem_Func(IntPtr itemsPtr, int count);
 
         
-        [DllImport(dll)] private static extern void SetVersionInfoFuncNative(III_Func func);
-        [DllImport(dll)] private static extern void SetDownloadProgressFuncNative(FBI_Func func);
         [DllImport(dll)] private static extern void SetOnAppConfigFuncNative(SSFpFpFp_Func func);
         [DllImport(dll)] private static extern void SetOnUIChangedFuncNative(UILayerInfo_Func func);
         [DllImport(dll)] private static extern void SetOnPOIListFuncNative(LayerPOIItem_Func func);
-        [DllImport(dll)] private static extern void SetOnResourceUpdatedFuncNative(B_Func func);
         [DllImport(dll)] private static extern void SetOnStageChangedFuncNative(S_Func func);
         [DllImport(dll)] private static extern void SetOnNavigationStartedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnRemainDistanceFuncNative(F_Func func);
@@ -79,12 +76,9 @@ namespace ARCeye
         private void Awake() {
             s_Instance = this;
 
-            SetVersionInfoFuncNative(onVersionInfo);
-            SetDownloadProgressFuncNative(onDownloadProgress);
             SetOnAppConfigFuncNative(OnAppConfig);
             SetOnUIChangedFuncNative(OnUIChanged);
             SetOnPOIListFuncNative(OnPOIList);
-            SetOnResourceUpdatedFuncNative(OnResourceUpdated);
             SetOnRemainDistanceFuncNative(OnRemainDistance);
             SetOnStageChangedFuncNative(OnStageChanged);
             SetOnNavigationStartedFuncNative(OnNavigationStarted);

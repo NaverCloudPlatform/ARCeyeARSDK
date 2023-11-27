@@ -59,6 +59,11 @@ public class ARPlayGroundExample : MonoBehaviour
 
     public void SetStage(string stageName)
     {
+        if(m_CurrStage == stageName)
+        {
+            return;
+        }
+        
         m_ARPlayGround.SetStage(stageName);
 
         // 스테이지가 할당되면 MapView를 활성화.
@@ -91,7 +96,10 @@ public class ARPlayGroundExample : MonoBehaviour
                 // Info
                 e.dpcode == 133130 ||
 
-                e.name == "랩스연구소"
+                // 계단
+                e.dpcode == 171105 ||
+
+                e.name == "송도달빛축제공원행 승강장"
         );
 
         foreach(var elem in filterdPOIItems)
@@ -180,11 +188,20 @@ public class ARPlayGroundExample : MonoBehaviour
         m_NaviMessageText.text = "목적지 도착!";
     }
 
-    public void OnTransitMovingStarted(ConnectionType transitType, string destStageName)
+public void OnTransitMovingStarted(ConnectionType transitType, string destStageName)
+{
+    // transit 노드 진입 시 즉시 stage를 변경해야 하는지 확인
+    if(CheckLevelEquality(destStageName))
     {
-        Debug.Log("Transit moving started : " + transitType + ", " + destStageName);
+        // VL 인식 없이 Stage를 변경
+        SetStage(destStageName);
+    }
+    else
+    {
+        // VL 인식 대기를 위해 Map 화면 비활성화
         m_MapViewController.Hide();
     }
+}
 
     public void OnTransitMovingEnded()
     {
@@ -215,4 +232,13 @@ public class ARPlayGroundExample : MonoBehaviour
         TouchSystem.Instance.onDrag.RemoveListener(m_MapViewController.MoveMapCamera);
         TouchSystem.Instance.onPinchZoom.RemoveListener(m_MapViewController.ZoomMapCamera);
     }
+
+
+public bool CheckLevelEquality(string nextStage)
+{
+    // 사전에 설정한 데이터. 현재 층과 다음 층이 어떤 조합일때 같은 층에서의 스테이지 전환인지 설정.
+    return 
+        (m_CurrStage == "GND" && nextStage == "1F") ||
+        (m_CurrStage == "1F" && nextStage == "GND");
+}
 }

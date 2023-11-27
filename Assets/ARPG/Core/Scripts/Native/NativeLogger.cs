@@ -43,7 +43,7 @@ namespace ARCeye
 
         static private int s_MaxLogsCount = 100;
         static private LinkedList<LogElem> s_LogList = new LinkedList<LogElem>();
-        static private LogLevel s_LogLevel = LogLevel.DEBUG;
+        static private LogLevel s_LogLevel = LogLevel.VERBOSE;
         public LogLevel logLevel
         { 
             get => s_LogLevel; 
@@ -71,10 +71,10 @@ namespace ARCeye
         static public void DebugLog(LogLevel logLevel, IntPtr raw)
         {
             string log = Marshal.PtrToStringAnsi(raw);
-            DebugLog(logLevel, log);
+            Print(logLevel, log);
         }
 
-        static public void DebugLog(LogLevel logLevel, string log)
+        static public void Print(LogLevel logLevel, string log)
         {
             if(logLevel < s_LogLevel) {
                 return;

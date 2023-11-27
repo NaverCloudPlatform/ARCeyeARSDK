@@ -43,12 +43,11 @@ namespace ARCeye
 
         public void SetOutlineThickness(float thickness)
         {
-            // Debug.Log("Set Outline thickness : " + thickness);
+            
         }
 
         public void InsertPOIEntity(UnityMapPOI mapPOI, int id, int dpCode, string label, Vector3 position, int drawType)
         {
-            // Debug.Log("Insert POI Entity : " + label);
             // MapPOIPool을 MapPOI들의 root로 설정.
             mapPOI.transform.parent = transform;
 
@@ -71,7 +70,7 @@ namespace ARCeye
 
         public void SetConfigFullpath(string atlasFullpath)
         {
-            Debug.Log("Set altas fullpath : " + atlasFullpath);
+            NativeLogger.Print(LogLevel.DEBUG, "Set altas fullpath : " + atlasFullpath);
         }
     }
 }

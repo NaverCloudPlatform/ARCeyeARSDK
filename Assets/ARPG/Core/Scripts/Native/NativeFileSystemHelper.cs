@@ -11,6 +11,8 @@ namespace ARCeye
     [DefaultExecutionOrder(-1500)]
     public class NativeFileSystemHelper : MonoBehaviour
     {
+        public bool useAndroidStreamingAssets = false;
+
 #if !UNITY_EDITOR && UNITY_ANDROID
         const string dll = "ARPG-plugin";
 
@@ -42,7 +44,23 @@ namespace ARCeye
         [DllImport(dll)]
         private static extern void OnPathErrorNative(string msg);
 
+        private static bool s_IsReadingComplete = false;
+        public bool isReadingComplete {
+            get {
+                if(useAndroidStreamingAssets) {
+                    // Android streaming assets을 사용할 경우 UnityWebRequest를 통한 비동기 접근 필요.
+                    return s_IsReadingComplete;
+                } else {
+                    // Android streaming assets을 사용하지 않으면 filesystem 사용 가능.
+                    return true;
+                }
+            }
+            set {
+                s_IsReadingComplete = value;
+            }
+        }
 
+        /// 아래의 Native callback 메서드들은 Android 환경에서 streaming assets을 사용할 때 사용.
 
         private void Awake() {
             s_Instance = this;
@@ -59,12 +77,16 @@ namespace ARCeye
         
         [MonoPInvokeCallback(typeof(ReadFileFuncDelegate))]
         static public void ReadFile(IntPtr filePathPtr) {
+            s_IsReadingComplete = false;
+
             string fileUrl = Marshal.PtrToStringAnsi(filePathPtr);
             s_Instance.StartCoroutine( s_Instance.ReadText(fileUrl) );
         }
 
         [MonoPInvokeCallback(typeof(ReadPathFileFuncDelegate))]
         static public void ReadPathFile(IntPtr filePathPtr) {
+            s_IsReadingComplete = false;
+
             string fileUrl = Marshal.PtrToStringAnsi(filePathPtr);
             s_Instance.StartCoroutine( s_Instance.ReadPathText(fileUrl) );
         }
@@ -82,7 +104,9 @@ namespace ARCeye
                 {
                     OnCompleteNative(www.downloadHandler.text);
                 }
-            } 
+            }
+
+            s_IsReadingComplete = true; 
         }
 
         private IEnumerator ReadPathText(string url) {
@@ -99,7 +123,20 @@ namespace ARCeye
                     OnPathCompleteNative(www.downloadHandler.text);
                 }
             } 
+
+            s_IsReadingComplete = true;
+        }
+#else
+        public bool isReadingComplete {
+            get {
+                return true;
+            }
         }
 #endif
+
+        public static bool IsGLBNotAssigned(string filePath)
+        {
+            return filePath.Contains("RmlsZURvZXNOb3RFeGlzdHM=");
+        }
     }
 }

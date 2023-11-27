@@ -14,7 +14,7 @@ namespace ARCeye
 
             if (layerIndex == -1)
             {
-                Debug.LogError("Layer 'Map' not found!");
+                NativeLogger.Print(LogLevel.ERROR, "Layer 'Map' not found!");
             }
             else
             {

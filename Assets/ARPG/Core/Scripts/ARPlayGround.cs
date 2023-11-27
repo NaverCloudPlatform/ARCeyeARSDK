@@ -7,13 +7,38 @@ using UnityEngine;
 using UnityEngine.Events;
 using AOT;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 namespace ARCeye
 {
+    [StructLayout(LayoutKind.Sequential)]
+    struct ARPGConfiguration
+    {
+        [HideInInspector]
+        [MarshalAs(UnmanagedType.LPStr, SizeConst = 64)]
+        public string languageCode;
+
+        [HideInInspector]
+        [MarshalAs(UnmanagedType.LPStr, SizeConst = 64)]
+        public string countryCode;
+
+        // ARPG_TRANSIT_UNKNOWN              0
+        // ARPG_TRANSIT_USE_VISUAL_CUES      1
+        // ARPG_TRANSIT_USE_AIR_PRESSURE     2
+        // ARPG_TRANSIT_USE_RANGE_CONSTRAINT 3
+        [HideInInspector]
+        public UInt32 transitOption;
+
+        // ARPG_FILESYSTEM_DEFAULT           0
+        // ARPG_FILESYSTEM_UNITY             1
+        [HideInInspector]
+        public UInt32 filesystemOption;
+    }
+
     [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.2.3";
+        const string PLUGIN_VERSION = "1.2.4";
 
         #if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
@@ -23,7 +48,7 @@ namespace ARCeye
 
 
         [DllImport(dll)]
-        private static extern void InitializePluginNative();
+        private static extern void InitializePluginNative(ARPGConfiguration config);
 
         [DllImport(dll)]
         private static extern void DestroyPluginNative();
@@ -37,14 +62,8 @@ namespace ARCeye
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void LoadNative(string amprojFilePath);
 
-        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void DownloadAndLoadResourcesNative(string downloadDirPath, string location);
-
         [DllImport(dll)]
         private static extern void ResetNative();
-
-        [DllImport(dll)]
-        private static extern void CheckResourceUpdatedNative();
 
         [DllImport(dll)]
         private static extern void UpdateSceneNative(UnityFrame unityPose);
@@ -66,8 +85,22 @@ namespace ARCeye
         private string m_ContentsPath;
         public  string contentsPath => m_ContentsPath;
 
-        // private string m_Location;
-        // public string location => m_Location;
+        private string amprojFilePath {
+            get {
+                string locationName = Path.GetFileName(contentsPath);
+                string dataRootPath = m_StreamingAsset ? Application.streamingAssetsPath : Application.persistentDataPath;
+                return $"{dataRootPath}/{contentsPath}/{locationName}.amproj";
+            }
+        }
+
+        [SerializeField]
+        private bool m_StreamingAsset = true;
+
+        [SerializeField]
+        private bool m_LoadOnAwake = true;
+
+        private bool m_IsLoadingRequested = false;
+        private bool m_IsLoaded = false;
 
         private Camera m_MainCamera;
 
@@ -76,6 +109,7 @@ namespace ARCeye
         private NetworkController m_NetworkController;
         private NativeLogger m_NativeLogger;
         private NativeEventHandler m_NativeEventHandler;
+        private NativeFileSystemHelper m_NativeFileSystemHelper;
         private UnityFrame m_Frame;
 
         private string m_CurrStage;
@@ -106,7 +140,14 @@ namespace ARCeye
         {
             InitNativeLogger();
             InitComponents();
-            InitializePluginNative();
+
+            ARPGConfiguration config = new ARPGConfiguration();
+            config.languageCode = "ko";
+            config.countryCode  = "KR";
+            config.transitOption = 1;
+            config.filesystemOption = (UInt32) (m_StreamingAsset ? 1 : 0);
+
+            InitializePluginNative(config);
             InitMainCamera();
 
             m_Frame = new UnityFrame();
@@ -114,9 +155,13 @@ namespace ARCeye
 
         private void Start()
         {
-            Debug.Log($"<b>ARPG version {PLUGIN_VERSION}, native {GetVersion()}</b>");
+            NativeLogger.Print(LogLevel.INFO, $"<b>ARPG version {PLUGIN_VERSION}, native {GetVersion()}</b>");
+            m_NativeLogger.SetLogLevel(m_LogLevel);
 
-            Load();
+            if(m_LoadOnAwake)
+            {
+                Load();
+            }
         }
 
         private void Update()
@@ -167,13 +212,18 @@ namespace ARCeye
             m_NativeEventHandler.m_OnDestinationArrived = m_OnDestinationArrived;
             m_NativeEventHandler.m_OnTransitMovingStarted = m_OnTransitMovingStarted;
             m_NativeEventHandler.m_OnTransitMovingEnded = m_OnTransitMovingEnded;
+
+            m_NativeFileSystemHelper = GetComponent<NativeFileSystemHelper>();
+#if !UNITY_EDITOR && UNITY_ANDROID
+            m_NativeFileSystemHelper.useAndroidStreamingAssets = m_StreamingAsset;
+#endif
         }
 
         private void InitNativeLogger()
         {
             m_NativeLogger = new NativeLogger();
+            m_NativeLogger.logLevel = m_LogLevel;
             m_NativeLogger.Initialize();
-            m_NativeLogger.SetLogLevel(m_LogLevel);   
         }
 
         private void InitMainCamera()
@@ -203,16 +253,62 @@ namespace ARCeye
         }
 
         /// <summary>
-        /// amproj 파일을 로드합니다.
+        /// 코루틴을 이용하여 amproj 파일을 로드합니다.
         /// </summary>
-        /// <param name="location"></param>
-        private void Load()
+        public void Load(System.Action completeCallback = null)
         {
-            string locationName = Path.GetFileName(contentsPath);
-            string amprojFilePath = Application.streamingAssetsPath + $"/{contentsPath}/{locationName}.amproj";
-
-            LoadNative(amprojFilePath);
+            if(m_IsLoadingRequested) {
+                NativeLogger.Print(LogLevel.INFO, "이미 Load 메서드가 호출 되었습니다.");
+                return;
+            }
+            m_IsLoadingRequested = true;
+            
+            Load(amprojFilePath, completeCallback);
         }
+
+        /// <summary>
+        /// 코루틴을 이용하여 특정 경로의 amproj 파일을 로드합니다.
+        /// </summary>
+        public void Load(string filePath, System.Action completeCallback = null)
+        {
+            StartCoroutine( LoadInternal(filePath, completeCallback) );
+        }
+
+        private IEnumerator LoadInternal(string filePath, System.Action completeCallback)
+        {
+            LoadNative(filePath);
+
+            yield return new WaitUntil(() => m_NativeFileSystemHelper.isReadingComplete );
+
+            NativeLogger.Print(LogLevel.DEBUG, "Load amproj file finish!");
+
+            m_IsLoaded = true;
+
+            completeCallback?.Invoke();
+        }
+
+        /// <summary>
+        /// 비동기적으로 amproj 파일을 로드합니다.
+        /// </summary>
+        public async Task LoadAsync()
+        {
+            await LoadAsync(amprojFilePath);
+        }
+
+        /// <summary>
+        /// 비동기적으로 특정 경로의 amproj 파일을 로드합니다.
+        /// </summary>
+        public async Task LoadAsync(string filePath)
+        {
+            LoadNative(filePath);
+
+            await TaskUtil.WaitUntil(() => { return m_NativeFileSystemHelper.isReadingComplete; });
+
+            NativeLogger.Print(LogLevel.DEBUG, "Load amproj file finish!");
+
+            m_IsLoaded = true;
+        }
+
 
         public void Reset()
         {
@@ -222,11 +318,21 @@ namespace ARCeye
         }
 
         public string GetStageName() {
+            CheckAMProjLoaded();
+
+            if(m_CurrStage == null)
+            {
+                NativeLogger.Print(LogLevel.WARNING, "Current stage isn't assigned. Check 'SetStage(string)' method is called");
+            }
+
             return m_CurrStage;
         }
 
         public void SetStage(string stageName)
         {
+            CheckAMProjLoaded();
+            
+            NativeLogger.Print(LogLevel.VERBOSE, "SetStage with stageName : " + stageName);
             m_CurrStage = stageName;
 
             SetStageNative(stageName);
@@ -238,6 +344,8 @@ namespace ARCeye
         /// <param name="layerInfo"></param>
         public void SetLayerInfo(string layerInfo)
         {
+            CheckAMProjLoaded();
+
             string stageName = m_LayerInfoConverter.Convert(layerInfo);
             SetStage(stageName);
         }
@@ -272,6 +380,8 @@ namespace ARCeye
 
         public void LoadNavigation(LayerPOIItem poiItem, ConnectionType connectionType = ConnectionType.Default)
         {
+            CheckAMProjLoaded();
+
             LoadNavigationParams param = new LoadNavigationParams();
              
             var coord = poiItem.entrance[0];
@@ -286,11 +396,6 @@ namespace ARCeye
         public void UnloadNavigation()
         {
             UnloadNavigationNative();
-        }
-
-        public void CheckResourceUpdated()
-        {
-            CheckResourceUpdatedNative();
         }
 
 
@@ -314,6 +419,12 @@ namespace ARCeye
                 if (elem) {
                     elem.gameObject.SetActive(value);
                 }
+        }
+
+        private void CheckAMProjLoaded() {
+            if(!m_IsLoaded) {
+                NativeLogger.Print(LogLevel.WARNING, "amproj 파일이 로드되지 않았습니다. Load 메서드가 호출되었는지 확인해주세요");
+            }
         }
     }
 }

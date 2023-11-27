@@ -93,7 +93,6 @@ public class ARNaviExample : MonoBehaviour
             m_UIViewController.UpdateAroundView(true);
 
             m_MapViewController.Show(true, false);
-            m_UIViewController.SetStageName(m_ARPlayGround.GetStageName());
         }
         else if(state == TrackerState.INITIAL)
         {
@@ -227,7 +226,7 @@ public class ARNaviExample : MonoBehaviour
         m_MapViewController.Show(true);
     }
 
-    public void OnTransitMovingStarted(int transitType, string destStageName)
+    public void OnTransitMovingStarted(ConnectionType transitType, string destStageName)
     {
         Debug.Log("Transit moving started : " + transitType + ", " + destStageName);
 

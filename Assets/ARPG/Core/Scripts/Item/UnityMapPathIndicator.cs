@@ -7,6 +7,7 @@ namespace ARCeye
     public class UnityMapPathIndicator : UnityModel
     {
         private LineRenderer m_LineRenderer;
+
         private GameObject m_BeginBullet;
         private GameObject m_EndBullet;
 
@@ -18,6 +19,7 @@ namespace ARCeye
 
             m_LineRenderer.transform.localRotation = Quaternion.Euler(90, 0, 0);
             m_LineRenderer.alignment = LineAlignment.TransformZ;
+            m_LineRenderer.numCornerVertices = 5;
         }
 
         public void SetMaterial(Material material)
@@ -54,7 +56,7 @@ namespace ARCeye
                 Vector3 prevPosition = GetPosition(path, i - 1);
                 float dist = (currPosition - prevPosition).magnitude;
 
-                if(dist < 2) {
+                if(dist < 1.5f) {
                     continue;
                 }
 

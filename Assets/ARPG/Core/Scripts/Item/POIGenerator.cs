@@ -48,7 +48,7 @@ namespace ARCeye
             var iconPrefab = m_SignPOIIconModels.Find(e => e.name == iconName);
             if(iconPrefab == null)
             {
-                Debug.LogWarning(iconName);
+                NativeLogger.Print(LogLevel.WARNING, iconName);
             }
             else
             {

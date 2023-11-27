@@ -60,9 +60,6 @@ namespace ARCeye
 
             while(!m_IsFinished){}
 
-            // Debug.Log("[NetworkController] response.status_code - " + m_GetResponse.status_code);
-            // Debug.Log("[NetworkController] response.text - " + m_GetResponse.text);
-
             // 기존에 할당 되어있던 응답이 있을 경우 삭제.
             Marshal.FreeHGlobal(m_GetResponsePtr);
 
@@ -151,11 +148,11 @@ namespace ARCeye
             yield return m_WebRequest.SendWebRequest();
 
             if(m_WebRequest.result == UnityWebRequest.Result.ConnectionError) {
-                Debug.LogError("[NetworkController] ConnectionError - " + m_WebRequest.error);
+                NativeLogger.Print(LogLevel.ERROR, "[NetworkController] ConnectionError - " + m_WebRequest.error);
             }
 
             if(m_WebRequest.result == UnityWebRequest.Result.ProtocolError) {
-                Debug.LogError("[NetworkController] ProtocolError - " + m_WebRequest.error);
+                NativeLogger.Print(LogLevel.ERROR, "[NetworkController] ProtocolError - " + m_WebRequest.error);
             }
         }
 

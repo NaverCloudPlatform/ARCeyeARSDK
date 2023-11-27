@@ -43,7 +43,7 @@ namespace ARCeye
                 string stageName = layer.stageName.Trim();
                 if(string.IsNullOrEmpty(stageName))
                 {
-                    Debug.LogWarning($"LayerInfo({layer.layerInfoCode})에 스테이지 이름이 할당되지 않았습니다.");
+                    NativeLogger.Print(LogLevel.WARNING, $"LayerInfo({layer.layerInfoCode})에 스테이지 이름이 할당되지 않았습니다.");
                 }
                 else
                 {
@@ -89,7 +89,7 @@ namespace ARCeye
 
             if(string.IsNullOrEmpty(result))
             {
-                Debug.LogError($"인식 된 VL 영역 {layerInfo}과 매칭되는 스테이지 이름을 찾을 수 없습니다.");
+                NativeLogger.Print(LogLevel.ERROR, $"인식 된 VL 영역 {layerInfo}과 매칭되는 스테이지 이름을 찾을 수 없습니다.");
             }
 
             return result;
@@ -104,14 +104,14 @@ namespace ARCeye
                 sb.Append($"stage : {elem.Value} -- layer : {elem.Key}\n");
             }
 
-            Debug.Log("LayerInfo\n" + sb.ToString());
+            NativeLogger.Print(LogLevel.DEBUG, "LayerInfo\n" + sb.ToString());
         }
 
         protected virtual void CheckError()
         {
             if(m_StageNameByLayerName.Count == 0)
             {
-                Debug.LogError("[ARSDK] LayerInfoSetting이 정상적으로 설정되지 않았습니다. ARPG > Core > LayerInfoSetting.asset 파일에서 로케이션 계층과 매칭되는 Stage 이름 정보를 입력해주세요.");
+                NativeLogger.Print(LogLevel.ERROR, "[ARSDK] LayerInfoSetting이 정상적으로 설정되지 않았습니다. ARPG > Core > LayerInfoSetting.asset 파일에서 로케이션 계층과 매칭되는 Stage 이름 정보를 입력해주세요.");
             }
 
             List<string> emptyStageNameLayers = new List<string>();

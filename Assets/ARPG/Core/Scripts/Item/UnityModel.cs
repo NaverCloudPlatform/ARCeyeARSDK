@@ -107,7 +107,6 @@ namespace ARCeye
         {
             if (!CanPlayAnimation())
             {
-                // Debug.LogWarning("No animation component");
                 PrintAnimErrorLog();
                 return;
             }
@@ -115,7 +114,6 @@ namespace ARCeye
             AnimationClip clip = anim.GetClip(animName);
             if(clip == null)
             {
-                // Debug.LogWarning("No animation with name : " + animName);
                 return;
             }
 
@@ -131,7 +129,7 @@ namespace ARCeye
                     anim.wrapMode = WrapMode.Clamp;
                     break;
                 default : 
-                    Debug.LogWarning($"[UnityModel] Can't find wrapMode {playModeStr}. Use WrapMode.Once instead");
+                    NativeLogger.Print(LogLevel.WARNING, $"[UnityModel] Can't find wrapMode {playModeStr}. Use WrapMode.Once instead");
                     anim.wrapMode = WrapMode.Once;
                     break;
             }
@@ -154,7 +152,7 @@ namespace ARCeye
         {
             if(m_Animation == null)
             {
-                // Debug.LogWarning("m_Animation == null " + gameObject.name);
+                
             }
         }
 
@@ -196,7 +194,6 @@ namespace ARCeye
             float value = 0.1f;
 
             if(anim == null) {
-                // Debug.LogWarning("UnityModel.AnimationDuration no anim");
                 return 0.1f;
             }
 
@@ -204,7 +201,6 @@ namespace ARCeye
 
             if(clip == null)
             {
-                // Debug.LogWarning($"{name} - No animation with name : " + animName);
                 return value;
             }
             value = clip.length;
@@ -318,7 +314,6 @@ namespace ARCeye
         public virtual void SetOpacity(float opacity)
         {
             if(m_Materials == null) {
-                // Debug.LogWarning("[UnityModel] No material is assigned");
                 return;
             }
 

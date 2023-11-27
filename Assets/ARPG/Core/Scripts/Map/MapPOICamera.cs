@@ -14,7 +14,7 @@ namespace ARCeye
 
             if (layerIndex == -1)
             {
-                Debug.LogError("Layer 'MapPOI' not found!");
+                NativeLogger.Print(LogLevel.ERROR, "Layer 'MapPOI' not found!");
             }
             else
             {

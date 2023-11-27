@@ -117,27 +117,27 @@ namespace ARCeye {
             }
         }
 
-        public void ShowTransitMovingView(int transitType, string currStage, string destStage) {
+        public void ShowTransitMovingView(ConnectionType transitType, string currStage, string destStage) {
             if (m_TransitMovingView) {
                 m_TransitMovingView.gameObject.SetActive(true);
 
                 // Configure transit icon
                 {
-                    if (transitType == (int)ConnectionType.Escalator) {
+                    if (transitType == ConnectionType.Escalator) {
                         m_TransitMovingView.transform.Find("Image_Elevator").gameObject.SetActive(false);
                         m_TransitMovingView.transform.Find("Image_Stair").gameObject.SetActive(false);
 
                         m_TransitMovingView.transform.Find("Image_Escalator").gameObject.SetActive(true);
                     }
 
-                    else if (transitType == (int)ConnectionType.Elevator) {
+                    else if (transitType == ConnectionType.Elevator) {
                         m_TransitMovingView.transform.Find("Image_Escalator").gameObject.SetActive(false);
                         m_TransitMovingView.transform.Find("Image_Stair").gameObject.SetActive(false);
 
                         m_TransitMovingView.transform.Find("Image_Elevator").gameObject.SetActive(true);
                     }
 
-                    else if (transitType == (int)ConnectionType.Stair) {
+                    else if (transitType == ConnectionType.Stair) {
                         m_TransitMovingView.transform.Find("Image_Escalator").gameObject.SetActive(false);
                         m_TransitMovingView.transform.Find("Image_Elevator").gameObject.SetActive(false);
 

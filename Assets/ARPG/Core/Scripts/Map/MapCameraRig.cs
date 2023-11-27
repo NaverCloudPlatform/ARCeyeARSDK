@@ -96,7 +96,7 @@ namespace ARCeye
             int layerMask  = 1 << layerIndex;
 
             if(camera.cullingMask != layerMask) {
-                Debug.LogWarning($"[MapCameraRig] {camera.name}의 culling mask != {layerName}");
+                NativeLogger.Print(LogLevel.WARNING, $"[MapCameraRig] {camera.name}의 culling mask != {layerName}");
                 camera.cullingMask = layerMask;
             }
         }
