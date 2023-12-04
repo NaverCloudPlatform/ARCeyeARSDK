@@ -2606,7 +2606,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_LogLevel
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_LoadOnAwake
@@ -2637,12 +2637,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeExited.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnNavigationStarted.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnPOIList.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeEntered.m_PersistentCalls.m_Calls.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnDestinationArrived.m_PersistentCalls.m_Calls.Array.size
@@ -2697,6 +2705,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeExited.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnDistanceUpdated.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1995848360}
@@ -2717,6 +2729,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeEntered.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnDestinationArrived.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 1
       objectReference: {fileID: 0}
@@ -2733,7 +2749,15 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeExited.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1995848360}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnNavigationStarted.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1995848360}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeEntered.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1995848360}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
@@ -2769,6 +2793,10 @@ PrefabInstance:
       value: OnNavigationEnded
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeExited.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnNavigationReSearched.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1995848360}
@@ -2781,6 +2809,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1995848360}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeEntered.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeExited.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnCustomRangeExited
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnDestinationArrived.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
@@ -2791,6 +2827,10 @@ PrefabInstance:
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnTransitMovingEnded.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeEntered.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnCustomRangeEntered
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnDestinationArrived.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -2837,7 +2877,15 @@ PrefabInstance:
       value: ARPlayGroundExample, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeExited.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ARPlayGroundExample, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnNavigationStarted.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ARPlayGroundExample, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeEntered.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: ARPlayGroundExample, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
@@ -2877,7 +2925,15 @@ PrefabInstance:
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeExited.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_OnNavigationStarted.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_OnCustomRangeEntered.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5451198551273644278, guid: 412767673ec604349b507b6860ee5c26, type: 3}
@@ -3273,7 +3329,7 @@ GameObject:
   - component: {fileID: 1456923740}
   - component: {fileID: 1456923739}
   m_Layer: 5
-  m_Name: Button_SetStage_Start
+  m_Name: Button_SetStage_SetStage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

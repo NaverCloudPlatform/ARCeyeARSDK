@@ -38,7 +38,7 @@ namespace ARCeye
     [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.2.4";
+        const string PLUGIN_VERSION = "1.2.5";
 
         #if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
@@ -130,7 +130,9 @@ namespace ARCeye
         public UnityEvent<float>       m_OnDistanceUpdated;
         public UnityEvent              m_OnDestinationArrived;
         public UnityEvent<ConnectionType, string> m_OnTransitMovingStarted;
-        public UnityEvent              m_OnTransitMovingEnded;
+        public UnityEvent                         m_OnTransitMovingEnded;
+        public UnityEvent<string, string> m_OnCustomRangeEntered;
+        public UnityEvent<string, string> m_OnCustomRangeExited;
 
         [Header("Debug")]
         public LogLevel                m_LogLevel = LogLevel.WARNING;
@@ -212,6 +214,8 @@ namespace ARCeye
             m_NativeEventHandler.m_OnDestinationArrived = m_OnDestinationArrived;
             m_NativeEventHandler.m_OnTransitMovingStarted = m_OnTransitMovingStarted;
             m_NativeEventHandler.m_OnTransitMovingEnded = m_OnTransitMovingEnded;
+            m_NativeEventHandler.m_OnCustomRangeEntered = m_OnCustomRangeEntered;
+            m_NativeEventHandler.m_OnCustomRangeExited = m_OnCustomRangeExited;
 
             m_NativeFileSystemHelper = GetComponent<NativeFileSystemHelper>();
 #if !UNITY_EDITOR && UNITY_ANDROID

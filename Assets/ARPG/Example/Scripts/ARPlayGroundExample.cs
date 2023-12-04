@@ -233,12 +233,25 @@ public void OnTransitMovingStarted(ConnectionType transitType, string destStageN
         TouchSystem.Instance.onPinchZoom.RemoveListener(m_MapViewController.ZoomMapCamera);
     }
 
+    public bool CheckLevelEquality(string nextStage)
+    {
+        // 사전에 설정한 데이터. 현재 층과 다음 층이 어떤 조합일때 같은 층에서의 스테이지 전환인지 설정.
+        return 
+            (m_CurrStage == "GND" && nextStage == "1F") ||
+            (m_CurrStage == "1F" && nextStage == "GND");
+    }
 
-public bool CheckLevelEquality(string nextStage)
-{
-    // 사전에 설정한 데이터. 현재 층과 다음 층이 어떤 조합일때 같은 층에서의 스테이지 전환인지 설정.
-    return 
-        (m_CurrStage == "GND" && nextStage == "1F") ||
-        (m_CurrStage == "1F" && nextStage == "GND");
-}
+    /* ------------------------------------- */
+    /*         Custom Range Events           */
+    /* ------------------------------------- */
+
+    public void OnCustomRangeEntered(string uuid, string name)
+    {
+        Debug.Log($"Enter custom range ({uuid} - {name})");
+    }
+
+    public void OnCustomRangeExited(string uuid, string name)
+    {
+        Debug.Log($"Exit custom range ({uuid} - {name})");
+    }
 }

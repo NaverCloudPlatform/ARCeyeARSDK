@@ -37,6 +37,10 @@ namespace ARCeye
         public UnityEvent<ConnectionType, string> m_OnTransitMovingStarted;
         [HideInInspector]
         public UnityEvent m_OnTransitMovingEnded;
+        [HideInInspector]
+        public UnityEvent<string, string> m_OnCustomRangeEntered;
+        [HideInInspector]
+        public UnityEvent<string, string> m_OnCustomRangeExited;
 
 
         /* -- Plugin connections --*/
@@ -53,6 +57,7 @@ namespace ARCeye
         public delegate void IS_Func(int i, string s);
         public delegate void F_Func(float f);
         public delegate void S_Func(string f);
+        public delegate void SS_Func(string s1, string s2);
         public delegate void III_Func(int i1, int i2, int i3);
         public delegate void FBI_Func(float f, bool b, int i);
         public delegate void SSFpFpFp_Func(string s1, string s2, IntPtr fp1, IntPtr fp2, IntPtr fp3);
@@ -71,6 +76,8 @@ namespace ARCeye
         [DllImport(dll)] private static extern void SetOnNavigationReSearchedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnTransitMovingStartedFuncNative(IS_Func func);
         [DllImport(dll)] private static extern void SetOnTransitMovingEndedFuncNative(V_Func func);
+        [DllImport(dll)] private static extern void SetOnCustomRangeEnteredFuncNative(SS_Func func);
+        [DllImport(dll)] private static extern void SetOnCustomRangeExitedFuncNative(SS_Func func);
 
 
         private void Awake() {
@@ -87,6 +94,8 @@ namespace ARCeye
             SetOnDestinationArrivedFuncNative(OnDestinationArrived);
             SetOnTransitMovingStartedFuncNative(OnTransitMovingStarted);
             SetOnTransitMovingEndedFuncNative(OnTransitMovingEnded);
+            SetOnCustomRangeEnteredFuncNative(OnCustomRangeEntered);
+            SetOnCustomRangeExitedFuncNative(OnCustomRangeExited);
         }
 
 
@@ -207,6 +216,16 @@ namespace ARCeye
         [MonoPInvokeCallback(typeof(V_Func))]
         private static void OnTransitMovingEnded() {
             s_Instance.m_OnTransitMovingEnded.Invoke();
+        }
+
+        [MonoPInvokeCallback(typeof(IS_Func))]
+        private static void OnCustomRangeEntered(string uuid, string name) {
+            s_Instance.m_OnCustomRangeEntered.Invoke(uuid, name);
+        }
+
+        [MonoPInvokeCallback(typeof(IS_Func))]
+        private static void OnCustomRangeExited(string uuid, string name) {
+            s_Instance.m_OnCustomRangeExited.Invoke(uuid, name);
         }
     }
 

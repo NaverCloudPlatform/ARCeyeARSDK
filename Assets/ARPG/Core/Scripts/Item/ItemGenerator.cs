@@ -584,8 +584,13 @@ namespace ARCeye
         static public void RemoveNode(IntPtr itemPtr) {
             MainThreadDispatcher.Instance()?.Enqueue(()=>{
                 GameObject item = Unwrap<GameObject>(itemPtr);
-                UnityMapPOIPool model = item.GetComponent<UnityMapPOIPool>();
-                model.RemoveAllMapPOIs();
+
+                // Scene을 변경하는 경우에는 item이 null이 되는 경우가 발생.
+                if(item != null)
+                {
+                    UnityMapPOIPool model = item.GetComponent<UnityMapPOIPool>();
+                    model.RemoveAllMapPOIs();
+                }
             });
         }
 
