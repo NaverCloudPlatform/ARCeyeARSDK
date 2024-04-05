@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5451198551273644276}
   - component: {fileID: 8513705081441293160}
   - component: {fileID: 8513705081441293163}
+  - component: {fileID: 1809109357865620303}
   m_Layer: 0
   m_Name: ARPlayGround
   m_TagString: Untagged
@@ -50,6 +51,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ContentsPath: 
+  m_StreamingAsset: 1
+  m_LoadOnAwake: 1
+  m_VisualizeAMProj: 1
   m_OnStageChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -59,13 +63,16 @@ MonoBehaviour:
   m_OnNavigationStarted:
     m_PersistentCalls:
       m_Calls: []
+  m_OnNavigationEnded:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnNavigationReSearched:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnDistanceUpdated:
     m_PersistentCalls:
       m_Calls: []
   m_OnDestinationArrived:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnNavigationEnded:
     m_PersistentCalls:
       m_Calls: []
   m_OnTransitMovingStarted:
@@ -74,6 +81,13 @@ MonoBehaviour:
   m_OnTransitMovingEnded:
     m_PersistentCalls:
       m_Calls: []
+  m_OnCustomRangeEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnCustomRangeExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_LogLevel: 3
 --- !u!114 &4031693856957110526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,10 +164,19 @@ MonoBehaviour:
   m_OnNavigationEnded:
     m_PersistentCalls:
       m_Calls: []
+  m_OnNavigationReSearched:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnTransitMovingStarted:
     m_PersistentCalls:
       m_Calls: []
   m_OnTransitMovingEnded:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnCustomRangeEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnCustomRangeExited:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &8513705081441293160
@@ -178,5 +201,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0835b4dc51d284290a36ed910a7caf0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useAndroidStreamingAssets: 0
+--- !u!114 &1809109357865620303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5451198551273644282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5f81c717c114cd3bd60fe75bb2b315, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

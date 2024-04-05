@@ -66,16 +66,22 @@ public class ARPlayGroundExample : MonoBehaviour
         
         m_ARPlayGround.SetStage(stageName);
 
+        m_MapViewController.Show();
+
         // 스테이지가 할당되면 MapView를 활성화.
         m_MapViewController.Show(true, false);
 
         m_CurrStage = stageName;
     }
 
+    /* --------------------------------------- */
+    /*           ARPlayGround Events           */
+    /* --------------------------------------- */
 
-    /* ------------------------------------- */
-    /*       POI List Visualization          */
-    /* ------------------------------------- */
+    public void OnStageChanged(string name, string label)
+    {
+        m_MapViewController.ChangeStage(name, label);
+    }
 
     public void OnPOIList(List<LayerPOIItem> poiItems)
     {
@@ -141,12 +147,12 @@ public class ARPlayGroundExample : MonoBehaviour
     {
         if(m_CurrStage == poiItem.stageName)
         {
-            m_ARPlayGround.LoadNavigation(poiItem, ConnectionType.Default);
+            m_ARPlayGround.LoadNavigation(poiItem, PathFindingType.Default);
         }
         else
         {
             Debug.Log("다른 층의 목적지를 선택. 사용자에게 이동 수단을 선택하는 UI를 출력하거나 지정된 수단으로 경로 탐색");
-            m_ARPlayGround.LoadNavigation(poiItem, ConnectionType.Elevator);
+            m_ARPlayGround.LoadNavigation(poiItem, PathFindingType.ElevatorOnly);
         }
     }
 
@@ -158,7 +164,6 @@ public class ARPlayGroundExample : MonoBehaviour
     public void OnNavigationStarted()
     {
         Debug.Log("Navigation is started");
-        m_DistanceText.gameObject.SetActive(true);
         m_NaviMessageText.gameObject.SetActive(false);
         HideDestRect();
     }
@@ -168,6 +173,11 @@ public class ARPlayGroundExample : MonoBehaviour
         Debug.Log("Navigation is ended");
         m_DistanceText.gameObject.SetActive(false);
         m_NaviMessageText.gameObject.SetActive(false);
+    }
+
+    public void OnNavigationFailed()
+    {
+        Debug.Log("Navigation is failed");
     }
 
     public void OnNavigationReSearched()

@@ -6,7 +6,7 @@ ARC eye AR SDK는 AR 컨텐츠 저작툴인 AMapper의 데이터를 이용하여
 
 ## 문서
 
-[ARSDK documentation](https://ar.naverlabs.com/ARPG/docs/ARSDK_v1.2.5.html)
+[ARSDK documentation](https://ar.naverlabs.com/ARPG/docs/ARSDK_v1.3.1.html)
 
 
 ## Contact

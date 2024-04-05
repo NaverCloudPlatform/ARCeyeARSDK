@@ -16,7 +16,7 @@ namespace ARCeye
         [HideInInspector]
         public UnityEvent<float, bool, int> m_OnDownloadProgressUpdated;
         [HideInInspector]
-        public UnityEvent<string> m_OnStageChanged;
+        public UnityEvent<string, string> m_OnStageChanged;
         [HideInInspector]
         public UnityEvent<UnityUILayerInfo> m_OnUIChanged;
         [HideInInspector]
@@ -31,6 +31,8 @@ namespace ARCeye
         public UnityEvent m_OnDestinationArrived;
         [HideInInspector]
         public UnityEvent m_OnNavigationEnded;
+        [HideInInspector]
+        public UnityEvent m_OnNavigationFailed;
         [HideInInspector]
         public UnityEvent m_OnNavigationReSearched;
         [HideInInspector]
@@ -68,11 +70,12 @@ namespace ARCeye
         [DllImport(dll)] private static extern void SetOnAppConfigFuncNative(SSFpFpFp_Func func);
         [DllImport(dll)] private static extern void SetOnUIChangedFuncNative(UILayerInfo_Func func);
         [DllImport(dll)] private static extern void SetOnPOIListFuncNative(LayerPOIItem_Func func);
-        [DllImport(dll)] private static extern void SetOnStageChangedFuncNative(S_Func func);
+        [DllImport(dll)] private static extern void SetOnStageChangedFuncNative(SS_Func func);
         [DllImport(dll)] private static extern void SetOnNavigationStartedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnRemainDistanceFuncNative(F_Func func);
         [DllImport(dll)] private static extern void SetOnDestinationArrivedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnNavigationEndedFuncNative(V_Func func);
+        [DllImport(dll)] private static extern void SetOnNavigationFailedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnNavigationReSearchedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnTransitMovingStartedFuncNative(IS_Func func);
         [DllImport(dll)] private static extern void SetOnTransitMovingEndedFuncNative(V_Func func);
@@ -90,6 +93,7 @@ namespace ARCeye
             SetOnStageChangedFuncNative(OnStageChanged);
             SetOnNavigationStartedFuncNative(OnNavigationStarted);
             SetOnNavigationEndedFuncNative(OnNavigationEnded);
+            SetOnNavigationFailedFuncNative(OnNavigationFailed);
             SetOnNavigationReSearchedFuncNative(OnNavigationReSearched);
             SetOnDestinationArrivedFuncNative(OnDestinationArrived);
             SetOnTransitMovingStartedFuncNative(OnTransitMovingStarted);
@@ -173,9 +177,10 @@ namespace ARCeye
             s_Instance.m_OnPOIList.Invoke(layerPOIs);
         }
 
-        [MonoPInvokeCallback(typeof(S_Func))]
-        private static void OnStageChanged(string stage) {
-            s_Instance.m_OnStageChanged.Invoke(stage);
+        [MonoPInvokeCallback(typeof(SS_Func))]
+        private static void OnStageChanged(string name, string label) {
+            label = label == string.Empty ? name : label;
+            s_Instance.m_OnStageChanged.Invoke(name, label);
         }
 
         [MonoPInvokeCallback(typeof(B_Func))]
@@ -201,6 +206,11 @@ namespace ARCeye
         [MonoPInvokeCallback(typeof(V_Func))]
         private static void OnNavigationEnded() {
             s_Instance.m_OnNavigationEnded.Invoke();
+        }
+
+        [MonoPInvokeCallback(typeof(V_Func))]
+        private static void OnNavigationFailed() {
+            s_Instance.m_OnNavigationFailed.Invoke();
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]

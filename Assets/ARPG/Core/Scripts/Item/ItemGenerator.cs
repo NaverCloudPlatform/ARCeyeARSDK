@@ -104,6 +104,8 @@ namespace ARCeye
 
         private static POIGenerator s_POIGenerator;
         private static InfoPanelGenerator s_InfoPanelGenerator;
+        private static MainThreadLoadingHandler s_MainThreadLoadingHandler;
+
 
         [Header("Scene")]
         [SerializeField]
@@ -133,6 +135,8 @@ namespace ARCeye
             s_Instance = this;
             s_POIGenerator = GetComponent<POIGenerator>();
             s_InfoPanelGenerator = GetComponent<InfoPanelGenerator>();
+
+            s_MainThreadLoadingHandler = new MainThreadLoadingHandler();
 
             InitScene();
 
@@ -259,7 +263,9 @@ namespace ARCeye
             }
 
             var unityModel = model as UnityModel;
-            unityModel.RunCoroutine(()=>OnLoadingCompleteNative(nativeModelPtr), 0.1f);
+            unityModel.RunCoroutine(()=>{
+                OnLoadingCompleteNative(nativeModelPtr);
+            }, 0.1f);
             unityModel.Initialize();
 
             return Wrap(go);
@@ -298,14 +304,9 @@ namespace ARCeye
             }
             else
             {
-                // glb 모델 로드.
-                var gltf = go.GetComponent<PostEventGltfAsset>();
-                gltf.PostEvent = (success) => {
-                    var item = go.GetComponent<UnityModel>();
-                    item.Initialize(gltf);
+                s_MainThreadLoadingHandler.Enqueue(go, filePath, ()=>{
                     OnLoadingCompleteNative(nativeModelPtr);
-                };
-                gltf.Load(filePath);
+                });
             }
 
             return Wrap(go);
@@ -326,9 +327,15 @@ namespace ARCeye
             try {
                 GCHandle.FromIntPtr(itemPtr);
                 GameObject item = Unwrap<GameObject>(itemPtr);
+
+                if(item.GetComponent<UnityModel>().GetType() == typeof(UnityInfoPanel))
+                {
+                    Destroy(item.transform.parent.gameObject);
+                }
+
                 Destroy(item);
             } catch (Exception e) {
-                NativeLogger.Print(LogLevel.WARNING, e.ToString());
+                // NativeLogger.Print(LogLevel.WARNING, e.ToString());
             }
         }
 

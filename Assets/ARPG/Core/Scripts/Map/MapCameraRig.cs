@@ -87,17 +87,25 @@ namespace ARCeye
         /// </summary>
         private void CheckLayersOfMapRigCameras() {
             CheckCameraLayer(m_MapCamera, "Map");
+            CheckCameraLayer(m_MapCamera, "AMProjViz", true);
             CheckCameraLayer(m_MapPOICamera, "MapPOI");
             CheckCameraLayer(m_MapArrowCamera, "MapArrow");
         }
 
-        private void CheckCameraLayer(Camera camera, string layerName) {
+        private void CheckCameraLayer(Camera camera, string layerName, bool append = false) {
             int layerIndex = LayerMask.NameToLayer(layerName);
             int layerMask  = 1 << layerIndex;
 
-            if(camera.cullingMask != layerMask) {
-                NativeLogger.Print(LogLevel.WARNING, $"[MapCameraRig] {camera.name}의 culling mask != {layerName}");
-                camera.cullingMask = layerMask;
+            if(append)
+            {
+                camera.cullingMask |= layerMask;
+            }
+            else
+            {
+                if(camera.cullingMask != layerMask) {
+                    NativeLogger.Print(LogLevel.WARNING, $"[MapCameraRig] {camera.name}의 culling mask != {layerName}");
+                    camera.cullingMask = layerMask;
+                }
             }
         }
 

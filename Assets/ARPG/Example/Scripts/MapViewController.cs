@@ -31,48 +31,52 @@ namespace ARCeye
         private YieldInstruction m_YieldMapLoading;
 
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            m_OnChangedToFull.AddListener(()=>{
+                TouchSystem.Instance.onDrag.AddListener(MoveMapCamera);
+                TouchSystem.Instance.onPinchZoom.AddListener(ZoomMapCamera);
+            });
+
+            m_OnChangedToShrinked.AddListener(()=>{
+                TouchSystem.Instance.onDrag.RemoveListener(MoveMapCamera);
+                TouchSystem.Instance.onPinchZoom.RemoveListener(ZoomMapCamera);
+            });
+        }
+
+        public override void Show()
+        {
+            base.Show();
+            StartCoroutine( ShowMapViewWithCartoMap() );
+        }
+
+        public override void Hide()
+        {
+            base.Hide();
+
+            HideMinimap();
+            StopAllCoroutines();
+        }
+
+        public void ChangeStage(string name, string label) {
+            Show(true, false);
+            m_View.SetStageLabel(label);
+        }
 
         public void Show(bool value, bool isMapFull)
         {
-            ShowMapView(value);
 
-            if(isMapFull) {
-                ActivateFullMap();
-            } else {
-                ActivateShrinkMap();
-            }
-        }
-        
-        public void Hide()
-        {
-            if(m_HideMapButton)
-            {
-                m_HideMapButton.SetActive(false);
-            }
-            ShowMapView(false);
         }
 
-        private void ShowMapView(bool value) {
-            if(value) {
-                StartCoroutine( WaitLoadingCartoMap() );
-            } else {
-                m_View?.Show(false);
-                m_OnMapActivated.Invoke(false);
-            }
-        }
-
-        private IEnumerator WaitLoadingCartoMap() {
-            // 맵을 로딩할때는 일단 MapView를 비활성화.
-            m_View.Show(false);
-
+        private IEnumerator ShowMapViewWithCartoMap() {
             // 0.1초마다 한번씩 맵 로드 여부를 확인.
             m_YieldMapLoading = new WaitForSeconds(0.1f);
 
             bool isLoaded = false;
 
             while(!isLoaded) {
-                yield return m_YieldMapLoading;
-
                 // UnityCartoMap이 아직 로딩되지 않았을 경우 MapView를 활성화하지 않는다.
                 UnityCartoMap cartoMap;
 
@@ -83,9 +87,12 @@ namespace ARCeye
                 }
 
                 if(cartoMap == null) {
+                    yield return m_YieldMapLoading;
                     continue;
                 }
+
                 if(!cartoMap.isLoaded) {
+                    yield return m_YieldMapLoading;
                     continue;
                 }
                 
@@ -96,31 +103,29 @@ namespace ARCeye
                 isLoaded = true;
             }
 
-            m_View.Show(true);
+            ActivateMinimap();
+
             m_OnMapActivated.Invoke(true);
         }
 
-        public void ActivateFullMap() {
+        public void ActivateFullmap() {
             m_MapCameraRig.ChangeToFullMap(true);
-            m_View.ShowFullMapScreen(true);
-
-            if(m_HideMapButton)
-            {
-                m_HideMapButton.SetActive(false);
-            }
+            m_View.ActivateFullMapScreen(true);
 
             m_OnChangedToFull.Invoke();
         }
 
-        public void ActivateShrinkMap() {
+        public void ActivateMinimap() {
             m_MapCameraRig.ChangeToFullMap(false);
-            m_View.ShowFullMapScreen(false);
+            m_View.ActivateFullMapScreen(false);
 
-            if(m_HideMapButton)
-            {
-                m_HideMapButton.SetActive(true);
-            }
             m_OnChangedToShrinked.Invoke();
+        }
+
+        public void HideMinimap() {
+            m_View.Show(false);
+
+            m_OnMapActivated.Invoke(false);
         }
 
         public void MoveMapCamera(Vector2 delta) {
@@ -129,10 +134,6 @@ namespace ARCeye
 
         public void ZoomMapCamera(float deltaRatio) {
             m_MapCameraRig.Zoom(deltaRatio);
-        }
-
-        public void ChangeStage(string stage) {
-            m_View.SetStage(stage);
         }
 
 
@@ -144,7 +145,7 @@ namespace ARCeye
         ///   ShrinkMapScreen을 터치했을때 실행되는 메서드.
         /// </summary>
         public void OnTouch() {
-            ActivateFullMap();
+            ActivateFullmap();
         }
     }
 }

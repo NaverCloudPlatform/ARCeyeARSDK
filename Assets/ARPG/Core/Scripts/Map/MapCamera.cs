@@ -10,16 +10,8 @@ namespace ARCeye
         {
             Camera camera = GetComponent<Camera>();
 
-            int layerIndex = LayerMask.NameToLayer("Map");
-
-            if (layerIndex == -1)
-            {
-                NativeLogger.Print(LogLevel.ERROR, "Layer 'Map' not found!");
-            }
-            else
-            {
-                camera.cullingMask = 1 << layerIndex;
-            }
+            CameraUtil.AddCullingMask(camera, "Map");
+            CameraUtil.AddCullingMask(camera, "AMProjViz");
         }
     }
 }

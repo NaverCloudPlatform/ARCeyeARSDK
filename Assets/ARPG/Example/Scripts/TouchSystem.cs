@@ -111,7 +111,7 @@ namespace ARCeye
                     m_PrevTouch1Position = touchPosition;
                     m_TouchState = State.OneTouchDown;
                     onTouchDown.Invoke(touchPosition);
-                } else {
+                } else if(m_TouchState == State.OneTouchDown) {
                     // Dragging.
                     Vector2 delta = touchPosition - m_PrevTouch1Position;
                     m_PrevTouch1Position = touchPosition;

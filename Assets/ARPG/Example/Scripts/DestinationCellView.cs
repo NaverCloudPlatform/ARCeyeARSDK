@@ -28,8 +28,12 @@ namespace ARCeye
 
             string iconName = POIGenerator.ConvertToName(item.dpcode);
             Texture2D iconTexture = Resources.Load<Texture2D>($"Image/Categories/UI_{iconName}");
-            Sprite iconSprite = Sprite.Create(iconTexture, new Rect(0, 0, iconTexture.width, iconTexture.height), new Vector2(0.5f, 0.5f));
-            m_Icon.sprite = iconSprite;
+            
+            if(iconTexture != null)
+            {
+                Sprite iconSprite = Sprite.Create(iconTexture, new Rect(0, 0, iconTexture.width, iconTexture.height), new Vector2(0.5f, 0.5f));
+                m_Icon.sprite = iconSprite;
+            }
         }
 
         public void RegisterAction(UnityAction action)

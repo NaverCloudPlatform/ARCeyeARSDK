@@ -20,12 +20,20 @@ namespace ARCeye
         private MapScreen m_ShrinkedMapScreen;
 
         [SerializeField]
+        private GameObject m_HideMapButton;
+
+        [SerializeField]
         private GameObject m_CloseMapButton;
 
 
         public override void Show(bool value) {
             base.Show(value);
             m_StageArea.gameObject.SetActive(value);
+
+            if(m_HideMapButton)
+            {
+                m_HideMapButton.SetActive(value);
+            }
         }
 
         public void Start()
@@ -50,15 +58,26 @@ namespace ARCeye
             rectTransform.sizeDelta = new Vector2(newWidth, canvasHeight);
         }
 
-        public void SetStage(string stageName)
+        public void SetStageLabel(string stageName)
         {
             m_StageNameText.text = stageName;
         }
 
-        public void ShowFullMapScreen(bool value) {
+        public void ActivateFullMapScreen(bool value) {
+            m_StageArea.gameObject.SetActive(!value);
+
             m_FullMapScreen.gameObject.SetActive(value);
             m_ShrinkedMapScreen.gameObject.SetActive(!value);
-            m_CloseMapButton.SetActive(value);
+
+            if(m_HideMapButton)
+            {
+                m_HideMapButton.SetActive(!value);
+            }
+
+            if(m_CloseMapButton)
+            {
+                m_CloseMapButton.SetActive(value);
+            }
         }
 
         /// <summary>

@@ -14,6 +14,12 @@ namespace ARCeye {
         private GameObject m_ScanView;
 
         [SerializeField] 
+        private Button m_ScanButton;
+
+        [SerializeField] 
+        private Button m_TransitScanButton;
+
+        [SerializeField] 
         private GameObject m_DestinationRecommendView;
 
         [SerializeField] 
@@ -21,6 +27,12 @@ namespace ARCeye {
 
         [SerializeField] 
         private GameObject m_NaviStartedView;
+
+        [SerializeField] 
+        private GameObject m_NaviRemainingDistanceArea;
+
+        [SerializeField]
+        private Text m_DistanceText;
 
         [SerializeField]
         private GameObject m_NaviArrivedView;
@@ -32,10 +44,19 @@ namespace ARCeye {
         private GameObject m_TransitMovingView;
 
         [SerializeField]
-        private GameObject m_TransitArrivedView;
+        private Text m_TransitMovingFailedText;
 
         [SerializeField]
-        private GameObject m_StageView;
+        private GameObject m_TransitIconEscalator;
+
+        [SerializeField]
+        private GameObject m_TransitIconElevator;
+
+        [SerializeField]
+        private GameObject m_TransitIconStair;
+
+        [SerializeField]
+        private GameObject m_TransitArrivedView;        
 
 
         public void ShowSplashView() {
@@ -57,13 +78,19 @@ namespace ARCeye {
             UpdateScanView(true);
         }
 
+        public void DisableScanButton()
+        {
+            m_ScanButton.interactable = false;
+        }
+
+        public void DistableTransitScanButton()
+        {
+            m_TransitScanButton.interactable = false;
+        }
+
         public void UpdateScanView(bool show) {
             if (m_ScanView) {
                 m_ScanView.SetActive(show);
-            }
-
-            if (show) {
-                HideStageView();
             }
         }
 
@@ -77,27 +104,29 @@ namespace ARCeye {
             if (m_AroundView) {
                 m_AroundView.SetActive(show);
             }
-
-            if (show)
-                ShowStageView();
         }
 
         public void UpdateNavigationStartedView(bool show) {
             if (m_NaviStartedView) {
                 m_NaviStartedView.SetActive(show);
-            }
 
-            if (show)
-                ShowStageView();
+                ShowRemainingDistance(true);
+            }
+        }
+
+        public void UpdateRemainingDistance(float distance) {
+            m_DistanceText.text = string.Format("{0}", distance.ToString("N0"));
+        }
+
+        public void ShowRemainingDistance(bool show) {
+            m_NaviRemainingDistanceArea.gameObject.SetActive(show);
+            m_DistanceText.text = string.Format("");
         }
 
         public void UpdateNavigationArrivedView(bool show) {
             if (m_NaviArrivedView) {
                 m_NaviArrivedView.SetActive(show);
             }
-
-            if (show)
-                ShowStageView();
         }
 
         public void ShowTransitSelectView(string currStage, string destStage) {
@@ -107,8 +136,6 @@ namespace ARCeye {
                 m_TransitSelectView.transform.Find("Stage Info/DynamicText_CurrentStage").gameObject.GetComponent<Text>().text = currStage;
                 m_TransitSelectView.transform.Find("Stage Info/DynamicText_DestinationStage").gameObject.GetComponent<Text>().text = destStage;
             }
-
-            HideStageView();
         }
 
         public void HideTransitSelectView() {
@@ -123,34 +150,19 @@ namespace ARCeye {
 
                 // Configure transit icon
                 {
-                    if (transitType == ConnectionType.Escalator) {
-                        m_TransitMovingView.transform.Find("Image_Elevator").gameObject.SetActive(false);
-                        m_TransitMovingView.transform.Find("Image_Stair").gameObject.SetActive(false);
-
-                        m_TransitMovingView.transform.Find("Image_Escalator").gameObject.SetActive(true);
-                    }
-
-                    else if (transitType == ConnectionType.Elevator) {
-                        m_TransitMovingView.transform.Find("Image_Escalator").gameObject.SetActive(false);
-                        m_TransitMovingView.transform.Find("Image_Stair").gameObject.SetActive(false);
-
-                        m_TransitMovingView.transform.Find("Image_Elevator").gameObject.SetActive(true);
-                    }
-
-                    else if (transitType == ConnectionType.Stair) {
-                        m_TransitMovingView.transform.Find("Image_Escalator").gameObject.SetActive(false);
-                        m_TransitMovingView.transform.Find("Image_Elevator").gameObject.SetActive(false);
-
-                        m_TransitMovingView.transform.Find("Image_Stair").gameObject.SetActive(true);
-                    }
+                    m_TransitIconEscalator.SetActive(transitType == ConnectionType.Escalator);
+                    m_TransitIconElevator.SetActive(transitType == ConnectionType.Elevator);
+                    m_TransitIconStair.SetActive(transitType == ConnectionType.Stair);
                 }
 
                 m_TransitMovingView.transform.Find("DynamicText_StageInfo").gameObject.GetComponent<Text>().text = destStage;
                 m_TransitMovingView.transform.Find("Start Stage/DynamicText_CurrentStage").gameObject.GetComponent<Text>().text = currStage;
                 m_TransitMovingView.transform.Find("Destination Stage/DynamicText_DestStage").gameObject.GetComponent<Text>().text = destStage;
-            }
 
-            HideStageView();
+                m_TransitMovingFailedText.gameObject.SetActive(false);
+
+                m_TransitScanButton.interactable = true;
+            }
         }
 
         public void HideTransitMovingView() {
@@ -159,37 +171,34 @@ namespace ARCeye {
             }
         }
 
-        public void ShowTransitArrivedView(string destStage) {
+        public void ShowTransitArrivedView(string destStage, float showDuration, System.Action completeCallback) {
+            StartCoroutine( ShowTransitArrivedViewInternal(destStage, showDuration, completeCallback));
+        }
+
+        private IEnumerator ShowTransitArrivedViewInternal(string destStage, float showDuration, System.Action completeCallback) {
             if (m_TransitArrivedView) {
                 m_TransitArrivedView.SetActive(true);
 
                 m_TransitArrivedView.transform.Find("Arrived Icon/DynamicText_DestStage").gameObject.GetComponent<Text>().text = destStage;
             }
 
-            HideStageView();
+            // HideStageView();
+
+            yield return new WaitForSeconds(showDuration);
+
+            HideTransitArrivedView();
+
+            completeCallback();
+        }
+
+        public void ShowTransitMovingFailed() {
+            m_TransitScanButton.interactable = true;
+            m_TransitMovingFailedText.gameObject.SetActive(true);
         }
 
         public void HideTransitArrivedView() {
             if (m_TransitArrivedView) {
                 m_TransitArrivedView.SetActive(false);
-            }
-        }
-
-        public void ShowStageView() {
-            if (m_StageView) {
-                m_StageView.SetActive(true);
-            }
-        }
-
-        public void HideStageView() {
-            if (m_StageView) {
-                m_StageView.SetActive(false);
-            }
-        }
-
-        public void SetStageName(string stageName) {
-            if (m_StageView) {
-                m_StageView.GetComponentInChildren<Text>().text = stageName;
             }
         }
 

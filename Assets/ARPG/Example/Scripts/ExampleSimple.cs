@@ -9,9 +9,9 @@ public class ExampleSimple : MonoBehaviour
     public Text m_StageName;
 
 
-    public void OnStageChanged(string stageName)
+    public void OnStageChanged(string name, string label)
     {
-        m_StageName.text = $"Stage : {stageName}";
+        m_StageName.text = $"Stage : {label}";
     }
 
     public void OnPOIList(List<LayerPOIItem> poiItems)

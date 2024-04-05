@@ -8,7 +8,11 @@ using AOT;
 namespace ARCeye
 {
     public enum ConnectionType {
-        Default, Escalator, Elevator, Stair
+        Default, Escalator = 5, Elevator = 6, Stair = 7
+    }
+
+    public enum PathFindingType {
+        Default, EscalatorOnly, ElevatorOnly, StairOnly
     }
     
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
@@ -16,7 +20,7 @@ namespace ARCeye
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public float[] endPoints;
         public string endFloor; 
-        public ConnectionType connectionType;
+        public PathFindingType pathFindingType;
     }
     
     public class PathFinder : MonoBehaviour

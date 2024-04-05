@@ -12,7 +12,7 @@ public class PackageImportPreprocess
         SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
         SerializedProperty layersProp = tagManager.FindProperty("layers");
 
-        string[] layerNames = {"Map", "MapPOI", "MapArrow"};
+        string[] layerNames = {"Map", "MapPOI", "MapArrow", "AMProjViz"};
         
         foreach (string layerName in layerNames)
         {
@@ -79,6 +79,31 @@ public class PackageImportPreprocess
 
             alwaysIncludedShaders.InsertArrayElementAtIndex(alwaysIncludedShaders.arraySize);
             alwaysIncludedShaders.GetArrayElementAtIndex(alwaysIncludedShaders.arraySize - 1).objectReferenceValue = shader;
+        }
+
+        // Unity 기본 쉐이더를 찾아서 추가.
+        var unlitColorShader = Shader.Find("Unlit/Color");
+        if (unlitColorShader == null)
+        {
+            Debug.LogError("Shader 'Unlit/Color' not found");
+            return;
+        }
+
+        bool shaderAlreadyIncluded = false;
+        for (int i = 0; i < alwaysIncludedShaders.arraySize; i++)
+        {
+            var shaderElement = alwaysIncludedShaders.GetArrayElementAtIndex(i);
+            if (shaderElement.objectReferenceValue == unlitColorShader)
+            {
+                shaderAlreadyIncluded = true;
+                break;
+            }
+        }
+
+        if (!shaderAlreadyIncluded)
+        {
+            alwaysIncludedShaders.arraySize++;
+            alwaysIncludedShaders.GetArrayElementAtIndex(alwaysIncludedShaders.arraySize - 1).objectReferenceValue = unlitColorShader;
         }
 
         graphicsSettings.ApplyModifiedProperties();
