@@ -97,11 +97,11 @@ namespace ARCeye
             if(layer.linkToStage)
             {
                 GUI.contentColor = Color.yellow;
-                foldoutLabel = $"계층 {depth + 1}  {layer.layerName} → {layer.stageName}";
+                foldoutLabel = $"Layer {depth + 1}  {layer.layerName} → {layer.stageName}";
             }
             else
             {
-                foldoutLabel = $"계층 {depth + 1}  {layer.layerName}";
+                foldoutLabel = $"Layer {depth + 1}  {layer.layerName}";
             }
 
             layer.foldout = EditorGUILayout.Foldout(layer.foldout, foldoutLabel);
@@ -116,7 +116,7 @@ namespace ARCeye
             GUI.backgroundColor = Color.green;
             if(layer.foldout && !layer.linkToStage && layer.depth < 6)
             {
-                if(GUILayout.Button($"새 계층 {depth + 2} 추가")) {
+                if(GUILayout.Button($"Add New Layer {depth + 2}")) {
                     layer.subLayers.Add(new Layer(depth + 1));
                 }
             }
@@ -137,12 +137,12 @@ namespace ARCeye
         {
             EditorGUI.indentLevel++;
 
-            layer.layerName = EditorGUILayout.TextField("계층 이름", layer.layerName);
-            layer.linkToStage = EditorGUILayout.Toggle("스테이지 연결", layer.linkToStage);
+            layer.layerName = EditorGUILayout.TextField("Layer Name", layer.layerName);
+            layer.linkToStage = EditorGUILayout.Toggle("Link to Stage", layer.linkToStage);
 
             if(layer.linkToStage)
             {
-                layer.stageName = EditorGUILayout.TextField("스테이지 이름", layer.stageName);
+                layer.stageName = EditorGUILayout.TextField("Stage Name", layer.stageName);
             }
             else
             {

@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f12a043366a0f44e6a4a4aea6a2e16df, type: 3}
+  m_Name: LayerInfoSetting_AMCO
+  m_EditorClassIdentifier: 
+  m_LayerTree:
+    layerList:
+    - data:
+        layerName: AMCOHERITZ
+        linkToStage: 0
+        stageName: aa
+        depth: 0
+        layerInfoCode: AMCOHERITZ
+        foldout: 1
+        isRemoved: 0
+      childCount: 2
+    - data:
+        layerName: GND
+        linkToStage: 1
+        stageName: ground
+        depth: 1
+        layerInfoCode: AMCOHERITZ_GND
+        foldout: 1
+        isRemoved: 0
+      childCount: 0
+    - data:
+        layerName: 2F
+        linkToStage: 1
+        stageName: 2F
+        depth: 1
+        layerInfoCode: AMCOHERITZ_2F
+        foldout: 1
+        isRemoved: 0
+      childCount: 1
+    - data:
+        layerName: 
+        linkToStage: 0
+        stageName: 
+        depth: 2
+        layerInfoCode: 
+        foldout: 1
+        isRemoved: 0
+      childCount: 1
+    - data:
+        layerName: 
+        linkToStage: 0
+        stageName: 
+        depth: 3
+        layerInfoCode: 
+        foldout: 1
+        isRemoved: 0
+      childCount: 0

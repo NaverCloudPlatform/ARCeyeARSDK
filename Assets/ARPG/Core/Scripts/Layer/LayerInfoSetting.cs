@@ -172,7 +172,7 @@ namespace ARCeye
     [Serializable]
     public class LayerInfoSetting : ScriptableObject
     {
-        [field:SerializeField, Tooltip("ARC eye 콘솔에 등록된 레이어 계층 구조")]
+        [field:SerializeField, Tooltip("Layer hierarchy registered in the ARC eye console")]
         private SerializedLayerTree m_LayerTree = new SerializedLayerTree(new Layer(0));
         public SerializedLayerTree layerTree => m_LayerTree;
 

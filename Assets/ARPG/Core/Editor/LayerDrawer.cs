@@ -28,7 +28,7 @@ namespace ARCeye
             string layerName = layerNameProp.stringValue;
             bool linkToStage = linkToStageProp.boolValue;
 
-            EditorGUI.PrefixLabel(position, new GUIContent($"계층 - {layerName}"));
+            EditorGUI.PrefixLabel(position, new GUIContent($"Layer - {layerName}"));
             position.y += lineHeight;
 
             {
@@ -42,22 +42,22 @@ namespace ARCeye
                 Rect linkToStageRect = new Rect(position.x, position.y, fullWidth, EditorGUIUtility.singleLineHeight);
                 position.y += lineHeight;
 
-                EditorGUI.PropertyField(layerNameRect, layerNameProp, new GUIContent("계층 이름"));
-                EditorGUI.PropertyField(linkToStageRect, linkToStageProp, new GUIContent("스테이지 연결"));
+                EditorGUI.PropertyField(layerNameRect, layerNameProp, new GUIContent("Layer Name"));
+                EditorGUI.PropertyField(linkToStageRect, linkToStageProp, new GUIContent("Link to Stage"));
 
                 if(linkToStage)
                 {
                     Rect stageNameRect = new Rect(position.x, position.y, fullWidth, EditorGUIUtility.singleLineHeight);
                     position.y += lineHeight;
 
-                    EditorGUI.PropertyField(stageNameRect, stageNameProp, new GUIContent("스테이지 이름"));
+                    EditorGUI.PropertyField(stageNameRect, stageNameProp, new GUIContent("Stage Name"));
                 }
                 else
                 {
                     Rect subLayerRect  = new Rect(position.x, position.y, fullWidth, EditorGUIUtility.singleLineHeight);
                     position.y += lineHeight;
 
-                    EditorGUI.PropertyField(subLayerRect, subLayerProp, new GUIContent("하위 계층"));
+                    EditorGUI.PropertyField(subLayerRect, subLayerProp, new GUIContent("Sub Layer"));
                     EditorUtility.SetDirty(subLayerProp.serializedObject.targetObject);
                 }
                 

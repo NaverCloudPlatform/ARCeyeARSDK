@@ -6,42 +6,54 @@ namespace ARCeye
 {
     public class UnityMapPathIndicator : UnityModel
     {
-        private LineRenderer m_LineRenderer;
-
-        private GameObject m_BeginBullet;
-        private GameObject m_EndBullet;
+        private List<LineRenderer> m_PathRenderers = new List<LineRenderer>();
+        private Material m_PathMaterial;
 
         private void Awake()
         {
             gameObject.name = "MapPathIndicator";
             gameObject.layer = LayerMask.NameToLayer("Map");
-            m_LineRenderer = gameObject.AddComponent<LineRenderer>();
+        }
 
-            m_LineRenderer.transform.localRotation = Quaternion.Euler(90, 0, 0);
-            m_LineRenderer.alignment = LineAlignment.TransformZ;
-            m_LineRenderer.numCornerVertices = 5;
+        public int AddPath()
+        {
+            GameObject pathGo = new GameObject("Path");
+            pathGo.layer = LayerMask.NameToLayer("Map");
+            pathGo.transform.SetParent(transform);
+
+            var pathRenderer = pathGo.AddComponent<LineRenderer>();
+
+            pathRenderer.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            pathRenderer.numCornerVertices = 5;
+            pathRenderer.alignment = LineAlignment.TransformZ;
+            pathRenderer.material = m_PathMaterial;
+
+            m_PathRenderers.Add(pathRenderer);
+
+            // 생성된 Path의 index를 리턴.
+            return m_PathRenderers.Count - 1;
         }
 
         public void SetMaterial(Material material)
         {
-            m_LineRenderer.material = material;   
+            m_PathMaterial = material;
+
+            foreach(var pathRenderer in m_PathRenderers)
+            {
+                pathRenderer.material = m_PathMaterial;
+            }
         }
 
-        public void SetBullet(GameObject beginBullet, GameObject endBullet)
-        {
-            // 기존의 bullet 제거.
-            GameObject.Destroy(m_BeginBullet);
-            GameObject.Destroy(m_EndBullet);
+        public void SetPath(int pathIndex, float[] path, GameObject beginBulletPrefab, GameObject endBulletPrefab) {
+            if(pathIndex < 0 || m_PathRenderers.Count <= pathIndex)
+            {
+                Debug.LogError($"PathRenderer index is out of bound! (PathRenderers Count {m_PathRenderers.Count}, pathIndex {pathIndex})");
+                return;
+            }
 
-            // 새로운 경로에 새로운 bullet 생성.
-            m_BeginBullet = beginBullet;
-            m_EndBullet = endBullet;
-
-            m_BeginBullet.transform.parent = m_LineRenderer.transform;
-            m_EndBullet.transform.parent = m_LineRenderer.transform;
-        }
-
-        public void SetPath(float[] path) {
+            var beginBulletGo = Instantiate(beginBulletPrefab, transform);
+            var endBulletGo = Instantiate(endBulletPrefab, transform);
+            
             List<Vector3> positions = new List<Vector3>();
 
             for(int i=0 ; i<path.Length / 3 ; i++)
@@ -63,12 +75,14 @@ namespace ARCeye
                 positions.Add(currPosition);
             }
 
-            m_LineRenderer.positionCount = positions.Count;
-            m_LineRenderer.SetPositions(positions.ToArray());
+            var pathRenderer = m_PathRenderers[pathIndex];
+
+            pathRenderer.positionCount = positions.Count;
+            pathRenderer.SetPositions(positions.ToArray());
 
             Vector3 margin = new Vector3(0, 0.1f, 0);
-            m_BeginBullet.transform.position = m_LineRenderer.GetPosition(0) + margin;
-            m_EndBullet.transform.position = m_LineRenderer.GetPosition(m_LineRenderer.positionCount - 1) + margin;
+            beginBulletGo.transform.position = pathRenderer.GetPosition(0) + margin;
+            endBulletGo.transform.position = pathRenderer.GetPosition(pathRenderer.positionCount - 1) + margin;
         }
 
         private Vector3 GetPosition(float[] path, int index) {

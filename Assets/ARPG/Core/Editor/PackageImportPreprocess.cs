@@ -49,7 +49,7 @@ public class PackageImportPreprocess
 
         if (guids.Length == 0)
         {
-            UnityEngine.Debug.LogWarning("ARPG 쉐이더 경로를 찾을 수 없습니다. Always Included Shaders에 직접 추가해주세요");
+            UnityEngine.Debug.LogWarning("Failed to find ARPG shader path. Add the ARPG shaders into Always Included Shaders directly");
             return;
         }
 

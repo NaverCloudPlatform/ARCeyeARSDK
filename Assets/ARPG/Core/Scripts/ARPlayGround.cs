@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Events;
-using AOT;
-using UnityEngine.UI;
 using System.Threading.Tasks;
 
 namespace ARCeye
@@ -38,7 +36,7 @@ namespace ARCeye
     [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.3.1";
+        const string PLUGIN_VERSION = "1.5.0";
 
 #if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
@@ -81,6 +79,13 @@ namespace ARCeye
         [SerializeField]
         private string m_ContentsPath;
         public string contentsPath => m_ContentsPath;
+
+        [SerializeField]
+        private Locale m_Locale;
+        public Locale locale {
+            get => m_Locale;
+            set => m_Locale = value;
+        }
 
         private string amprojFilePath
         {
@@ -157,8 +162,9 @@ namespace ARCeye
             InitComponents();
 
             ARPGConfiguration config = new ARPGConfiguration();
-            config.languageCode = "ko";
-            config.countryCode = "KR";
+            config.languageCode = LocaleConverter.GetLanguageCode(locale);
+            config.countryCode = LocaleConverter.GetCountryCode(locale);
+
             config.transitOption = 1 | 3;
 #if !UNITY_EDITOR && UNITY_ANDROID
             config.filesystemOption = (UInt32) (m_StreamingAsset ? 1 : 0);
@@ -174,7 +180,7 @@ namespace ARCeye
 
         private void Start()
         {
-            NativeLogger.Print(LogLevel.INFO, $"<b>ARPG version {PLUGIN_VERSION}, native {GetVersion()}</b>");
+            NativeLogger.Print(LogLevel.INFO, $"<b>ARSDK version {PLUGIN_VERSION}, native {GetVersion()}</b>");
             m_NativeLogger.SetLogLevel(m_LogLevel);
 
             if (m_LoadOnAwake)
@@ -205,7 +211,7 @@ namespace ARCeye
             var rhViewMatirx = PoseHelper.ConvertLHRHView(viewMatrix).transpose;
             projMatrix.m23 = -1;
 
-            m_Frame.viewMatrix = rhViewMatirx.ToData();
+            m_Frame.viewMatrix = rhViewMatirx.ToDataDouble();
             m_Frame.projMatrix = projMatrix.ToData();
 
             UpdateSceneNative(m_Frame);
@@ -213,8 +219,8 @@ namespace ARCeye
 
         private void OnDestroy()
         {
-            DestroyPluginNative();
             m_NativeLogger.Release();
+            DestroyPluginNative();
         }
 
         /// <summary>

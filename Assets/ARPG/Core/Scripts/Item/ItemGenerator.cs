@@ -529,11 +529,8 @@ namespace ARCeye
                 GameObject item = Unwrap<GameObject>(ptr);
                 UnityMapPathIndicator mapPath = item.GetComponent<UnityMapPathIndicator>();
 
-                var beginBullet = Instantiate(s_Instance.m_MapPathBulletBegin);
-                var endBullet = Instantiate(s_Instance.m_MapPathBulletEnd);
-
-                mapPath.SetBullet(beginBullet, endBullet);
-                mapPath.SetPath(pathBuffer);
+                int pathIndex = mapPath.AddPath();
+                mapPath.SetPath(pathIndex, pathBuffer, s_Instance.m_MapPathBulletBegin, s_Instance.m_MapPathBulletEnd);
             });
         }
 

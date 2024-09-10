@@ -11,7 +11,7 @@ namespace ARCeye
     {
         public long timestamp;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public float[] viewMatrix;
+        public double[] viewMatrix;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public float[] projMatrix;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]

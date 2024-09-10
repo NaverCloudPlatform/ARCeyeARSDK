@@ -236,6 +236,7 @@ public class ARNavigationExample : MonoBehaviour
     {
         string currStage = m_ARPlayGround.GetStageName();
         m_NavigationViewController.ShowTransitMovingView(transitType, currStage, destStageName);
+        m_NavigationViewController.EnableScanButton(true);
 
         m_VLSDKManager.StopSession();
     }
