@@ -838,8 +838,20 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: 
-    iPhone: UNITY_XR_ARKIT_LOADER_ENABLED
+    Android: ARSDK_GLTFAST;VLSDK_ARFOUNDATION;VLSDK_NEWTONSOFT_JSON
+    EmbeddedLinux: ARSDK_GLTFAST
+    GameCoreXboxOne: ARSDK_GLTFAST
+    Nintendo Switch: ARSDK_GLTFAST
+    PS4: ARSDK_GLTFAST
+    PS5: ARSDK_GLTFAST
+    QNX: ARSDK_GLTFAST
+    Stadia: ARSDK_GLTFAST
+    Standalone: ARSDK_GLTFAST;VLSDK_ARFOUNDATION;VLSDK_NEWTONSOFT_JSON
+    VisionOS: ARSDK_GLTFAST
+    WebGL: ARSDK_GLTFAST
+    XboxOne: ARSDK_GLTFAST
+    iPhone: UNITY_XR_ARKIT_LOADER_ENABLED;VLSDK_ARFOUNDATION;VLSDK_NEWTONSOFT_JSON
+    tvOS: ARSDK_GLTFAST
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
