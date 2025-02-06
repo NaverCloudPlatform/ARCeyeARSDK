@@ -67,6 +67,11 @@ public class NavigationView : View
         m_TransitArrivedView.Initialize(destStageName);
     }
 
+    public void HideTransitArrivedView()
+    {
+        m_TransitArrivedView.Show(false);
+    }
+
     public void HideAllViews()
     {
         m_StartedView.Show(false);
@@ -94,5 +99,10 @@ public class NavigationView : View
     public void ShowRescanGuide(bool value)
     {
         m_TransitMovingView.ShowRescanGuide(value);
+    }
+
+    public void SetTransitMovingCurrStageText(string currStage)
+    {
+        m_TransitMovingView.SetCurrStageText(currStage);
     }
 }

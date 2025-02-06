@@ -113,10 +113,6 @@ namespace ARCeye
             m_IsFullMode = value;
             m_InitFullYaw = m_MainCamera.transform.rotation.eulerAngles.y;
 
-            m_MapCamera.targetTexture = GetTargetTexture(value);
-            m_MapPOICamera.targetTexture = GetTargetTexture(value);
-            m_MapArrowCamera.targetTexture = GetTargetTexture(value);
-
             Vector3 euler = m_PitchRig.localRotation.eulerAngles;
             euler.x = value ? 90 : 130;
             euler.y = 0;
@@ -157,6 +153,16 @@ namespace ARCeye
             cameraPosition.z = Mathf.Clamp(cameraPosition.z, -m_FullCameraMaxDistance, -m_FullCameraMinDistance);
             
             m_TranslationRig.localPosition = cameraPosition;
+        }
+
+        public void Rotate(float deltaDegree) {
+            float cameraYaw = m_TranslationRig.localEulerAngles.z;
+
+            cameraYaw -= deltaDegree;
+
+            Vector3 euler = m_TranslationRig.localEulerAngles;
+            euler.z = cameraYaw;
+            m_TranslationRig.localEulerAngles = euler;
         }
     }
 }

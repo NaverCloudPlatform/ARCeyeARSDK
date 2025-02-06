@@ -3,7 +3,9 @@
     "rootNamespace": "",
     "references": [
         "ARCeye.ARSDK",
-        "ARCeye.VLSDK"
+        "ARCeye.VLSDK",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

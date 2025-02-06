@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace ARCeye
 {
@@ -11,7 +12,7 @@ namespace ARCeye
         private GameObject m_StageArea;
 
         [SerializeField]
-        private Text m_StageNameText;
+        private TMP_Text m_StageNameText;
 
         [SerializeField]
         private MapScreen m_FullMapScreen;
@@ -25,6 +26,15 @@ namespace ARCeye
         [SerializeField]
         private GameObject m_CloseMapButton;
 
+        [SerializeField]
+        private GameObject m_NextStep;
+
+
+        private void Awake()
+        {
+            m_FullMapScreen.gameObject.SetActive(false);
+            m_ShrinkedMapScreen.gameObject.SetActive(false);
+        }
 
         public override void Show(bool value) {
             base.Show(value);
@@ -34,28 +44,13 @@ namespace ARCeye
             {
                 m_HideMapButton.SetActive(value);
             }
-        }
 
-        public void Start()
-        {
-            ResizeFullMapScreenRect();
-        }
-
-        public void ResizeFullMapScreenRect() 
-        {
-            var canvas = GetComponentInParent<Canvas>();
-            var canvasRect = canvas.GetComponent<RectTransform>();
-
-            float canvasWidth = canvasRect.sizeDelta.x;
-            float canvasHeight = canvasRect.sizeDelta.y;
-
-            float fullMapRTWidth = 1440.0f;
-            float fullMapRTHeight = 1920.0f;
-
-            float newWidth = fullMapRTWidth * canvasHeight / fullMapRTHeight;
-
-            RectTransform rectTransform = m_FullMapScreen.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(newWidth, canvasHeight);
+            // Hide일 경우 모든 MapScreen을 비활성화 한다.
+            if(!value)
+            {
+                m_FullMapScreen.gameObject.SetActive(false);
+                m_ShrinkedMapScreen.gameObject.SetActive(false);
+            }
         }
 
         public void SetStageLabel(string stageName)
@@ -66,8 +61,8 @@ namespace ARCeye
         public void ActivateFullMapScreen(bool value) {
             m_StageArea.gameObject.SetActive(!value);
 
-            m_FullMapScreen.gameObject.SetActive(value);
-            m_ShrinkedMapScreen.gameObject.SetActive(!value);
+            m_FullMapScreen.Activate(value);
+            m_ShrinkedMapScreen.Activate(!value);
 
             if(m_HideMapButton)
             {
@@ -77,6 +72,11 @@ namespace ARCeye
             if(m_CloseMapButton)
             {
                 m_CloseMapButton.SetActive(value);
+            }
+
+            if(m_NextStep)
+            {
+                m_NextStep.SetActive(!value);
             }
         }
 

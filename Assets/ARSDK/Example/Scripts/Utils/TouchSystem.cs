@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace ARCeye
 {
@@ -35,6 +38,10 @@ namespace ARCeye
         public UnityEvent<float> onPinchZoom => m_OnPinchZoom;
 
         [SerializeField]
+        private UnityEvent<float> m_OnRotate;
+        public UnityEvent<float> onRotate => m_OnRotate;
+
+        [SerializeField]
         private UnityEvent<Vector2> m_OnTouchUp;
         public UnityEvent<Vector2> onTouchUp => m_OnTouchUp;
 
@@ -43,7 +50,7 @@ namespace ARCeye
         [SerializeField]
         private Image m_Pointer2;
 
-        private Vector2 m_ReferenceResolution;
+        private Vector2 m_CanvasSize;
 
         private State m_TouchState = State.OneTouchUp;
 
@@ -53,22 +60,52 @@ namespace ARCeye
 
         private int touchCount {
             get {
-#if UNITY_EDITOR
+#if ENABLE_INPUT_SYSTEM
+    #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN
+                if(IsLeftAltPressed()) {
+                    return Mouse.current.leftButton.isPressed ? 2 : 0;
+                } else {
+                    return Mouse.current.leftButton.isPressed ? 1 : 0;
+                }
+    #else
+                int activeTouches = 0;
+
+                foreach (var touch in Touchscreen.current.touches)
+                {
+                    if (touch.isInProgress)
+                    {
+                        activeTouches++;
+                    }
+                }
+
+                return activeTouches;
+    #endif
+#else
+    #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN
                 bool isTouched = Input.GetMouseButton(0);
                 if(Input.GetKey(KeyCode.LeftAlt)) {
                     return isTouched ? 2 : 0;
                 } else {
                     return isTouched ? 1 : 0;
                 }
-#else
+    #else
                 return Input.touchCount;
+    #endif
 #endif
             }
         }
 
         private Vector2 rawTouchPosition {
             get {
+#if ENABLE_INPUT_SYSTEM
+    #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN
+                return Mouse.current.position.ReadValue();
+    #else
+                return Touchscreen.current.primaryTouch.position.ReadValue();
+    #endif
+#else
                 return Input.mousePosition;
+#endif
             }
         }
 
@@ -76,30 +113,39 @@ namespace ARCeye
             get {
                 Vector2 scaledTouchPosition;
 
-                scaledTouchPosition.x = rawTouchPosition.x * m_ReferenceResolution.x / Screen.width;
-                scaledTouchPosition.y = rawTouchPosition.y * m_ReferenceResolution.y / Screen.height;
+                scaledTouchPosition.x = rawTouchPosition.x * m_CanvasSize.x / Screen.width;
+                scaledTouchPosition.y = rawTouchPosition.y * m_CanvasSize.y / Screen.height;
 
                 return scaledTouchPosition;
             }
         }
 
         private Vector2 GetTouchPosition(int fingerId) {
-#if UNITY_EDITOR
+#if ENABLE_INPUT_SYSTEM
+    #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN
             if(fingerId == 0) {
                 return touchPosition;
             } else {
-                return m_ReferenceResolution - touchPosition;
+                return m_CanvasSize - touchPosition;
             }
+    #else
+            var touch = Touchscreen.current.touches[fingerId];
+            return touch.position.ReadValue();
+    #endif
 #else
             Touch touch = Input.GetTouch(fingerId);
             return touch.position;
 #endif
         }
 
-        private void Awake() {
+        private void Start() {
             Canvas canvas = GetComponentInParent<Canvas>();
-            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
-            m_ReferenceResolution = scaler.referenceResolution;
+            RectTransform canvasRT = canvas.GetComponent<RectTransform>();
+
+            float canvasWidth = canvasRT.rect.width;
+            float canvasHeight = canvasRT.rect.height;
+
+            m_CanvasSize = new Vector2(canvasWidth, canvasHeight);
         }
 
         private void Update() {
@@ -134,6 +180,13 @@ namespace ARCeye
 
                     onPinchZoom.Invoke(ratio);
 
+                    // TwoTouch rotation 진행.
+                    Vector2 currDir = (GetTouchPosition(0) - GetTouchPosition(1)).normalized;
+                    Vector2 initDir = (m_PrevTouch1Position - m_PrevTouch2Position).normalized;
+                    float deltaDeg = Vector2.SignedAngle(initDir, currDir);
+
+                    m_OnRotate?.Invoke(deltaDeg);
+
                     m_PrevTouch1Position = GetTouchPosition(0);
                     m_PrevTouch2Position = GetTouchPosition(1);
                 }
@@ -147,7 +200,7 @@ namespace ARCeye
         }
 
         private void DrawDebugDots() {
-            if(Input.GetKey(KeyCode.LeftAlt)) {
+            if(IsLeftAltPressed()) {
                 m_Pointer1.gameObject.SetActive(true);
                 m_Pointer2.gameObject.SetActive(true);
 
@@ -157,6 +210,21 @@ namespace ARCeye
                 m_Pointer1.gameObject.SetActive(false);
                 m_Pointer2.gameObject.SetActive(false);
             }
+        }
+
+        private bool IsLeftAltPressed() {
+#if ENABLE_INPUT_SYSTEM
+    #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN
+            if (Keyboard.current == null)
+                return false;
+
+            return Keyboard.current.leftAltKey.isPressed;
+    #else
+            return false;
+    #endif
+#else
+            return Input.GetKey(KeyCode.LeftAlt);
+#endif
         }
     }
 }

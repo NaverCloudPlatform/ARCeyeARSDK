@@ -42,7 +42,7 @@ public class NavigationViewController : ViewController<NavigationView>
 
         completeCallback();
 
-        ShowMainView();
+        m_View.HideTransitArrivedView();
     }
 
     public void ShowArrivedView()
@@ -68,6 +68,11 @@ public class NavigationViewController : ViewController<NavigationView>
     public void ShowRescanGuideInTransitMoving(bool value)
     {
         m_View.ShowRescanGuide(value);
+    }
+
+    public void UpdateTransitMovingCurrStage(string value)
+    {
+        m_View.SetTransitMovingCurrStageText(value);
     }
 
     public override void Hide()

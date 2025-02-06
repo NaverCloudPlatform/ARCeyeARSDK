@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: LocalizationStringTable_de
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: de
+  m_SharedData: {fileID: 11400000, guid: 95e1d29ec535b49d6a118708f947c5b3, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 405642665984
+    m_Localized: AR-Navigationsanleitung
+    m_Metadata:
+      m_Items: []
+  - m_Id: 983215104000
+    m_Localized: Folgen Sie den Verkehrsregeln.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2569198886912
+    m_Localized: Scannen Sie Ihre Umgebung mit Ihrer Kamera, um zu beginnen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3818619133952
+    m_Localized: Die Positionierung kann in dunklen Umgebungen/bei schlechter Beleuchtung
+      instabil sein.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6138971021312
+    m_Localized: Bitte scannen Sie erneut, wenn Ihre aktuelle Positionierung nicht
+      korrekt ist.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7226591797248
+    m_Localized: Scannen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8060465569792
+    m_Localized: "Nehmen Sie Ihr Telefon und scannen Sie Einrichtungen, Geb\xE4ude,
+      Schilder usw."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8406835388416
+    m_Localized: Scan abgeschlossen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8951360905216
+    m_Localized: Zum Ziel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10769268727808
+    m_Localized: Angekommen!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12084162060288
+    m_Localized: Angekommen!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1457321774407680
+    m_Localized: "Zum n\xE4chsten Ort gehen"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1458317913219072
+    m_Localized: "W\xE4hlen Sie eine Art der Stockwerk\xFCbertragung"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1458435433422848
+    m_Localized: "W\xE4hlen Sie eine Art der Stockwerk\xFCbertragung"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1732654490705920
+    m_Localized: Suchen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1733331061301248
+    m_Localized: Suchen
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

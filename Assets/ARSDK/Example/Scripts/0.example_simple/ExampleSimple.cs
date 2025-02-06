@@ -18,7 +18,7 @@ public class ExampleSimple : MonoBehaviour
     {
         foreach(var item in poiItems)
         {
-            Debug.Log($"{item.name}, {item.stageName}, {POIGenerator.ConvertToName(item.dpcode)}");
+            Debug.Log($"{item.name}, {item.stageName}, {item.dpcode}");
         }
     }
 }

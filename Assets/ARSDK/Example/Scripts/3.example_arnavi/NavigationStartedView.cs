@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ARCeye;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class NavigationStartedView : View
 {
@@ -10,7 +10,7 @@ public class NavigationStartedView : View
     private GameObject m_RemainingDistArea;
 
     [SerializeField]
-    private Text m_RemainingDistText;
+    private TMP_Text m_RemainingDistText;
 
     public void ShowRemainingDistance(bool value)
     {
@@ -21,5 +21,9 @@ public class NavigationStartedView : View
     public void UpdateRemainingDistance(float distance)
     {
         m_RemainingDistText.text = string.Format("{0}", distance.ToString("N0"));
+    }
+
+    public override void Show(bool show) {
+        base.Show(show);
     }
 }

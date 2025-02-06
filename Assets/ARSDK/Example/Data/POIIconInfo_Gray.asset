@@ -1,0 +1,267 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 537a7b613c125432786607f606391b7c, type: 3}
+  m_Name: POIIconInfo_Gray
+  m_EditorClassIdentifier: 
+  m_POIAtlas: {fileID: 100100200, guid: f2f08b97f56d44bffabe86fc9e76701e, type: 3}
+  m_DefaultIcon: {fileID: 21300000, guid: 3b865d464fed64109a90436047db05fd, type: 3}
+  m_POIInfoList:
+  - dpCode: 51204
+    icon: {fileID: 21300000, guid: af53ba991a25643d28fc9b28a9fd3a25, type: 3}
+  - dpCode: 90000
+    icon: {fileID: 21300000, guid: 5cd26b27ca67a4119951cb0758cea4ed, type: 3}
+  - dpCode: 120100
+    icon: {fileID: 21300000, guid: c5c2b1044bec547e7944b39e7f2f5f05, type: 3}
+  - dpCode: 160101
+    icon: {fileID: 21300000, guid: 192e3c1d5ca064e03a920bce238b417d, type: 3}
+  - dpCode: -400529
+    icon: {fileID: 21300000, guid: 749487cf4728847a9a4613c959c52de1, type: 3}
+  - dpCode: -400528
+    icon: {fileID: 21300000, guid: 9cf622d6cc91d44acbf01b88f0b58c21, type: 3}
+  - dpCode: -400532
+    icon: {fileID: 21300000, guid: c204600b14bf64c84a7efdd67d3d6d94, type: 3}
+  - dpCode: 160303
+    icon: {fileID: 21300000, guid: 15bf0e52bc78448b8bfd33a09ecaec0d, type: 3}
+  - dpCode: -400530
+    icon: {fileID: 21300000, guid: b6a765a8e383b4d18b566912b69f2576, type: 3}
+  - dpCode: 81400
+    icon: {fileID: 21300000, guid: 98e7301820c1f46298ca8de31524cdb0, type: 3}
+  - dpCode: 200100
+    icon: {fileID: 21300000, guid: 2a51139c535f44ab8a715c890ca09d2e, type: 3}
+  - dpCode: 151211
+    icon: {fileID: 21300000, guid: b2f1b91d4e73043418e5a02a45d1b13c, type: 3}
+  - dpCode: 163003
+    icon: {fileID: 21300000, guid: 01699ca74e8574db88ae1e6f3da13440, type: 3}
+  - dpCode: 80200
+    icon: {fileID: 21300000, guid: 92b91ff076eaa46eeb27f0605ac6ce06, type: 3}
+  - dpCode: 151211
+    icon: {fileID: 21300000, guid: c4d425d4260774a69a887316189836c1, type: 3}
+  - dpCode: 111200
+    icon: {fileID: 21300000, guid: 6032c609c45354ec883b8cc696770cfb, type: 3}
+  - dpCode: 70100
+    icon: {fileID: 21300000, guid: 5a58340a5d0d24639a1d9b02dd786cca, type: 3}
+  - dpCode: 131500
+    icon: {fileID: 21300000, guid: 6ed7ac5b131774557890a7ca015fd49f, type: 3}
+  - dpCode: 163001
+    icon: {fileID: 21300000, guid: baf52af178ea24f758c934544527c26f, type: 3}
+  - dpCode: 131301
+    icon: {fileID: 21300000, guid: 3a06ab8f839e14db9a2534d2737f7a75, type: 3}
+  - dpCode: 60100
+    icon: {fileID: 21300000, guid: 97f7fcbd117de473c8ec83dada1f351c, type: 3}
+  - dpCode: 100300
+    icon: {fileID: 21300000, guid: 5aa3293a8bb9a4b3d981248e8dadefdd, type: 3}
+  - dpCode: 180100
+    icon: {fileID: 21300000, guid: 01dd2dae6888c48789f1b739e01e041c, type: 3}
+  - dpCode: 160501
+    icon: {fileID: 21300000, guid: 76607ae65820e4860811982327569c0c, type: 3}
+  - dpCode: 110700
+    icon: {fileID: 21300000, guid: 036b4086ae84a4f2da9bf9ffcac3c010, type: 3}
+  - dpCode: -400508
+    icon: {fileID: 21300000, guid: b16ad3a24615a4c278147f591bea4b29, type: 3}
+  - dpCode: 150900
+    icon: {fileID: 21300000, guid: e09b30e51703e43e4b858b3476c59bff, type: 3}
+  - dpCode: 133134
+    icon: {fileID: 21300000, guid: e54b2784edf014d3bb0ef2fa2dbdabf2, type: 3}
+  - dpCode: 100200
+    icon: {fileID: 21300000, guid: 2634bdc819d564e859155898ef028887, type: 3}
+  - dpCode: 111400
+    icon: {fileID: 21300000, guid: e5857d57ab64748d39c8b326773ee460, type: 3}
+  - dpCode: -400505
+    icon: {fileID: 21300000, guid: d0e3f4cc709ec4eed95da32c12876333, type: 3}
+  - dpCode: 100200
+    icon: {fileID: 21300000, guid: 252a8f8f5a5e84a0dad1c1c557a8c592, type: 3}
+  - dpCode: 21000
+    icon: {fileID: 21300000, guid: ddcfca5adeb9741aea6e3fb87f3b92fb, type: 3}
+  - dpCode: 80500
+    icon: {fileID: 21300000, guid: 03dfde854f94943689d9092902be095c, type: 3}
+  - dpCode: 130500
+    icon: {fileID: 21300000, guid: f4a3703f44cb9424292170b98f7e52d0, type: 3}
+  - dpCode: 80600
+    icon: {fileID: 21300000, guid: 7428ada28aa40427e9c80c66af2de608, type: 3}
+  - dpCode: 133153
+    icon: {fileID: 21300000, guid: 81f2176622ea24613a25c758dc28bd23, type: 3}
+  - dpCode: 130100
+    icon: {fileID: 21300000, guid: 5c7db0145fe4f45cc9f747bbe4955714, type: 3}
+  - dpCode: 163002
+    icon: {fileID: 21300000, guid: 88a2ed1580dfb4396a5fba1241f11da1, type: 3}
+  - dpCode: 130200
+    icon: {fileID: 21300000, guid: 643526a6ea70e410b9f1ebc8ffbd7fd1, type: 3}
+  - dpCode: 130700
+    icon: {fileID: 21300000, guid: d5d531b52a8da4079bda60d643e6eba8, type: 3}
+  - dpCode: 130800
+    icon: {fileID: 21300000, guid: cba1be3c21a124bdaa3edf0764cf4c53, type: 3}
+  - dpCode: 133101
+    icon: {fileID: 21300000, guid: ece131007fa03438d976ba14059e6c6a, type: 3}
+  - dpCode: -400510
+    icon: {fileID: 21300000, guid: 63d2a94ef34ad4c138a8c6be1675078a, type: 3}
+  - dpCode: 133103
+    icon: {fileID: 21300000, guid: bbb72e369cd2140e3ba2f551708d70dc, type: 3}
+  - dpCode: 132200
+    icon: {fileID: 21300000, guid: 3b865d464fed64109a90436047db05fd, type: 3}
+  - dpCode: 80100
+    icon: {fileID: 21300000, guid: 5335b0848d5264f30858aa8c632fea22, type: 3}
+  - dpCode: 160601
+    icon: {fileID: 21300000, guid: 9f765572df73d4064a83f2bb31341cd8, type: 3}
+  - dpCode: 160602
+    icon: {fileID: 21300000, guid: 97b35fbaf8a84477f93897e51ad69568, type: 3}
+  - dpCode: 160603
+    icon: {fileID: 21300000, guid: 063ae55b586ec41bdbcfb6c40430ac52, type: 3}
+  - dpCode: 160604
+    icon: {fileID: 21300000, guid: e4831565e81f14f6ca6e0c8ec7600fcb, type: 3}
+  - dpCode: 160605
+    icon: {fileID: 21300000, guid: 43ca30b1e581749ed9e86428cff92a08, type: 3}
+  - dpCode: 160606
+    icon: {fileID: 21300000, guid: 5e359c470d4f64df8b1a42d45845d852, type: 3}
+  - dpCode: 160607
+    icon: {fileID: 21300000, guid: 9fa45e8e55d6c404d912bbace7f13a56, type: 3}
+  - dpCode: 160608
+    icon: {fileID: 21300000, guid: f7cc5316abaf94be1b7e9af168f6492d, type: 3}
+  - dpCode: 160609
+    icon: {fileID: 21300000, guid: 35c1fb5c908b540619c2f51f9969b568, type: 3}
+  - dpCode: 160610
+    icon: {fileID: 21300000, guid: 79ac2f066f813477da97aa4980d39504, type: 3}
+  - dpCode: 160611
+    icon: {fileID: 21300000, guid: f85098b1f72ef4f6aae9f4e93d107b6b, type: 3}
+  - dpCode: 160612
+    icon: {fileID: 21300000, guid: 04d5ea1d68bb948ecbb5d58624240d08, type: 3}
+  - dpCode: 110900
+    icon: {fileID: 21300000, guid: cb6ed8b5749fe4ca9808c36a5f52b87b, type: 3}
+  - dpCode: 111000
+    icon: {fileID: 21300000, guid: d4b3e6e26fea04f3db1c84ff9fafd75a, type: 3}
+  - dpCode: -400507
+    icon: {fileID: 21300000, guid: fd40af4fb6c2d41fbab35d49f678602c, type: 3}
+  - dpCode: 151300
+    icon: {fileID: 21300000, guid: 372bdc7331c5b40308ec328d26710ffe, type: 3}
+  - dpCode: -400532
+    icon: {fileID: 21300000, guid: 222a9ebe9037c408b8455e9b42c222e4, type: 3}
+  - dpCode: 130600
+    icon: {fileID: 21300000, guid: 488147ef937b14e62b348f3489f4ffdb, type: 3}
+  - dpCode: 40500
+    icon: {fileID: 21300000, guid: 5bfbde660d4544fd295a9cd28fcaadb3, type: 3}
+  - dpCode: -400509
+    icon: {fileID: 21300000, guid: 89558107a00d241c7894e9cbd1343e4d, type: 3}
+  - dpCode: 140100
+    icon: {fileID: 21300000, guid: be22cb67904a34fcfbd9125dd4b02309, type: 3}
+  - dpCode: 90100
+    icon: {fileID: 21300000, guid: ba27f50de62244ed1b0bb6d5cb96bee6, type: 3}
+  - dpCode: 111300
+    icon: {fileID: 21300000, guid: ee27488c90b7c4ee8a5ddb97beacf4a9, type: 3}
+  - dpCode: 133130
+    icon: {fileID: 21300000, guid: d421aa8a31fbb474a9bfcfc3286a1959, type: 3}
+  - dpCode: -400533
+    icon: {fileID: 21300000, guid: d32843a3661ce43eb8d169c8e20e7d4a, type: 3}
+  - dpCode: 51100
+    icon: {fileID: 21300000, guid: 6d7d39cd8a9ce4429bb3ba3d08848f0e, type: 3}
+  - dpCode: 133104
+    icon: {fileID: 21300000, guid: 7f02068e006d54b83a1f2255431662f9, type: 3}
+  - dpCode: 133126
+    icon: {fileID: 21300000, guid: 4a1bbe86a49614b87979a5460249b9d3, type: 3}
+  - dpCode: 130400
+    icon: {fileID: 21300000, guid: 75ff11a66cd8843ab876674fcc98ff52, type: 3}
+  - dpCode: -400501
+    icon: {fileID: 21300000, guid: 51c5ae6605e6b4873bc82cdd7852d29b, type: 3}
+  - dpCode: 131000
+    icon: {fileID: 21300000, guid: bcf379605c3474569841427ceb6ca68d, type: 3}
+  - dpCode: 81800
+    icon: {fileID: 21300000, guid: d8134fe0eff6843c2b11e86b6e80ecca, type: 3}
+  - dpCode: 90600
+    icon: {fileID: 21300000, guid: 8ed5b998ca96a4621973ec0de5d49e8a, type: 3}
+  - dpCode: 163017
+    icon: {fileID: 21300000, guid: be238db72e8a04c7daa6751c2fab09cc, type: 3}
+  - dpCode: 80200
+    icon: {fileID: 21300000, guid: e36d17df9a601467e8d01ebaf82a0787, type: 3}
+  - dpCode: 30300
+    icon: {fileID: 21300000, guid: c471608c3343c4892b07ad0cc5373b0d, type: 3}
+  - dpCode: 50900
+    icon: {fileID: 21300000, guid: 82cbd6322c0884a83bbd9f3669a2a75c, type: 3}
+  - dpCode: 81803
+    icon: {fileID: 21300000, guid: 864c94e6c03d541eba7c5f0fe3330355, type: 3}
+  - dpCode: -400512
+    icon: {fileID: 21300000, guid: b3369b51e532d4c209dcbd0b328183c4, type: 3}
+  - dpCode: 23500
+    icon: {fileID: 21300000, guid: 7c1e8ff5e5b0844ce8f599cf8a0feb13, type: 3}
+  - dpCode: 81400
+    icon: {fileID: 21300000, guid: 9fc723e1782064f368b4f9d9432f6f89, type: 3}
+  - dpCode: 151211
+    icon: {fileID: 21300000, guid: d97b020ee194e4f70be97d37c6496e28, type: 3}
+  - dpCode: 170704
+    icon: {fileID: 21300000, guid: d491661c2d1c44d17be1f79d4166e3f5, type: 3}
+  - dpCode: 140700
+    icon: {fileID: 21300000, guid: 3423e310bf9f6447c910e11d1e18589e, type: 3}
+  - dpCode: 133133
+    icon: {fileID: 21300000, guid: 7b6d9dec2aecc4848bd3cd6640149021, type: 3}
+  - dpCode: 110800
+    icon: {fileID: 21300000, guid: 5c9f6d5d5e3e74f569df0bab9e84ba3b, type: 3}
+  - dpCode: 40115
+    icon: {fileID: 21300000, guid: bdb4f9a843b21409cade31d73393eb0c, type: 3}
+  - dpCode: 30301
+    icon: {fileID: 21300000, guid: fc1cad28f6b5345dea511c3450025228, type: 3}
+  - dpCode: 21500
+    icon: {fileID: 21300000, guid: 4f17282405ab2472ca6fcd1ede9c5865, type: 3}
+  - dpCode: 21503
+    icon: {fileID: 21300000, guid: 25c4e44fbcc3144a8afc0e1d9983c1f7, type: 3}
+  - dpCode: 150101
+    icon: {fileID: 21300000, guid: b1aa6bc9416a14262b89073995cf88fb, type: 3}
+  - dpCode: 110900
+    icon: {fileID: 21300000, guid: 8e75427db1434469894ef2be238dd76f, type: 3}
+  - dpCode: 163006
+    icon: {fileID: 21300000, guid: f7ac7f68145c042fe86dcb766499d49a, type: 3}
+  - dpCode: -400503
+    icon: {fileID: 21300000, guid: d80c253da21bd4aa0a4f60c5ce220f72, type: 3}
+  - dpCode: 132000
+    icon: {fileID: 21300000, guid: 0492b83ad93bb438e9fafd436ca1eb0c, type: 3}
+  - dpCode: 50600
+    icon: {fileID: 21300000, guid: d334369ee858c447699756e530a6aebc, type: 3}
+  - dpCode: -400534
+    icon: {fileID: 21300000, guid: ea33950b9a5ea403bbc5613e4132bc96, type: 3}
+  - dpCode: 130300
+    icon: {fileID: 21300000, guid: cd0a8d6b4fd9143d2889c21556aea011, type: 3}
+  - dpCode: 140200
+    icon: {fileID: 21300000, guid: 4d3ce74371bbe42f097aa8bbec3bc00b, type: 3}
+  - dpCode: 200300
+    icon: {fileID: 21300000, guid: c0305147936674c16bf21286c996d754, type: 3}
+  - dpCode: 133123
+    icon: {fileID: 21300000, guid: 24d1609d3ad914f57b14a5d7e066d26c, type: 3}
+  - dpCode: 40700
+    icon: {fileID: 21300000, guid: 3e977039e06d944de9527a8db56cf7b8, type: 3}
+  - dpCode: 40200
+    icon: {fileID: 21300000, guid: 4f28f9d74a9fb418286ad6c0ecc0a381, type: 3}
+  - dpCode: 171105
+    icon: {fileID: 21300000, guid: a337292dae06141db886dc6117f06396, type: 3}
+  - dpCode: 131800
+    icon: {fileID: 21300000, guid: 936882759605346d185948b07d904f15, type: 3}
+  - dpCode: 160303
+    icon: {fileID: 21300000, guid: f5f8b302141be4e2083a13e918695ab6, type: 3}
+  - dpCode: 163007
+    icon: {fileID: 21300000, guid: b800720b015e74336bc21dda85a3dbe3, type: 3}
+  - dpCode: 80400
+    icon: {fileID: 21300000, guid: c58aa1c86f3584c12b83345ead0f3777, type: 3}
+  - dpCode: 81200
+    icon: {fileID: 21300000, guid: e9569e33b57ae432fa5367c6c952128e, type: 3}
+  - dpCode: 133000
+    icon: {fileID: 21300000, guid: 40619ca766aaa4024b4202f1c394b8ad, type: 3}
+  - dpCode: 133113
+    icon: {fileID: 21300000, guid: 17439c80c06204f009e2452e1cba5fa0, type: 3}
+  - dpCode: 133003
+    icon: {fileID: 21300000, guid: fdda7967dc79f4c9ab4cd4f15aea0e29, type: 3}
+  - dpCode: 133004
+    icon: {fileID: 21300000, guid: b06b2ec8c788947858b52f15cdc334b8, type: 3}
+  - dpCode: 80700
+    icon: {fileID: 21300000, guid: 17be452d3686f4b7e94b5694e459f756, type: 3}
+  - dpCode: 163018
+    icon: {fileID: 21300000, guid: c5b4e44d020a0401388df02734b21e15, type: 3}
+  - dpCode: 171104
+    icon: {fileID: 21300000, guid: 09ac6a8ce412a4fa7bdf9137d4d8c5bf, type: 3}
+  - dpCode: 50100
+    icon: {fileID: 21300000, guid: 3e73856500d1d44b6a17f48ba9ad86dd, type: 3}
+  - dpCode: 131900
+    icon: {fileID: 21300000, guid: c3f4a2358e0cc4abbb4bb4c2942763f5, type: 3}

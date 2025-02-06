@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: LocalizationStringTable_fr
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fr
+  m_SharedData: {fileID: 11400000, guid: 95e1d29ec535b49d6a118708f947c5b3, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 405642665984
+    m_Localized: Guide de navigation AR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 983215104000
+    m_Localized: "Suivez les r\xE8gles de circulation."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2569198886912
+    m_Localized: "Scannez votre environnement avec votre cam\xE9ra pour commencer."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3818619133952
+    m_Localized: "Le positionnement peut \xEAtre instable dans des environnements
+      sombres/faiblement \xE9clair\xE9s."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6138971021312
+    m_Localized: Veuillez rescanner si votre positionnement actuel est incorrect.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7226591797248
+    m_Localized: Scanner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8060465569792
+    m_Localized: "Prenez votre t\xE9l\xE9phone et scannez les installations, b\xE2timents,
+      panneaux, etc."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8406835388416
+    m_Localized: "Scan termin\xE9."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8951360905216
+    m_Localized: "\xC0 destination"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10769268727808
+    m_Localized: "Arriv\xE9 !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12084162060288
+    m_Localized: "Arriv\xE9 !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1457321774407680
+    m_Localized: "Aller \xE0 l'emplacement suivant"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1458435433422848
+    m_Localized: Choisissez un mode de transfert de plancher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1458317913219072
+    m_Localized: Choisissez un mode de transfert de plancher"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1732654490705920
+    m_Localized: Rechercher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1733331061301248
+    m_Localized: Rechercher
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

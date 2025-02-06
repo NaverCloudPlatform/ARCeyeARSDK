@@ -161,6 +161,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4031693856957110526, guid: 412767673ec604349b507b6860ee5c26, type: 3}
+      propertyPath: m_LayerInfoSetting
+      value: 
+      objectReference: {fileID: 11400000, guid: 16705217337b644e6b431550cb3be547, type: 2}
     - target: {fileID: 5451198551273644277, guid: 412767673ec604349b507b6860ee5c26, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -1114,13 +1118,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1897364063}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.12708376, y: 0.8643611, z: -0.40305817, w: 0.27253202}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 50, y: 145, z: 0}
 --- !u!1 &1898840634
 GameObject:
   m_ObjectHideFlags: 0
@@ -1288,9 +1292,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_GrayPOIInfo
+      value: 
+      objectReference: {fileID: 11400000, guid: f7aa2d30b88934451bf880e3f8ca8083, type: 2}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIAtlas
       value: 
       objectReference: {fileID: 100100200, guid: af426831f401e4ad4b909277f8d5f41f, type: 3}
+    - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_ColorPOIInfo
+      value: 
+      objectReference: {fileID: 11400000, guid: 5dabdc84599db4f5f85a91982a776aad, type: 2}
     - target: {fileID: 3216815866985024128, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPOIPrefab
       value: 

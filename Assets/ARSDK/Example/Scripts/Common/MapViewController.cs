@@ -31,6 +31,17 @@ namespace ARCeye
         private YieldInstruction m_YieldMapLoading;
 
 
+        private UnityMapPOIPool m_MapPOIPool;
+        private UnityMapPOIPool mapPOIPool {
+            get {
+                if(m_MapPOIPool == null) {
+                    m_MapPOIPool = FindObjectOfType<UnityMapPOIPool>();
+                }
+                return m_MapPOIPool;
+            }
+        }
+
+
         protected override void Awake()
         {
             base.Awake();
@@ -38,11 +49,13 @@ namespace ARCeye
             m_OnChangedToFull.AddListener(()=>{
                 TouchSystem.Instance.onDrag.AddListener(MoveMapCamera);
                 TouchSystem.Instance.onPinchZoom.AddListener(ZoomMapCamera);
+                TouchSystem.Instance.onRotate.AddListener(RotateCamera);
             });
 
             m_OnChangedToShrinked.AddListener(()=>{
                 TouchSystem.Instance.onDrag.RemoveListener(MoveMapCamera);
                 TouchSystem.Instance.onPinchZoom.RemoveListener(ZoomMapCamera);
+                TouchSystem.Instance.onRotate.RemoveListener(RotateCamera);
             });
         }
 
@@ -61,7 +74,6 @@ namespace ARCeye
         }
 
         public void ChangeStage(string name, string label) {
-            Show(true, false);
             m_View.SetStageLabel(label);
         }
 
@@ -116,6 +128,8 @@ namespace ARCeye
         }
 
         public void ActivateFullmap() {
+            mapPOIPool.ActivateFullmapMode();
+
             m_MapCameraRig.ChangeToFullMap(true);
             m_View.ActivateFullMapScreen(true);
 
@@ -123,6 +137,8 @@ namespace ARCeye
         }
 
         public void ActivateMinimap() {
+            mapPOIPool.ActivateMinimapMode();
+            
             m_MapCameraRig.ChangeToFullMap(false);
             m_View.ActivateFullMapScreen(false);
 
@@ -141,6 +157,10 @@ namespace ARCeye
 
         public void ZoomMapCamera(float deltaRatio) {
             m_MapCameraRig.Zoom(deltaRatio);
+        }
+
+        public void RotateCamera(float deltaDegree) {
+            m_MapCameraRig.Rotate(deltaDegree);
         }
 
 

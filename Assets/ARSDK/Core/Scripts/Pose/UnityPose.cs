@@ -22,6 +22,6 @@ namespace ARCeye
         double latitude;
         double longitude;
         double altitude;
-        double relaltitude;
+        public double relaltitude;
     }
 }

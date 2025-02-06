@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: LocalizationStringTable Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: LocalizationStringTable
+  m_TableCollectionNameGuidString: 95e1d29ec535b49d6a118708f947c5b3
+  m_Entries:
+  - m_Id: 405642665984
+    m_Key: 3.example_arnavi/Canvas/ScanView/ScanPanel/Title/Text_Title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 983215104000
+    m_Key: 3.example_arnavi/Canvas/ScanView/ScanPanel/Text_Line1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2569198886912
+    m_Key: 3.example_arnavi/Canvas/ScanView/ScanPanel/Text_Line2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3818619133952
+    m_Key: 3.example_arnavi/Canvas/ScanView/ScanPanel/Text_Line3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6138971021312
+    m_Key: 3.example_arnavi/Canvas/ScanView/ScanPanel/Text_Line3 1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7226591797248
+    m_Key: 3.example_arnavi/Canvas/ScanView/ScanPanel/Button_Scan/Text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8060465569792
+    m_Key: 3.example_arnavi/Canvas/ScanView/ScanGuide/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8406835388416
+    m_Key: 3.example_arnavi/Canvas/ScanView/ScanComplete/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8951360905216
+    m_Key: 3.example_arnavi/Canvas/NavigationView/Navi Started View/Remaining Distance/Text_Remaining
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10769268727808
+    m_Key: 3.example_arnavi/Canvas/NavigationView/Navi Arrived View/Destination Arrived/Text_NaviMessage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12084162060288
+    m_Key: 3.example_arnavi/Canvas/NavigationView/Transit Arrived View/Arrived Icon/Text_Arrived
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1457321774407680
+    m_Key: 3.example_arnavi/Canvas/NavigationView/Transit Moving View/Text_MovingScan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1458317913219072
+    m_Key: 3.example_arnavi/Canvas/NavigationView/Transit Select View/Text_Shadow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1458435433422848
+    m_Key: 3.example_arnavi/Canvas/NavigationView/Transit Select View/Text_Select
+      Transit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1732654490705920
+    m_Key: 3.example_arnavi/Canvas/AroundView/DestinationListView/Destination Scroll
+      View/Bottom Sheet/Header/Button/Text_Recommendations
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1733331061301248
+    m_Key: 3.example_arnavi/Canvas/AroundView/DestinationListView/Destination Full
+      View/SearchBox/Text_Search
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 2120010272178176035
+  references:
+    version: 2
+    RefIds:
+    - rid: 2120010272178176035
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1733387761238

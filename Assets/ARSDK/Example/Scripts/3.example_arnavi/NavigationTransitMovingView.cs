@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using ARCeye;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class NavigationTransitMovingView : View
 {
     [SerializeField]
-    private Text m_GuideDestStageText;
-
+    private TMP_Text m_StartStageText;
     [SerializeField]
-    private Text m_StartStageText;
-    [SerializeField]
-    private Text m_DestStageText;
+    private TMP_Text m_DestStageText;
 
     [SerializeField]
     private GameObject m_IconEscalator;
@@ -30,8 +28,6 @@ public class NavigationTransitMovingView : View
 
     public void Initialize(ConnectionType transitType, string currStage, string destStageName)
     {
-        m_GuideDestStageText.text = destStageName;
-
         m_IconEscalator.gameObject.SetActive(false);
         m_IconElevator.gameObject.SetActive(false);
         m_IconStair.gameObject.SetActive(false);
@@ -42,10 +38,10 @@ public class NavigationTransitMovingView : View
                 m_IconEscalator.gameObject.SetActive(true);
                 break;
             case ConnectionType.Elevator : 
-                m_IconEscalator.gameObject.SetActive(true);
+                m_IconElevator.gameObject.SetActive(true);
                 break;
             case ConnectionType.Stair : 
-                m_IconEscalator.gameObject.SetActive(true);
+                m_IconStair.gameObject.SetActive(true);
                 break;
         }
 
@@ -53,6 +49,11 @@ public class NavigationTransitMovingView : View
         m_DestStageText.text = destStageName;
 
         ShowRescanGuide(false);
+    }
+
+    public void SetCurrStageText(string currStage)
+    {
+        m_StartStageText.text = currStage;
     }
 
     public void EnableScanButton(bool value)

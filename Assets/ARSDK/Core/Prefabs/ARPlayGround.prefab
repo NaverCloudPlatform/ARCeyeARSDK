@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8513705081441293160}
   - component: {fileID: 8513705081441293163}
   - component: {fileID: 1809109357865620303}
+  - component: {fileID: 263589126894087470}
   m_Layer: 0
   m_Name: ARPlayGround
   m_TagString: Untagged
@@ -30,13 +31,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5451198551273644282}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5451198551273644278
 MonoBehaviour:
@@ -51,6 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ContentsPath: 
+  m_Locale: 0
   m_StreamingAsset: 1
   m_LoadOnAwake: 1
   m_VisualizeAMProj: 1
@@ -66,6 +68,9 @@ MonoBehaviour:
   m_OnNavigationEnded:
     m_PersistentCalls:
       m_Calls: []
+  m_OnNavigationFailed:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnNavigationReSearched:
     m_PersistentCalls:
       m_Calls: []
@@ -79,6 +84,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_OnTransitMovingEnded:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnTransitMovingFailed:
     m_PersistentCalls:
       m_Calls: []
   m_OnCustomRangeEntered:
@@ -164,6 +172,9 @@ MonoBehaviour:
   m_OnNavigationEnded:
     m_PersistentCalls:
       m_Calls: []
+  m_OnNavigationFailed:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnNavigationReSearched:
     m_PersistentCalls:
       m_Calls: []
@@ -177,6 +188,27 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_OnCustomRangeExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnCameraPoseUpdated:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnVideoLoaded:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnVideoPlaying:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnVideoUnloaded:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnAudioLoaded:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnAudioPlaying:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnAudioUnloaded:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &8513705081441293160
@@ -214,5 +246,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e5f81c717c114cd3bd60fe75bb2b315, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &263589126894087470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5451198551273644282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5ae76b956f70425da1c3a8814acd6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

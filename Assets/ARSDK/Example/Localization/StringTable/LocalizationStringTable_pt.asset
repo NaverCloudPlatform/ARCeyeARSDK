@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: LocalizationStringTable_pt
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: pt
+  m_SharedData: {fileID: 11400000, guid: 95e1d29ec535b49d6a118708f947c5b3, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 405642665984
+    m_Localized: "Guia de Navega\xE7\xE3o AR"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 983215104000
+    m_Localized: "Siga as regras de tr\xE1fego."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2569198886912
+    m_Localized: "Digitalize seus arredores com sua c\xE2mera para come\xE7ar."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3818619133952
+    m_Localized: "O posicionamento pode ser inst\xE1vel em ambientes escuros/com
+      pouca ilumina\xE7\xE3o."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6138971021312
+    m_Localized: Por favor, digitalize novamente se o seu posicionamento atual estiver
+      incorreto.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7226591797248
+    m_Localized: Escanear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8060465569792
+    m_Localized: "Pegue seu telefone e escaneie instala\xE7\xF5es, edif\xEDcios,
+      placas, etc."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8406835388416
+    m_Localized: Escaneamento completo.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8951360905216
+    m_Localized: Ao destino
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10769268727808
+    m_Localized: Chegou!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12084162060288
+    m_Localized: Chegado!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1457321774407680
+    m_Localized: "Ir para o pr\xF3ximo local"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1458435433422848
+    m_Localized: "Escolha um modo de transfer\xEAncia de andar"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1458317913219072
+    m_Localized: "Escolha um modo de transfer\xEAncia de andar"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1732654490705920
+    m_Localized: Pesquisar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1733331061301248
+    m_Localized: Pesquisar
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

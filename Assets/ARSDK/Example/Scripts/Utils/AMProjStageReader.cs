@@ -16,13 +16,13 @@ namespace ARCeye
         private bool m_ReadAMProjFinished;
 
         
-        public void Load(string amprojFilePath, UnityAction<List<string>> finishCallback)
+        public void Load(string amprojFilePath, UnityAction<Dictionary<string, float>> finishCallback)
         {
             m_ReadAMProjFinished = false;
             StartCoroutine( LoadInternal(amprojFilePath, finishCallback) );
         }
 
-        private IEnumerator LoadInternal(string amprojFilePath, UnityAction<List<string>> finishCallback)
+        private IEnumerator LoadInternal(string amprojFilePath, UnityAction<Dictionary<string, float>> finishCallback)
         {
             yield return ReadAMProjFile(amprojFilePath);
 
@@ -30,11 +30,11 @@ namespace ARCeye
 
             var stageObjects = (JArray) m_Root["stages"];
 
-            List<string> stages = new List<string>();
+            Dictionary<string, float> stages = new Dictionary<string, float>();
 
             foreach(var stageElem in stageObjects)
             {
-                stages.Add(stageElem["name"].Value<string>());
+                stages.Add(stageElem["name"].Value<string>(), stageElem["height"].Value<float>());
             }
 
             finishCallback.Invoke(stages);

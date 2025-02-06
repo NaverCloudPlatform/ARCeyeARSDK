@@ -13,7 +13,7 @@ public class SplashViewController : ViewController<SplashView>
 
     public void HideWithFadeOut()
     {
-        UIEffect.FadeOut(m_View, 1.5f, ()=>{
+        UIEffect.FadeOut(m_View, 0.5f, ()=>{
             Show(false);
         });
     }

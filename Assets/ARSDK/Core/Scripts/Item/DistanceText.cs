@@ -12,8 +12,6 @@ namespace ARCeye
 
         void Awake()
         {
-            ResetTransform();
-
             // TextMesh 생성.
             m_TextMesh = gameObject.AddComponent<TextMesh>();
             m_TextMesh.offsetZ = 0;
@@ -27,6 +25,8 @@ namespace ARCeye
             m_TextMesh.richText = true;
             m_TextMesh.color = Color.white;
 
+            SetOpacity(0);
+
             if(ItemGenerator.Instance.font != null) {
                 m_TextMesh.font = ItemGenerator.Instance.font;
             }
@@ -35,14 +35,28 @@ namespace ARCeye
             m_MeshRenderer = gameObject.GetComponent<MeshRenderer>();
             
             Texture fontTexture = m_TextMesh.font.material.mainTexture;
-            m_MeshRenderer.material = ItemGenerator.Instance.poiTextMaterial;
-            m_MeshRenderer.material.SetFloat("_CullMode", 0.0f);
+            m_MeshRenderer.material = ItemGenerator.Instance.turnSpotTextMaterial;
+            m_MeshRenderer.material.SetFloat("_CullMode", 2.0f);
             m_MeshRenderer.sharedMaterial.mainTexture = fontTexture;
+        }
+
+        public void SetLabel(string label)
+        {
+            m_TextMesh.text = label;
+        }
+
+        public void SetOpacity(float opacity)
+        {
+            var color = m_TextMesh.color;
+            color.a = opacity;
+            m_TextMesh.color = color;
         }
 
         public void ResetTransform()
         {
-            transform.localPosition = Vector3.zero;
+            // TurnSpot 모델의 Distance_Root 위치로 인해 TextMesh가 정상적으로 렌더링 되지 않음.
+            // 아래와 같이 직접 설정.
+            transform.localPosition = new Vector3(0, 0, 0);
             transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
             transform.localScale = new Vector3(0.035f, 0.035f, 0.035f);
         }

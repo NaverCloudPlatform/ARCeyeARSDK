@@ -28,9 +28,14 @@ using System.Threading.Tasks;
 [DefaultExecutionOrder(-1500)]
 public class MainThreadDispatcher : MonoBehaviour {
 
-	private static readonly Queue<Action> _executionQueue = new Queue<Action>();
+	private static Queue<Action> _executionQueue = new Queue<Action>();
 
 	public void Update() {
+		if(_executionQueue == null)
+		{
+			_executionQueue = new Queue<Action>();
+		}
+
 		lock(_executionQueue) {
 			while (_executionQueue.Count > 0) {
 				_executionQueue.Dequeue().Invoke();
@@ -43,6 +48,11 @@ public class MainThreadDispatcher : MonoBehaviour {
 	/// </summary>
 	/// <param name="action">IEnumerator function that will be executed from the main thread.</param>
 	public void Enqueue(IEnumerator action) {
+		if(_executionQueue == null)
+		{
+			_executionQueue = new Queue<Action>();
+		}
+		
 		lock (_executionQueue) {
 			_executionQueue.Enqueue (() => {
 				StartCoroutine (action);
@@ -108,12 +118,13 @@ public class MainThreadDispatcher : MonoBehaviour {
 	void Awake() {
 		if (_instance == null) {
 			_instance = this;
-			DontDestroyOnLoad(this.gameObject);
+			// DontDestroyOnLoad(this.gameObject);
 		}
 	}
 
 	void OnDestroy() {
-			_instance = null;
+		_instance = null;
+		_executionQueue= null;
 	}
 
 

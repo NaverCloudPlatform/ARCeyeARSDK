@@ -18,6 +18,9 @@ public class ARPlayGroundExample : MonoBehaviour
     [SerializeField]
     private Transform m_StageButtonsArea;
 
+    [SerializeField]
+    private POIIconInfo m_POIGrayIconInfo;
+
     [Header("POI")]
 
     [SerializeField]
@@ -51,6 +54,9 @@ public class ARPlayGroundExample : MonoBehaviour
     private Text m_NaviMessageText;
 
 
+    private List<DestinationCellView> m_POICellList = new List<DestinationCellView>();
+    private NearbyCalculator m_NearbyCalculator;
+
     private Camera m_MainCamera;
     private string m_CurrStage;
 
@@ -63,8 +69,10 @@ public class ARPlayGroundExample : MonoBehaviour
         HideDestRect();
 
         m_AMProjStageReader.Load(m_ARPlayGround.amprojFilePath, stages => {
-            GenerateStageButtons(m_StageButtonsArea, stages);
+            GenerateStageButtons(m_StageButtonsArea, stages.Keys.ToList());
         });
+
+        m_NearbyCalculator = new NearbyCalculator();
     }
 
     public void Reset()
@@ -84,9 +92,11 @@ public class ARPlayGroundExample : MonoBehaviour
         m_MapViewController.Show();
 
         // 스테이지가 할당되면 MapView를 활성화.
-        m_MapViewController.Show(true, false);
+        // m_MapViewController.Show(true, false);
 
         m_CurrStage = stageName;
+
+        m_NearbyCalculator.SetCurrStage(stageName);
     }
 
     private void GenerateStageButtons(Transform stageButtonsArea, List<string> stages)
@@ -99,7 +109,7 @@ public class ARPlayGroundExample : MonoBehaviour
             stageButton.gameObject.name = $"Button_SetStage_{stageName}";
             stageButton.onClick.RemoveAllListeners();
             stageButton.onClick.AddListener(()=>{
-                m_ARPlayGround.SetStage(stageName); 
+                SetStage(stageName); 
             });
 
             Text buttonText = stageButton.GetComponentInChildren<Text>();
@@ -122,35 +132,40 @@ public class ARPlayGroundExample : MonoBehaviour
     {
         DestinationCellView defaultCell = GetDefaultCell();
         // 조건에 해당하는 POI만 출력.
-        // var filterdPOIItems = poiItems.FindAll(
-        //     e => 
-        //         // Cafe
-        //         e.dpcode == 110700 ||
-        //         e.dpcode == 111100 ||
+        var filterdPOIItems = poiItems.FindAll(
+            e => 
+                // Cafe
+                e.dpcode == 110700 ||
+                e.dpcode == 111100 ||
 
-        //         // Toliets
-        //         e.dpcode == 133000 ||
-        //         e.dpcode == 133003 ||
-        //         e.dpcode == 133004 ||
-        //         e.dpcode == 133113 ||
+                // Toliets
+                e.dpcode == 133000 ||
+                e.dpcode == 133003 ||
+                e.dpcode == 133004 ||
+                e.dpcode == 133113 ||
 
-        //         // Info
-        //         e.dpcode == 133130 ||
+                // Info
+                e.dpcode == 133130 ||
 
-        //         // 계단
-        //         e.dpcode == 171105 ||
+                // 계단
+                e.dpcode == 171105
+        );
 
-        //         e.name == "송도달빛축제공원행 승강장"
-        // );
 
-        var filterdPOIItems = poiItems;
+        m_POICellList.Clear();
 
         foreach(var elem in filterdPOIItems)
         {
             GameObject cellGO = Instantiate(defaultCell.gameObject, m_DestinationScrollRectContent);
             DestinationCellView cellView = cellGO.GetComponent<DestinationCellView>();
-            cellView.Initialize(elem);
+
+            Sprite icon = m_POIGrayIconInfo.GetSprite(elem.dpcode);
+
+            cellView.Initialize(icon, elem);
+            cellView.ShowDistanceText();
             cellView.RegisterAction(()=> LoadNavigation(elem) );
+
+            m_POICellList.Add(cellView);
         }
 
         GameObject.Destroy(defaultCell.gameObject);
@@ -166,6 +181,10 @@ public class ARPlayGroundExample : MonoBehaviour
         m_ShowDestRectButton.gameObject.SetActive(false);
         m_HideDestRectButton.gameObject.SetActive(true);
         m_DestinationScrollRect.gameObject.SetActive(true);
+
+        // 거리 계산.
+        CalculateDistanceToBookmarkPOI();
+        SortPOICellViews();
     }
 
     public void HideDestRect()
@@ -173,6 +192,25 @@ public class ARPlayGroundExample : MonoBehaviour
         m_ShowDestRectButton.gameObject.SetActive(true);
         m_HideDestRectButton.gameObject.SetActive(false);
         m_DestinationScrollRect.gameObject.SetActive(false);
+    }
+
+    private void CalculateDistanceToBookmarkPOI()
+    {
+        foreach(var cellView in m_POICellList)
+        {
+            float dist = m_NearbyCalculator.CalculateDistance(cellView.poiItem);
+            cellView.SetDistance(dist);
+        }
+    }
+
+    private void SortPOICellViews()
+    {
+        m_POICellList.Sort((a, b) => a.Distance.CompareTo(b.Distance));
+
+        for(int i=0 ; i<m_POICellList.Count ; i++)
+        {
+            m_POICellList[i].transform.SetAsLastSibling();
+        }
     }
 
 

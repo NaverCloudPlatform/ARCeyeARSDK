@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: LocalizationStringTable_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 95e1d29ec535b49d6a118708f947c5b3, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 405642665984
+    m_Localized: Guide for AR Navigation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 983215104000
+    m_Localized: Follow traffic rules.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2569198886912
+    m_Localized: Scan your surroundings\nwith your camera to get started.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3818619133952
+    m_Localized: Positioning may be unstable\nin dark environments/low lighting.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6138971021312
+    m_Localized: Please rescan if your current positioning is incorrect.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7226591797248
+    m_Localized: Scan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8060465569792
+    m_Localized: Pick up your phone and scan facilities,\nbuildings, signs, signs,
+      etc.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8406835388416
+    m_Localized: Scan completed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8951360905216
+    m_Localized: Remaining
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10769268727808
+    m_Localized: Arrived!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12084162060288
+    m_Localized: Arrived!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1457321774407680
+    m_Localized: Going to the next location
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1458317913219072
+    m_Localized: Choose a mode of floor transfer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1458435433422848
+    m_Localized: Choose a mode of floor transfer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1732654490705920
+    m_Localized: Search
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1733331061301248
+    m_Localized: Search
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []
