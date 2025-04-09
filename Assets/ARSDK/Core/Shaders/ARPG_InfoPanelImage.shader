@@ -7,6 +7,7 @@ Shader "ARPG/InfoPanelImage"
 		_Width ("Width px", Float) = 1500
 		_Height ("Height px", Float) = 1200
         _UseRoundedCorner ("UseRoundedCorner", Float) = 1
+        _Alpha ("Alpha", Float) = 1
 
         [Enum(UnityEngine.Rendering.CullMode)] _CullMode ("Cull Mode", Float) = 2.0
         [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest ("ZTest", Float) = 4
@@ -54,6 +55,7 @@ Shader "ARPG/InfoPanelImage"
 			float _Width;
 			float _Height;
             float _UseRoundedCorner;
+            float _Alpha;
 
             v2f vert (appdata v)
             {
@@ -88,7 +90,9 @@ Shader "ARPG/InfoPanelImage"
                 if(_UseRoundedCorner){
                     if(alpha<=0.0)
                         discard;
+                    col.a = _Alpha;
                 }
+                col.a = _Alpha;
                 return col;
             }
             ENDCG

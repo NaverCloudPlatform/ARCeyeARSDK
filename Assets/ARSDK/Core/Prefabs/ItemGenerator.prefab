@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5952151847712425795}
   - component: {fileID: 8409957157607560170}
   - component: {fileID: 1667182386120505619}
+  - component: {fileID: 8861697961777733185}
   m_Layer: 0
   m_Name: ItemGenerator
   m_TagString: Untagged
@@ -67,9 +68,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SignPOIPrefab: {fileID: 0}
-  m_SignPOIIconModels: []
   m_MapPOIPrefab: {fileID: 0}
-  m_MapPOIAtlas: {fileID: 0}
+  m_ColorPOIInfo: {fileID: 0}
+  m_GrayPOIInfo: {fileID: 0}
 --- !u!114 &5952151847712425795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,6 +110,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_VideoPrefab: {fileID: 4021148077792763828, guid: bfb1dc5fc6be74922a6827f42f2cfa60, type: 3}
   m_AudioPrefab: {fileID: 5490887468492302601, guid: 5e0d1d9fda09d49719f672a975876792, type: 3}
+--- !u!114 &8861697961777733185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3216815866985024135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 736145319f61f46b4a7748db5dabac2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5029584592680465873
 GameObject:
   m_ObjectHideFlags: 0

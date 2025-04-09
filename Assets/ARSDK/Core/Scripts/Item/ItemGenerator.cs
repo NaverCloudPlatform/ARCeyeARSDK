@@ -8,6 +8,11 @@ using AOT;
 
 namespace ARCeye
 {
+    public enum GestureType {
+        TAPPED = 0,
+        UNTAPPED = 1,
+    }
+    
     public class ItemGenerator : MonoBehaviour
     {   
         /* -- Native plugin -- */
@@ -34,6 +39,7 @@ namespace ARCeye
 
         [DllImport(dll)] private static extern float OnLoadingCompleteNative(IntPtr nativeModelPtr);
         [DllImport(dll)] private static extern float OnFadingCompleteNative(IntPtr nativeModelPtr);
+        [DllImport(dll)] private static extern float OnGestureReceivedNative(IntPtr nativeModelPtr, int gestureType);
 
         [DllImport(dll)] private static extern void SetSetRouteNative(VFpI_Func func);
         [DllImport(dll)] private static extern void SetUnloadPathNative(V_Func func);
@@ -46,7 +52,7 @@ namespace ARCeye
         // UnityMapPOIPool
         [DllImport(dll)] private static extern void SetSetFontSizeFuncNative(VF_Func func);
         [DllImport(dll)] private static extern void SetSetOutlineThickness(VF_Func func);
-        [DllImport(dll)] private static extern void SetInsertPOIEntityFuncNative(VIISFFFI_Func func);
+        [DllImport(dll)] private static extern void SetInsertPOIEntityFuncNative(VIISFFFII_Func func);
         [DllImport(dll)] private static extern void SetRemoveNodeFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetSetConfigFullpathFuncNative(S_Func func);
 
@@ -65,6 +71,8 @@ namespace ARCeye
         [DllImport(dll)] private static extern void SetUseFrameFuncNative(VB_Func func);
         [DllImport(dll)] private static extern void SetUseRoundedCornerFuncNative(VB_Func func);
         [DllImport(dll)] private static extern void SetSetInfoPanelTextFuncNative(VS_Func func);
+        [DllImport(dll)] private static extern void SetSetInfoPanelHeaderFuncNative(VS_Func func);
+        [DllImport(dll)] private static extern void SetSetInfoPanelFrameFuncNative(VS_Func func);
         [DllImport(dll)] private static extern void SetSetInfoPanelImageFuncNative(VS_Func func);
 
         // UnityVideo
@@ -93,7 +101,7 @@ namespace ARCeye
         public delegate void S_Func(IntPtr p);
         public delegate void VB_Func(IntPtr itemPtr, bool active);
         public delegate void VFpI_Func(IntPtr vp, IntPtr fp, int i);
-        public delegate void VIISFFFI_Func(IntPtr vp, int i1, int i2, IntPtr ptr1, float f1, float f2, float f3, int i3);
+        public delegate void VIISFFFII_Func(IntPtr vp, int i1, int i2, IntPtr ptr1, float f1, float f2, float f3, int i3, int i4);
         public delegate void VFFFFBBB_Func(IntPtr vp, float f1, float f2, float f3, float f4, bool b1, bool b2, bool b3);
 
         public delegate bool HasCodeFunc(int i);
@@ -132,12 +140,10 @@ namespace ARCeye
         private UnityMapPOIPool m_MapPOIPool;
         private UnityMapPathIndicator m_MapPOIPathIndicator;
         
-
-        private Material m_POITextMaterial;
-        public  Material poiTextMaterial => m_POITextMaterial;
         private Material m_InfoPanelTextMaterial;
         public  Material infoPanelTextMaterial => m_InfoPanelTextMaterial;
-
+        private Material m_TurnSpotTextMaterial;
+        public  Material turnSpotTextMaterial => m_TurnSpotTextMaterial;
 
 
         void Awake()
@@ -195,6 +201,8 @@ namespace ARCeye
             SetUseFrameFuncNative(UseFrame);
             SetUseRoundedCornerFuncNative(UseRoundedCorner);
             SetSetInfoPanelTextFuncNative(SetInfoPanelText);
+            SetSetInfoPanelHeaderFuncNative(SetInfoPanelHeader);
+            SetSetInfoPanelFrameFuncNative(SetInfoPanelFrame);
             SetSetInfoPanelImageFuncNative(SetInfoPanelImage);
 
             // UnityVideo
@@ -215,11 +223,11 @@ namespace ARCeye
 
         private void CreateMaterials()
         {
-            Shader poiTextShader = FindShader("ARPG/POI Text");
             Shader infoPanelTextShader = FindShader("ARPG/InfoPanel Text");
+            Shader turnSpotTextShader = FindShader("ARPG/TurnSpot Text");
 
-            m_POITextMaterial = new Material(poiTextShader);
             m_InfoPanelTextMaterial = new Material(infoPanelTextShader);
+            m_TurnSpotTextMaterial = new Material(turnSpotTextShader);
         }
 
         private Shader FindShader(string shaderName)
@@ -273,7 +281,7 @@ namespace ARCeye
             if(modelType == typeof(UnitySignPOI)) {
                 go = s_POIGenerator.GenerateSignPOI();
             } else if(modelType == typeof(UnityInfoPanel)) {
-                GameObject empty = new GameObject("itemInfoPanel");
+                GameObject empty = new GameObject("ItemInfoPanel");
 
                 go = s_InfoPanelGenerator.GenerateInfoPanel();
                 go.transform.parent = empty.transform;
@@ -312,10 +320,10 @@ namespace ARCeye
             }
 
             var unityModel = model as UnityModel;
+            unityModel.SetNativePtr(nativeModelPtr);
             unityModel.RunCoroutine(()=>{
                 OnLoadingCompleteNative(nativeModelPtr);
             }, 0.1f);
-            unityModel.Initialize();
 
             return Wrap(go);
         }
@@ -346,6 +354,12 @@ namespace ARCeye
             // 각 Item별 적당한 root로 이동.
             SetParentToModel(go, modelType);
 
+            // Set native pointer
+            UnityModel model = go.GetComponent(modelType) as UnityModel;
+            if(model) {
+                model.SetNativePtr(nativeModelPtr);
+            }
+
             if(modelType == typeof(UnityCartoMap)) {
                 s_Instance.m_CartoMap = go.GetComponent<UnityCartoMap>();
             } 
@@ -368,7 +382,44 @@ namespace ARCeye
         static public void SetParentToModel(GameObject modelGo, Type modelType)
         {
             if(s_Instance.m_Scene != null) {
-                modelGo.transform.parent = s_Instance.m_Scene.transform;
+                if(modelType == typeof(UnityNextStepArrow) || modelType == typeof(UnityNextStepText)) {
+                    modelGo.transform.parent = s_Instance.m_Scene.parent;
+                } else {
+                    modelGo.transform.parent = s_Instance.m_Scene.transform;
+                }
+            }
+        }
+
+        static public void OnGestureReceived(GestureType gestureType, GameObject receiver) 
+        {
+            var panel = receiver.GetComponent<UnityInfoPanel>();
+            if(panel != null) {
+                IntPtr nativeModelPtr = (panel as UnityModel).GetNativePtr();
+
+                if (nativeModelPtr != IntPtr.Zero) {
+                    OnGestureReceivedNative(nativeModelPtr, (int)gestureType);
+                }
+                return;
+            }
+
+            var video = receiver.GetComponent<UnityVideo>();
+            if(video != null) {
+                IntPtr nativeModelPtr = (video as UnityModel).GetNativePtr();
+
+                if (nativeModelPtr != IntPtr.Zero) {
+                    OnGestureReceivedNative(nativeModelPtr, (int)gestureType);
+                }
+                return;
+            }
+
+            UnityModel model = receiver.GetComponent<UnityModel>() as UnityModel;
+            if(model) {
+                IntPtr nativeModelPtr = model.GetNativePtr();
+
+                if (nativeModelPtr != IntPtr.Zero) {
+                    OnGestureReceivedNative(nativeModelPtr, (int)gestureType);
+                }
+                return;
             }
         }
 
@@ -413,6 +464,19 @@ namespace ARCeye
         {
             MainThreadDispatcher.Instance()?.Enqueue(()=>{
                 GameObject item = Unwrap<GameObject>(itemPtr);
+
+                var panel = item.GetComponent<UnityInfoPanel>();
+                if(panel != null) {
+                    (panel as UnityModel).SetActive(active);
+                    return;
+                }
+
+                var video = item.GetComponent<UnityVideo>();
+                if(video != null) {
+                    (video as UnityModel).SetActive(active);
+                    return;
+                }
+
                 item.GetComponent<UnityModel>().SetActive(active); 
             });
         }
@@ -420,7 +484,27 @@ namespace ARCeye
         [MonoPInvokeCallback(typeof(SetSetPickableFuncDelegate))]
         static public void SetPickable(IntPtr itemPtr, bool pickable)
         {
-            // TODO. interaction 관련 기능을 구현한 뒤 연동.
+            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+                GameObject item = Unwrap<GameObject>(itemPtr);
+                
+                var infoPanel = item.GetComponent<UnityInfoPanel>();
+                if(infoPanel != null) {
+                    infoPanel.SetPickable(pickable);
+                    return;
+                }
+
+                var video = item.GetComponent<UnityVideo>();
+                if(video != null) {
+                    (video as UnityModel).SetPickable(pickable);
+                    return;
+                }
+
+                var unityModel = item.GetComponent<UnityModel>();
+                if(unityModel != null) {
+                    unityModel.SetPickable(pickable);
+                    return;
+                }
+            });
         }
 
         [MonoPInvokeCallback(typeof(SetMatrixModelFuncDelegate))]
@@ -535,6 +619,13 @@ namespace ARCeye
         {
             MainThreadDispatcher.Instance()?.Enqueue(()=>{
                 GameObject item = Unwrap<GameObject>(itemPtr);
+
+                var infoPanel = item.GetComponent<UnityInfoPanel>();
+                if(infoPanel != null) {
+                    infoPanel.SetOpacity(opacity);
+                    return;
+                }
+
                 UnityModel unityModel = item.GetComponent<UnityModel>();
                 if(unityModel != null) {
                     unityModel.SetOpacity(opacity);
@@ -627,19 +718,19 @@ namespace ARCeye
             });
         }
 
-        [MonoPInvokeCallback(typeof(VIISFFFI_Func))]
-        static public void InsertPOIEntity(IntPtr itemPtr, int id, int dpCode, IntPtr labelRaw, float px, float py, float pz, int drawType) {
+        [MonoPInvokeCallback(typeof(VIISFFFII_Func))]
+        static public void InsertPOIEntity(IntPtr itemPtr, int id, int dpCode, IntPtr labelRaw, float px, float py, float pz, int visibility, int display) {
             MainThreadDispatcher.Instance()?.Enqueue(()=>{
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityMapPOIPool mapPOIPool = item.GetComponent<UnityMapPOIPool>();
 
                 UnityMapPOI mapPOI = s_POIGenerator.GenerateMapPOI();
-                s_POIGenerator.SetIconCode(mapPOI, dpCode);
+                s_POIGenerator.SetIconCodeToMapPOI(mapPOI, dpCode);
 
                 string label = Marshal.PtrToStringAnsi(labelRaw);
                 Vector3 position = new Vector3(px, py, pz);
 
-                mapPOIPool.InsertPOIEntity(mapPOI, id, dpCode, label, position, drawType);
+                mapPOIPool.InsertPOIEntity(mapPOI, id, dpCode, label, position, visibility, display);
             });
         }
 
@@ -695,7 +786,7 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(()=>{
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnitySignPOI model = item.GetComponent<UnitySignPOI>();
-                s_POIGenerator.SetIconCode(model, type);
+                s_POIGenerator.SetIconCodeToSignPOI(model, type);
             });
         }
 
@@ -762,6 +853,28 @@ namespace ARCeye
 
                 string text = Marshal.PtrToStringAnsi(strPtr);
                 model.SetInfoPanelText(text);
+            });
+        }
+
+        [MonoPInvokeCallback(typeof(VS_Func))]
+        static public void SetInfoPanelHeader(IntPtr itemPtr, IntPtr strPtr) {
+            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+                GameObject item = Unwrap<GameObject>(itemPtr);
+                UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
+
+                string text = Marshal.PtrToStringAnsi(strPtr);
+                model.SetInfoPanelHeader(text);
+            });
+        }
+
+        [MonoPInvokeCallback(typeof(VS_Func))]
+        static public void SetInfoPanelFrame(IntPtr itemPtr, IntPtr strPtr) {
+            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+                GameObject item = Unwrap<GameObject>(itemPtr);
+                UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
+
+                string text = Marshal.PtrToStringAnsi(strPtr);
+                model.SetInfoPanelFrame(text);
             });
         }
 

@@ -15,6 +15,19 @@ namespace ARCeye
 
         protected virtual void Awake()
         {
+            
+        }
+
+        public void Load()
+        {
+            Load(m_LayerInfoSetting);
+        }
+
+        public void Load(LayerInfoSetting layerInfoSetting)
+        {
+            m_StageNameByLayerName.Clear();
+            m_LayerInfoSetting = layerInfoSetting;
+            
             Layer rootLayer = m_LayerInfoSetting.layer;
             rootLayer.parent = null;
 

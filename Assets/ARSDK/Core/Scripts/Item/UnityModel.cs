@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GLTFast.Materials;
 
 namespace ARCeye
 {
@@ -26,14 +25,23 @@ namespace ARCeye
         private Dictionary<Material, bool> m_OpaqueMaterials;
         private bool m_UseBillboard = false;
         protected Billboard.RotationMode m_BillboardRotationMode = Billboard.RotationMode.AXIS_Y;
-        
-        const string k_PBRMetallicRoughness = "glTF/PbrMetallicRoughness (2Pass)";
-        const string k_PBRSpecularGlossiness = "glTF/PbrSpecularGlossiness (2Pass)";
-        const string k_PBRUnlit = "glTF/Unlit (2Pass)";
+
+        private IntPtr m_NativePtr;
+        private string m_WrapMode;
+
+        public void SetNativePtr(IntPtr nativePtr)
+        {
+            m_NativePtr = nativePtr;
+        }
+
+        public IntPtr GetNativePtr()
+        {
+            return m_NativePtr;
+        }
 
         public virtual void Initialize()
         {
-
+            InitLayerInModel("ARItem");
         }
 
         public virtual void Initialize(PostEventGltfAsset model)
@@ -58,49 +66,57 @@ namespace ARCeye
             //   본 메서드는 gameObject의 SetActive가 아닌, ARPG에서 모델이 보이는지 여부를 설정함.
             //   SetActive(true)일 경우 SetOpacity(1)를 설정하면 actionRange로 진입했을때
             //   opacity가 순간적으로 1이 되기 때문에 fade 애니메이션이 정상적으로 실행되지 않는다.
-            if(!value)
-            {
+            if(!value) {
                 SetOpacity(0);
+                BoxCollider collider = GetComponentInChildren<BoxCollider>();
+                if (collider) {
+                    collider.enabled = false;
+                }
+            } else {
+                BoxCollider collider = GetComponentInChildren<BoxCollider>();
+                if (collider) {
+                    collider.enabled = true;
+                }
             }
         }
 
         protected virtual void FindMaterials()
         {
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
-            m_Materials = new Material[renderers.Length];
+            List<Material> allMaterials = new();
+            Material zwriteMat = MaterialGenerator.GetZWriteMaterial();
 
-            for(int i=0 ; i<m_Materials.Length ; i++)
+            foreach(var renderer in renderers)
             {
-                var material = renderers[i].material;
+                // 기존에 존재하던 Materials 추출.
+                List<Material> materials = new();
+                renderer.GetMaterials(materials);
 
-                if(material.shader.name == "glTF/PbrMetallicRoughness")
-                {
-                    Shader shader = Shader.Find(k_PBRMetallicRoughness);
-                    material.shader = shader;
-                    material.SetTexture("normalTexture", null);
-                    m_OpaqueMaterials.Add(material, false);
-                }
-                else if(material.shader.name == "glTF/PbrSpecularGlossiness")
-                {
-                    Shader shader = Shader.Find(k_PBRSpecularGlossiness);
-                    material.shader = shader;
-                    m_OpaqueMaterials.Add(material, false);
-                }
-                else if(material.shader.name == "glTF/Unlit")
-                {
-                    Shader shader = Shader.Find(k_PBRUnlit);
-                    material.shader = shader;
+                // fade 효과가 적용될 Material들만 별도로 관리.
+                allMaterials.AddRange(materials);
 
-                    // gltf/Unlit 쉐이더의 경우 backface culling을 수행하면 frontface culling 같이 출력 된다.
-                    // 성능 상의 이슈가 없을 경우 culling을 비활성화.
-                    material.SetFloat("_CullMode", 0);
-
-                    // Unlit을 사용하는 오브젝트는 항상 Opaque 상태로 로딩이 되도록.
-                    m_OpaqueMaterials.Add(material, true);
+                // 기존에 설정된 PBR 쉐이더를 2Pass 전용 쉐이더로 변경.
+                foreach(var material in materials)
+                {
+                    if(IsGLTFMaterial(material))
+                    {
+                        MaterialGenerator.SetFadeModeBlend(material);
+                    }
                 }
                 
-                m_Materials[i] = material;
+                // zwrite 패스 추가.
+                materials.Insert(0, zwriteMat);
+
+                renderer.SetMaterials(materials);
             }
+
+            m_Materials = allMaterials.ToArray();
+        }
+
+        private bool IsGLTFMaterial(Material material)
+        {
+            string shaderName = material.shader.name;
+            return shaderName.Contains("glTF");
         }
 
         public virtual void PlayAnimation(string animName, string playModeStr)
@@ -121,20 +137,36 @@ namespace ARCeye
             {
                 case "once" : 
                     anim.wrapMode = WrapMode.Once;
+                    m_WrapMode = "once";
                     break;
                 case "loop" : 
                     anim.wrapMode = WrapMode.Loop;
+                    m_WrapMode = "loop";
                     break;
                 case "clamp" : 
                     anim.wrapMode = WrapMode.Clamp;
+                    m_WrapMode = "clamp";
                     break;
                 default : 
                     NativeLogger.Print(LogLevel.WARNING, $"[UnityModel] Can't find wrapMode {playModeStr}. Use WrapMode.Once instead");
                     anim.wrapMode = WrapMode.Once;
+                    m_WrapMode = "once";
                     break;
             }
             
             anim.Play(animName);
+        }
+        
+        // 모든 UnityModel은 기본적으로 ARItem 레이어로 설정. 다른 레이어를 사용하는 아이템의 경우 자식 클래스의 Initialize 메서드에서 설정한다.
+        protected void InitLayerInModel(string layerName)
+        {
+            var children = gameObject.GetComponentsInChildren<Transform>();
+            var layer = LayerMask.NameToLayer(layerName);
+            foreach(var child in children)
+            {
+                child.gameObject.layer = layer;
+            }
+            gameObject.layer = layer;
         }
 
         public void StopAnimation() {
@@ -225,7 +257,9 @@ namespace ARCeye
         {
             if(fadeIn)
             {
-                anim?.Rewind();
+                if(m_WrapMode != "loop") {
+                    anim?.Rewind();
+                }
             }
             
             if(m_Materials == null)
@@ -234,7 +268,10 @@ namespace ARCeye
             }
 
             Color baseColor = m_Materials[0].color;
-            float start = baseColor.a;
+            // TODO. baseColor.a에서 정상 동작해야함.
+            // float start = baseColor.a;
+
+            float start = fadeIn ? 0 : 1;
             float end = fadeIn ? 1 : 0;
 
             bool isFinished = false;
@@ -245,16 +282,6 @@ namespace ARCeye
                 EnableAllRenderers(true);
             }
 
-            foreach(var material in m_Materials)
-            {
-                if(material.shader.name != k_PBRUnlit)
-                {
-                    continue;
-                }
-
-                BuiltInMaterialGenerator.SetAlphaModeBlend(material);
-            }
-
             while(!isFinished)
             {
                 float t = accumTime / duration;
@@ -263,7 +290,8 @@ namespace ARCeye
                 foreach(var material in m_Materials)
                 {
                     Color color = material.color;
-                    material.color = new Color(color.r, color.g, color.b, a);
+                    color.a = a;
+                    material.color = color;
                 }
 
                 yield return null;
@@ -279,25 +307,8 @@ namespace ARCeye
             foreach(var material in m_Materials)
             {
                 Color color = material.color;
-                material.color = new Color(color.r, color.g, color.b, end);
-            }
-
-            // fadein 시 기존의 material 속성 변경.
-            if(fadeIn)
-            {
-                foreach(var material in m_Materials)
-                {
-                    if(material.shader.name != k_PBRUnlit)
-                    {
-                        continue;
-                    }
-
-                    if(m_OpaqueMaterials[material]) {
-                        BuiltInMaterialGenerator.SetOpaqueMode(material);
-                    } else {
-                        BuiltInMaterialGenerator.SetAlphaModeBlend(material);
-                    }
-                }
+                color.a = end;
+                material.color = color;
             }
 
             if(onComplete != null)
@@ -319,10 +330,9 @@ namespace ARCeye
 
             foreach(var material in m_Materials)
             {
-                BuiltInMaterialGenerator.SetAlphaModeBlend(material);
-
                 Color baseColor = material.color;
-                material.color = new Color(baseColor.r, baseColor.g, baseColor.b, opacity);
+                baseColor.a = opacity;
+                material.color = baseColor;
             }
 
             if(opacity == 0.0f)
@@ -332,17 +342,48 @@ namespace ARCeye
             else
             {
                 EnableAllRenderers(true);
+            }
+        }
 
-                if(opacity == 1.0f)
-                {
-                    foreach(var material in m_Materials)
+        public virtual void SetPickable(bool value)
+        {
+            if(!value) {
+                Transform collider = transform.Find("Collider");
+                if (collider != null) {
+                    collider.gameObject.SetActive(false);
+                }
+            }
+            else {
+                Transform collider = transform.Find("Collider");
+                if (collider != null) {
+                    collider.gameObject.SetActive(true);
+                }
+
+                // Create collider for all children meshes.
+                else {
+                    Renderer[] renderers = GetComponentsInChildren<Renderer>();
+
+                    if (renderers.Length > 0) 
                     {
-                        if(m_OpaqueMaterials[material]) {
-                            BuiltInMaterialGenerator.SetOpaqueMode(material);
-                        } else {
-                            BuiltInMaterialGenerator.SetAlphaModeBlend(material);
+                        Bounds localBounds = renderers[0].localBounds;
+                        Bounds bounds = renderers[0].bounds;
+
+                        for (int i = 1; i < renderers.Length; i++)
+                        {
+                            localBounds.Encapsulate(renderers[i].localBounds);
+                            bounds.Encapsulate(renderers[i].bounds);
                         }
-                    }   
+
+                        GameObject go = new GameObject("Collider");
+                        go.transform.localPosition = bounds.center;
+                        go.transform.parent = transform;
+                        go.transform.localRotation = Quaternion.identity;
+                        go.transform.localScale = new Vector3(1, 1, 1);
+
+                        BoxCollider boxCollider = go.AddComponent<BoxCollider>();
+
+                        boxCollider.size = localBounds.size;
+                    }
                 }
             }
         }

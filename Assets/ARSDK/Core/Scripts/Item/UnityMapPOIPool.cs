@@ -46,8 +46,18 @@ namespace ARCeye
             
         }
 
-        public void InsertPOIEntity(UnityMapPOI mapPOI, int id, int dpCode, string label, Vector3 position, int drawType)
+        public void InsertPOIEntity(UnityMapPOI mapPOI, int id, int dpCode, string label, Vector3 position, int visibility, int display)
         {
+            // visibility
+            //   Hidden - 0
+            //   Map - 1
+            //   AR - 2
+            //   Map and AR - 3
+            if(visibility == 0 || visibility == 2)
+            {
+                return;
+            }
+            
             // MapPOIPool을 MapPOI들의 root로 설정.
             mapPOI.transform.parent = transform;
 
@@ -56,6 +66,7 @@ namespace ARCeye
             mapPOI.transform.localPosition = unityCoord;
             mapPOI.SetLabel(label);
             mapPOI.SetFontSize(m_FontSize);
+            mapPOI.SetDisplay(display);
 
             m_MapPOILists.Add(mapPOI);
         }
@@ -71,6 +82,22 @@ namespace ARCeye
         public void SetConfigFullpath(string atlasFullpath)
         {
             NativeLogger.Print(LogLevel.DEBUG, "Set altas fullpath : " + atlasFullpath);
+        }
+
+        public void ActivateFullmapMode()
+        {
+            foreach(var mapPOI in m_MapPOILists)
+            {
+                mapPOI.ActivateFullmapMode();
+            }
+        }
+
+        public void ActivateMinimapMode()
+        {
+            foreach(var mapPOI in m_MapPOILists)
+            {
+                mapPOI.ActivateMinimapMode();
+            }
         }
     }
 }

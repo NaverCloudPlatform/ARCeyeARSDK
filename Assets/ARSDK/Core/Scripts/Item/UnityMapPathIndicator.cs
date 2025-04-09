@@ -51,6 +51,12 @@ namespace ARCeye
                 return;
             }
 
+            if(beginBulletPrefab == null || endBulletPrefab == null)
+            {
+                Debug.LogWarning("Bullet prefab is null");
+                return;
+            }
+
             var beginBulletGo = Instantiate(beginBulletPrefab, transform);
             var endBulletGo = Instantiate(endBulletPrefab, transform);
             

@@ -10,8 +10,9 @@ public class PackageImportPreprocess
     private static Dictionary<string, string> packagesToAdd = new Dictionary<string, string>()
     {
         { "com.unity.nuget.newtonsoft-json", "3.2.1" },
-        { "com.unity.cloud.gltfast", "6.1.0" },
-        { "com.unity.cloud.draco", "5.1.8" }
+        { "com.unity.cloud.gltfast", "6.9.0" },
+        { "com.unity.cloud.draco", "5.1.8" },
+        { "com.unity.textmeshpro", "3.0.6" },
     };
 
     private static Dictionary<string, string> packagesToDefineSymbols = new Dictionary<string, string>()
@@ -27,7 +28,7 @@ public class PackageImportPreprocess
         SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
         SerializedProperty layersProp = tagManager.FindProperty("layers");
 
-        string[] layerNames = {"Map", "MapPOI", "MapArrow", "AMProjViz"};
+        string[] layerNames = {"Map", "MapPOI", "MapArrow", "AMProjViz", "ARItem"};
         
         foreach (string layerName in layerNames)
         {
@@ -77,8 +78,11 @@ public class PackageImportPreprocess
 
         for(int i=0 ; i<shadersCount ; i++)
         {
-            Object obj = alwaysIncludedShaders.GetArrayElementAtIndex(i).objectReferenceValue;
-            shaderNames.Add(obj.name);
+            SerializedProperty property = alwaysIncludedShaders.GetArrayElementAtIndex(i);
+            if(property != null && property.objectReferenceValue)
+            {
+                shaderNames.Add(property.objectReferenceValue.name);
+            }
         }
 
         foreach (string guid in guids)
@@ -228,25 +232,21 @@ public class PackageImportPreprocess
         foreach(var packages in packagesToDefineSymbols)
         {
             string defineSymbol = packages.Value;
-            AddDefineSymbol(defineSymbol);
+            AddDefineSymbol(defineSymbol, BuildTargetGroup.Standalone);
+            AddDefineSymbol(defineSymbol, BuildTargetGroup.iOS);
+            AddDefineSymbol(defineSymbol, BuildTargetGroup.Android);
         }
     }
 
-    private static void AddDefineSymbol(string defineSymbol)
+    private static void AddDefineSymbol(string defineSymbol, BuildTargetGroup group)
     {
-        foreach (BuildTargetGroup group in GetBuildTargetGroups())
+        var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
+
+        // Define Symbol이 이미 포함되어 있는지 확인
+        if (!symbols.Contains(defineSymbol))
         {
-            if (group == BuildTargetGroup.Unknown)
-                continue;
-
-            var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
-
-            // Define Symbol이 이미 포함되어 있는지 확인
-            if (!symbols.Contains(defineSymbol))
-            {
-                symbols += ";" + defineSymbol;
-                PlayerSettings.SetScriptingDefineSymbolsForGroup(group, symbols);
-            }
+            symbols += ";" + defineSymbol;
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, symbols);
         }
     }
     

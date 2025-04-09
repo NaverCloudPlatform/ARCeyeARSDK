@@ -2,12 +2,15 @@
     "name": "ARCeye.ARSDK",
     "rootNamespace": "",
     "references": [
-        "glTFast"
+        "glTFast",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [
         "Android",
         "Editor",
         "iOS",
+        "macOSStandalone",
         "WSA",
         "WindowsStandalone64"
     ],

@@ -6,25 +6,20 @@ namespace ARCeye
 {
     public class UnityTurnSpot : UnityModel
     {
-        private Transform m_CameraTransform;
-
         private Transform m_MeterArea;
         private Transform m_DistanceArea;
 
-        private TextMesh m_MeterText;
-        private TextMesh m_DistanceText;
+        private MeterText m_MeterText;
+        private DistanceText m_DistanceText;
 
 
 
         private void Start()
         {
-            m_CameraTransform = Camera.main.transform;
             m_BillboardRotationMode = Billboard.RotationMode.AXIS_Y_FLIP;
         }
 
         public override void Initialize() {
-            base.Initialize();
-
             string rootPath = GetRootPath();
 
             m_MeterArea = transform.Find(rootPath + "Meter_Root");
@@ -34,17 +29,40 @@ namespace ARCeye
             {
                 GameObject meterTextGO = new GameObject("MeterText");
                 meterTextGO.transform.parent = m_MeterArea;
-                MeterText meterText = meterTextGO.AddComponent<MeterText>();
-                m_MeterText = meterText.textMesh;
+                m_MeterText = meterTextGO.AddComponent<MeterText>();
             }
 
             if(m_DistanceArea != null)
             {
                 GameObject distanceTextGO = new GameObject("DistanceText");
                 distanceTextGO.transform.parent = m_DistanceArea;
-                DistanceText distanceText = distanceTextGO.AddComponent<DistanceText>();
-                m_DistanceText = distanceText.textMesh;
+                m_DistanceText = distanceTextGO.AddComponent<DistanceText>();
             }
+
+            m_MeterText.ResetTransform();
+            m_DistanceText.ResetTransform();
+
+            base.Initialize();
+        }
+
+        private bool IsDestination()
+        {
+            Transform child = transform.GetChild(0);
+            Transform model = child.GetChild(0);
+            return model.name.Contains("Destination");
+        }
+
+        public override void SetOpacity(float opacity)
+        {
+            base.SetOpacity(opacity);
+
+            // Initialize가 호출되기 전에 SetOpacity가 호출되는 경우 방지.
+            if(m_MeterText == null || m_DistanceArea == null) {
+                return;
+            }
+
+            m_MeterText.SetOpacity(opacity);
+            m_DistanceText.SetOpacity(opacity);
         }
 
         private string GetRootPath() {
@@ -85,7 +103,7 @@ namespace ARCeye
                 label = label + " ";
             }
 
-            m_DistanceText.text = label;
+            m_DistanceText.SetLabel(label);
         }
     }
 }

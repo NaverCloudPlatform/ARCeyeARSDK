@@ -32,7 +32,7 @@ namespace ARCeye
 
                     ++s_LoaderTaskCount;
                     var loader = s_LoaderTaskQueue.Dequeue();
-                    loader.Invoke();
+                    loader?.Invoke();
                 }
             });
             s_LoaderTaskThread.Start();

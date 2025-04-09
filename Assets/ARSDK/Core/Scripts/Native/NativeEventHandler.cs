@@ -18,6 +18,10 @@ namespace ARCeye
         [HideInInspector]
         public UnityEvent<string, string> m_OnStageChanged;
         [HideInInspector]
+        public UnityEvent<string, string, string> m_OnSceneLoaded;
+        [HideInInspector]
+        public UnityEvent<string> m_OnSceneUnloaded;
+        [HideInInspector]
         public UnityEvent<UnityUILayerInfo> m_OnUIChanged;
         [HideInInspector]
         public UnityEvent<List<LayerPOIItem>> m_OnPOIList;
@@ -34,9 +38,9 @@ namespace ARCeye
         [HideInInspector]
         public UnityEvent m_OnNavigationFailed;
         [HideInInspector]
-        public UnityEvent m_OnNavigationReSearched;
+        public UnityEvent m_OnNavigationRerouted;
         [HideInInspector]
-        public UnityEvent<ConnectionType, string> m_OnTransitMovingStarted;
+        public UnityEvent<ConnectionType, string, string> m_OnTransitMovingStarted;
         [HideInInspector]
         public UnityEvent m_OnTransitMovingEnded;
         [HideInInspector]
@@ -45,6 +49,7 @@ namespace ARCeye
         public UnityEvent<string, string> m_OnCustomRangeExited;
         [HideInInspector]
         public UnityEvent<Vector3, Quaternion> m_OnCameraPoseUpdated;
+        [HideInInspector]
         public UnityEvent<UnityMediaInfo> m_OnVideoLoaded;
         [HideInInspector]
         public UnityEvent<string, int, float> m_OnVideoPlaying;
@@ -70,10 +75,12 @@ namespace ARCeye
         public delegate void B_Func(bool b);
         public delegate void I_Func(int i);
         public delegate void IS_Func(int i, string s);
+        public delegate void ISS_Func(int i, string s1, string s2);
         public delegate void F_Func(float f);
         public delegate void FFFFFFF_Func(float f1, float f2, float f3, float f4, float f5, float f6, float f7);
         public delegate void S_Func(string f);
         public delegate void SS_Func(string s1, string s2);
+        public delegate void SSS_Func(string s1, string s2, string s3);
         public delegate void III_Func(int i1, int i2, int i3);
         public delegate void SIS_Func(string s, int i, float f);
         public delegate void SIB_Func(string s, int i, bool b);
@@ -88,13 +95,15 @@ namespace ARCeye
         [DllImport(dll)] private static extern void SetOnUIChangedFuncNative(UILayerInfo_Func func);
         [DllImport(dll)] private static extern void SetOnPOIListFuncNative(LayerPOIItem_Func func);
         [DllImport(dll)] private static extern void SetOnStageChangedFuncNative(SS_Func func);
+        [DllImport(dll)] private static extern void SetOnSceneLoadedFuncNative(SSS_Func func);
+        [DllImport(dll)] private static extern void SetOnSceneUnloadedFuncNative(S_Func func);
         [DllImport(dll)] private static extern void SetOnNavigationStartedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnRemainDistanceFuncNative(F_Func func);
         [DllImport(dll)] private static extern void SetOnDestinationArrivedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnNavigationEndedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnNavigationFailedFuncNative(V_Func func);
-        [DllImport(dll)] private static extern void SetOnNavigationReSearchedFuncNative(V_Func func);
-        [DllImport(dll)] private static extern void SetOnTransitMovingStartedFuncNative(IS_Func func);
+        [DllImport(dll)] private static extern void SetOnNavigationReroutedFuncNative(V_Func func);
+        [DllImport(dll)] private static extern void SetOnTransitMovingStartedFuncNative(ISS_Func func);
         [DllImport(dll)] private static extern void SetOnTransitMovingEndedFuncNative(V_Func func);
         [DllImport(dll)] private static extern void SetOnCustomRangeEnteredFuncNative(SS_Func func);
         [DllImport(dll)] private static extern void SetOnCustomRangeExitedFuncNative(SS_Func func);
@@ -115,10 +124,12 @@ namespace ARCeye
             SetOnPOIListFuncNative(OnPOIList);
             SetOnRemainDistanceFuncNative(OnRemainDistance);
             SetOnStageChangedFuncNative(OnStageChanged);
+            SetOnSceneLoadedFuncNative(OnSceneLoaded);
+            SetOnSceneUnloadedFuncNative(OnSceneUnloaded);
             SetOnNavigationStartedFuncNative(OnNavigationStarted);
             SetOnNavigationEndedFuncNative(OnNavigationEnded);
             SetOnNavigationFailedFuncNative(OnNavigationFailed);
-            SetOnNavigationReSearchedFuncNative(OnNavigationReSearched);
+            SetOnNavigationReroutedFuncNative(OnNavigationRerouted);
             SetOnDestinationArrivedFuncNative(OnDestinationArrived);
             SetOnTransitMovingStartedFuncNative(OnTransitMovingStarted);
             SetOnTransitMovingEndedFuncNative(OnTransitMovingEnded);
@@ -132,7 +143,6 @@ namespace ARCeye
             SetOnAudioPlayingFuncNative(OnAudioPlaying);
             SetOnAudioUnloadedFuncNative(OnAudioUnloaded);
         }
-
 
         [MonoPInvokeCallback(typeof(III_Func))]
         private static void onVersionInfo(int latestVer, int minVer, int errorCode)
@@ -185,10 +195,12 @@ namespace ARCeye
                 item.name = nativeItem.name;
                 item.fullName = nativeItem.full_name;
                 item.stageName = nativeItem.stage_name;
+                item.stageLabel = nativeItem.stage_label;
                 item.display = nativeItem.display;
                 item.category = nativeItem.category;
                 item.dpcode = nativeItem.dpcode;
                 item.entrance = new List<Vector3>();
+                item.usage = nativeItem.usage;
 
                 // 입구점 좌표 배열의 포인터를 입구점 좌표 배열로 변환.
                 float[] entrance = new float[nativeItem.coord_count];
@@ -196,9 +208,9 @@ namespace ARCeye
 
                 int entranceCount = nativeItem.coord_count/3;
                 for(int j=0 ; j < entranceCount ; j++) {
-                    float x = entrance[j + 0];
-                    float y = entrance[j + 1];
-                    float z = entrance[j + 2];
+                    float x = entrance[j * 3 + 0];
+                    float y = entrance[j * 3 + 1];
+                    float z = entrance[j * 3 + 2];
                     item.entrance.Add(new Vector3(x, y, z));
                 }
 
@@ -212,6 +224,16 @@ namespace ARCeye
         private static void OnStageChanged(string name, string label) {
             label = label == string.Empty ? name : label;
             s_Instance.m_OnStageChanged.Invoke(name, label);
+        }
+
+        [MonoPInvokeCallback(typeof(SSS_Func))]
+        private static void OnSceneLoaded(string keyname, string crscode, string locale) {
+            s_Instance.m_OnSceneLoaded.Invoke(keyname, crscode, locale);
+        }
+
+        [MonoPInvokeCallback(typeof(S_Func))]
+        private static void OnSceneUnloaded(string keyname) {
+            s_Instance.m_OnSceneUnloaded.Invoke(keyname);
         }
 
         [MonoPInvokeCallback(typeof(B_Func))]
@@ -245,13 +267,13 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]
-        private static void OnNavigationReSearched() {
-            s_Instance.m_OnNavigationReSearched.Invoke();
+        private static void OnNavigationRerouted() {
+            s_Instance.m_OnNavigationRerouted.Invoke();
         }
 
-        [MonoPInvokeCallback(typeof(IS_Func))]
-        private static void OnTransitMovingStarted(int transitType, string destFloor) {
-            s_Instance.m_OnTransitMovingStarted.Invoke((ConnectionType) transitType, destFloor);
+        [MonoPInvokeCallback(typeof(ISS_Func))]
+        private static void OnTransitMovingStarted(int transitType, string destFloor, string destFloorLabel) {
+            s_Instance.m_OnTransitMovingStarted.Invoke((ConnectionType) transitType, destFloor, destFloorLabel);
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]
@@ -378,6 +400,8 @@ namespace ARCeye
         public string full_name;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string stage_name;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string stage_label;
         
         [MarshalAs(UnmanagedType.I4)]
         public int    display;
@@ -390,6 +414,7 @@ namespace ARCeye
 
         [MarshalAs(UnmanagedType.I4)]
         public int    coord_count;
+        public int    usage;
     }
 
     public struct LayerPOIItem {
@@ -397,19 +422,21 @@ namespace ARCeye
         public string name;
         public string fullName;
         public string stageName;
+        public string stageLabel;
         
         public int    display;
         public int    category;
         public int    dpcode;
 
         public List<Vector3> entrance;
+        public int    usage;
 
         public override string ToString()
         {
-            return $"{fullName}, {stageName}, {category}, {entrance[0]}";
+            return $"{name}, {stageName}, {category}, {entrance[0]}";
         }
     }
-
+    
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct UnityMediaInfo {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]

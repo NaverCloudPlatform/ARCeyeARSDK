@@ -1,23 +1,19 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection.Emit;
+using TMPro;
 using UnityEngine;
-using GLTFast.Materials;
 
 namespace ARCeye
 {
     public class UnitySignPOI : UnityModel
     {
         [SerializeField]
-        private TextMesh m_Text;
+        private TextMeshPro m_Text;
 
         [SerializeField]
         private SpriteRenderer m_Label;
 
         [SerializeField]
-        private Transform m_Icon;
-
-        private SkinnedMeshRenderer[] m_POIIconRenderers;
+        private SpriteRenderer m_IconRenderer;
 
         private Billboard m_Billboard;
 
@@ -28,30 +24,17 @@ namespace ARCeye
             m_Billboard = GetComponent<Billboard>();
             m_Billboard.rotationMode = Billboard.RotationMode.AXIS_Y;
 
-            if(ItemGenerator.Instance.font != null) {
-                m_Text.font = ItemGenerator.Instance.font;
-            }
-
-            var meshRenderer = m_Text.GetComponent<MeshRenderer>();
-            
-            Texture fontTexture = m_Text.font.material.mainTexture;
-            meshRenderer.material = ItemGenerator.Instance.poiTextMaterial;
-            meshRenderer.sharedMaterial.mainTexture = fontTexture;
-
             SetOpacity(0);
+
+            InitLayerInModel("ARItem");
         }
 
         public void SetType(int type) {
 
         }
 
-        public void SetIcon(GameObject icon) {
-            icon.transform.SetParent(m_Icon);
-            icon.transform.localPosition = Vector3.zero;
-            icon.transform.localEulerAngles = new Vector3(0, 180, 0);
-            icon.transform.localScale = new Vector3(2, 2, 2);
-
-            m_POIIconRenderers = icon.GetComponentsInChildren<SkinnedMeshRenderer>();
+        public void SetIcon(Sprite icon) {
+            m_IconRenderer.sprite = icon;
 
             // Icon을 설정한 뒤에 SetActive(false)를 통해 opacity를 0으로 설정해야 한다.
             // SetIcon을 호출하기 전까지는 POIIconRenderer가 설정되어 있지 않기 때문.
@@ -59,17 +42,20 @@ namespace ARCeye
         }
 
         public void SetLabel(string content) {
-            m_Text.text = content;
+            m_Text.text = content;         
+            m_Label.size = CalculateLabelSize();
+        }
 
-            var meshRenderer = m_Text.GetComponent<MeshRenderer>();
+        private Vector2 CalculateLabelSize()
+        {
+            RectTransform rectTransform = m_Text.GetComponent<RectTransform>();
 
-            Vector3 localSize  = meshRenderer.localBounds.size;
-            float   localScale = meshRenderer.transform.localScale.x;
-            Vector3 scaledSize = localSize * localScale;
-            Vector3 margin     = new Vector3(0.2f, 0.05f, 0.0f);
+            Vector2 size = m_Text.GetPreferredValues();
+            Vector3 scale = rectTransform.localScale;
+            Vector2 scaledSize = new Vector2(size.x * scale.x, size.y * scale.y);
+            Vector2 margin     = new Vector3(0.22f, 0.07f);
 
-            Vector3 size = scaledSize + margin;
-            m_Label.size = size;
+            return scaledSize + margin;
         }
 
         public void SetAutoRotateMode(int rotationMode) {
@@ -124,17 +110,9 @@ namespace ARCeye
             m_Text.color = textColor;
             m_Label.color = labelColor;
 
-            if(m_POIIconRenderers != null)
-            {
-                foreach(var renderer in m_POIIconRenderers)
-                {
-                    // Alpha 효과를 주기 위해서는 Alpha blend 모드가 되어야 한다.
-                    BuiltInMaterialGenerator.SetAlphaModeBlend(renderer.material);
-
-                    Color color = renderer.material.color;
-                    renderer.material.color = new Color(color.r, color.g, color.b, opacity);
-                }
-            }
+            Color iconColor = m_IconRenderer.color;
+            iconColor.a = opacity;
+            m_IconRenderer.color = iconColor;
 
             m_Opacity = opacity;
 
@@ -152,14 +130,7 @@ namespace ARCeye
         {
             m_Text.gameObject.SetActive(value);
             m_Label.gameObject.SetActive(value);
-
-            if(m_POIIconRenderers != null)
-            {
-                foreach(var renderer in m_POIIconRenderers)
-                {
-                    renderer.gameObject.SetActive(value);
-                }
-            }
+            m_IconRenderer.gameObject.SetActive(value);
         }
     }
 }

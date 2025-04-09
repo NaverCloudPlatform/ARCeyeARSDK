@@ -233,5 +233,14 @@ namespace ARCeye
                 onComplete.Invoke();
             }
         }
+
+        public override void SetOpacity(float opacity)
+        {
+            m_Material.SetFloat("_Alpha", opacity);
+            Material backface = (gameObject.transform.childCount == 0) ? null : gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material; 
+            if (backface != null) {
+                backface.SetFloat("_Alpha", opacity);
+            }
+        }
     }
 }

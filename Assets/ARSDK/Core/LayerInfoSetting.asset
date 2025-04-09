@@ -19,7 +19,7 @@ MonoBehaviour:
         linkToStage: 0
         stageName: aa
         depth: 0
-        layerInfoCode: AMCOHERITZ
+        layerInfoCode: 
         foldout: 1
         isRemoved: 1
       childCount: 0

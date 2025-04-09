@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,12 +13,45 @@ namespace ARCeye
         {
             LayerInfoSetting asset = ScriptableObject.CreateInstance<LayerInfoSetting>();
 
-            AssetDatabase.CreateAsset(asset, "Assets/ARPG/Core/LayerInfoSetting.asset");
+            string path = GetSelectedDirectoryPath();
+            string assetPathAndName = GenerateUniqueAssetPath(path);
+
+            AssetDatabase.CreateAsset(asset, assetPathAndName);
             AssetDatabase.SaveAssets();
 
             EditorUtility.FocusProjectWindow();
 
             Selection.activeObject = asset;
+        }
+
+        private static string GetSelectedDirectoryPath()
+        {
+            string path = "Assets";
+            string selectedPath = AssetDatabase.GetAssetPath(Selection.activeObject);
+
+            if (Selection.activeObject != null)
+            {
+                if (!string.IsNullOrEmpty(selectedPath))
+                {
+                    if (File.Exists(selectedPath))
+                    {
+                        selectedPath = Path.GetDirectoryName(selectedPath);
+                    }
+
+                    path = selectedPath;
+                }
+            }
+
+            return path;
+        }
+
+        private static string GenerateUniqueAssetPath(string path)
+        {
+            string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath(
+                Path.Combine(path, "New LayerInfoSetting.asset")
+            );
+
+            return assetPathAndName;
         }
     }
 }
