@@ -29,12 +29,12 @@ namespace ARCeye
         [SerializeField]
         private List<POIIconInfoItem> m_POIInfoList;
 
-        
+
         public Sprite GetSprite(int dpCode)
         {
             POIIconInfoItem item = m_POIInfoList.Find(e => e.dpCode == dpCode);
 
-            if(item != null)
+            if (item != null)
             {
                 string iconName = item.icon.name;
                 return m_POIAtlas.GetSprite(iconName);

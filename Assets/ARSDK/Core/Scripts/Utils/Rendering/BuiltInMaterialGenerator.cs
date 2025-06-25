@@ -26,20 +26,20 @@ namespace ARCeye
         /// </summary>
         public static void SetFadeModeBlend(Material material)
         {
-            material.SetFloat(MaterialProperty.Mode, (int) StandardShaderMode.Fade);
+            material.SetFloat(MaterialProperty.Mode, (int)StandardShaderMode.Fade);
             material.SetOverrideTag(RenderTypeTag, FadeRenderType);
-            
+
             material.EnableKeyword(k_AlphaBlendOnKeyword);
-            
-            material.SetInt(MaterialProperty.SrcBlend, (int) BlendMode.SrcAlpha);
-            material.SetInt(MaterialProperty.DstBlend, (int) BlendMode.OneMinusSrcAlpha);
-            material.SetInt(MaterialProperty.ZWrite,   1);   // On
+
+            material.SetInt(MaterialProperty.SrcBlend, (int)BlendMode.SrcAlpha);
+            material.SetInt(MaterialProperty.DstBlend, (int)BlendMode.OneMinusSrcAlpha);
+            material.SetInt(MaterialProperty.ZWrite, 1);   // On
             material.SetInt(MaterialProperty.CullMode, 2); // Back
 
             material.DisableKeyword(k_AlphaPremultiplyOnKeyword);
             material.DisableKeyword(k_AlphaTestOnKeyword);
 
-            material.renderQueue = (int) RenderQueue.Transparent;
+            material.renderQueue = (int)RenderQueue.Transparent;
         }
     }
 }

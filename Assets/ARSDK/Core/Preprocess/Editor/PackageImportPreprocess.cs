@@ -19,7 +19,7 @@ public class PackageImportPreprocess
     {
         { "com.unity.cloud.gltfast", "ARSDK_GLTFAST" }
     };
-    
+
     static PackageImportPreprocess()
     {
         AddPackagesToManifest();
@@ -28,8 +28,8 @@ public class PackageImportPreprocess
         SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
         SerializedProperty layersProp = tagManager.FindProperty("layers");
 
-        string[] layerNames = {"Map", "MapPOI", "MapArrow", "AMProjViz", "ARItem"};
-        
+        string[] layerNames = { "Map", "MapPOI", "MapArrow", "AMProjViz", "ARItem" };
+
         foreach (string layerName in layerNames)
         {
             bool layerExist = false;
@@ -76,10 +76,10 @@ public class PackageImportPreprocess
 
         List<string> shaderNames = new List<string>();
 
-        for(int i=0 ; i<shadersCount ; i++)
+        for (int i = 0; i < shadersCount; i++)
         {
             SerializedProperty property = alwaysIncludedShaders.GetArrayElementAtIndex(i);
-            if(property != null && property.objectReferenceValue)
+            if (property != null && property.objectReferenceValue)
             {
                 shaderNames.Add(property.objectReferenceValue.name);
             }
@@ -91,7 +91,7 @@ public class PackageImportPreprocess
             Shader shader = AssetDatabase.LoadAssetAtPath<Shader>(shaderPath);
             string shaderName = shader.name;
 
-            if(shaderNames.Contains(shaderName))
+            if (shaderNames.Contains(shaderName))
             {
                 continue;
             }
@@ -127,7 +127,7 @@ public class PackageImportPreprocess
 
         graphicsSettings.ApplyModifiedProperties();
 
-        
+
         AddDefineSymbols();
         CheckVLSDKDefineSymbols();
     }
@@ -142,12 +142,12 @@ public class PackageImportPreprocess
             Debug.LogError("Cannot find manifest.json file");
             return;
         }
-        
+
         string manifestJson = File.ReadAllText(manifestPath);
         string dependenciesBlock = GetDependenciesBlock(manifestJson);
-        
+
         Dictionary<string, string> dependencies = ParseDependencies(dependenciesBlock);
-        
+
         bool manifestChanged = false;
         foreach (var package in packagesToAdd)
         {
@@ -229,7 +229,7 @@ public class PackageImportPreprocess
 
     private static void AddDefineSymbols()
     {
-        foreach(var packages in packagesToDefineSymbols)
+        foreach (var packages in packagesToDefineSymbols)
         {
             string defineSymbol = packages.Value;
             AddDefineSymbol(defineSymbol, BuildTargetGroup.Standalone);
@@ -249,7 +249,7 @@ public class PackageImportPreprocess
             PlayerSettings.SetScriptingDefineSymbolsForGroup(group, symbols);
         }
     }
-    
+
     private static IEnumerable<BuildTargetGroup> GetBuildTargetGroups()
     {
         foreach (BuildTargetGroup group in (BuildTargetGroup[])System.Enum.GetValues(typeof(BuildTargetGroup)))
@@ -261,7 +261,7 @@ public class PackageImportPreprocess
             }
         }
     }
-    
+
     private static bool IsObsolete(BuildTargetGroup group)
     {
         var attributes = typeof(BuildTargetGroup).GetField(group.ToString())

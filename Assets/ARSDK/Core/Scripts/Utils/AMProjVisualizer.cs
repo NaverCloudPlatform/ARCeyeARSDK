@@ -18,7 +18,7 @@ namespace ARCeye
         public void Load(string amprojFilePath)
         {
             m_ReadAMProjFinished = false;
-            StartCoroutine( LoadInternal(amprojFilePath) );
+            StartCoroutine(LoadInternal(amprojFilePath));
         }
 
         private IEnumerator LoadInternal(string amprojFilePath)
@@ -52,7 +52,7 @@ namespace ARCeye
                 {
                     m_JsonStr = System.IO.File.ReadAllText(amprojPath);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     NativeLogger.Print(LogLevel.ERROR, $"파일을 읽는데 문제가 발생했습니다. 다음 경로에 amproj 파일이 존재하는지 확인해주세요 : " + amprojPath);
                     Debug.LogError("Error: " + e);
@@ -66,19 +66,19 @@ namespace ARCeye
         public void Visualize(string stageName)
         {
             NativeLogger.Print(LogLevel.DEBUG, $"Visualize amproj stage ({stageName})");
-            StartCoroutine( VisualizeInternal(stageName) );
+            StartCoroutine(VisualizeInternal(stageName));
         }
 
         private IEnumerator VisualizeInternal(string stageName)
         {
-            yield return new WaitUntil(()=>m_ReadAMProjFinished);
+            yield return new WaitUntil(() => m_ReadAMProjFinished);
 
             // 기존에 추가되어 있던 요소들을 제거.
             Reset();
 
             // 새로운 요소들 추가.
             JObject stageObject = LoadStage(stageName);
-            if(stageObject == null)
+            if (stageObject == null)
             {
                 yield break;
             }
@@ -86,7 +86,7 @@ namespace ARCeye
             JArray layersObject = LoadAllLayers(stageObject);
 
             // 모든 레이어를 순회하면서 vertices 그리기.
-            foreach(JObject layer in layersObject)
+            foreach (JObject layer in layersObject)
             {
                 AddLinesInLayer(layer);
             }
@@ -95,7 +95,7 @@ namespace ARCeye
         public void Reset()
         {
             int childCount = transform.childCount;
-            for(int i=0 ; i<childCount ; i++) 
+            for (int i = 0; i < childCount; i++)
             {
                 Destroy(transform.GetChild(i).gameObject);
             }
@@ -103,50 +103,51 @@ namespace ARCeye
 
         private JObject LoadStage(string stageName)
         {
-            var stageObjects = (JArray) m_Root["stages"];
+            var stageObjects = (JArray)m_Root["stages"];
             JObject stageObject = stageObjects
                     .OfType<JObject>()
-                    .FirstOrDefault(obj => obj["name"]?.ToString() == stageName);   
+                    .FirstOrDefault(obj => obj["name"]?.ToString() == stageName);
             return stageObject;
         }
 
         private JArray LoadAllLayers(JObject stageObject)
         {
-            return (JArray) stageObject["layers"];
+            return (JArray)stageObject["layers"];
         }
 
         private void AddLinesInLayer(JObject layer)
         {
-            string layerName = (string) layer["name"];
-            JArray layerColor = (JArray) layer["color"];
-            JArray items = (JArray) layer["items"];
-            if(items.Count == 0) {
+            string layerName = (string)layer["name"];
+            JArray layerColor = (JArray)layer["color"];
+            JArray items = (JArray)layer["items"];
+            if (items.Count == 0)
+            {
                 return;
             }
 
             GameObject lineRendererGo = new GameObject($"amproj - {layerName}");
             lineRendererGo.transform.parent = transform;
 
-            Color stageColor = new Color((float) layerColor[0], (float) layerColor[1], (float) layerColor[2]);
+            Color stageColor = new Color((float)layerColor[0], (float)layerColor[1], (float)layerColor[2]);
 
             var graphNodePositions = CacheGraphNodeItemPositions(items);
 
-            foreach(JObject item in items)
+            foreach (JObject item in items)
             {
-                string itemName = (string) item["name"];
-                string type = (string) item["type"];
+                string itemName = (string)item["name"];
+                string type = (string)item["type"];
 
-                if(type == "GeometryItem")
+                if (type == "GeometryItem")
                 {
                     AddGeometryItemLines(item, layerName, itemName, stageColor, lineRendererGo.transform);
-                } 
-                else if(type == "GraphEdgeItem")
+                }
+                else if (type == "GraphEdgeItem")
                 {
-                    string fromId = (string) item["link.from"];
-                    string toId = (string) item["link.to"];
+                    string fromId = (string)item["link.from"];
+                    string toId = (string)item["link.to"];
 
                     Vector3 from = graphNodePositions[fromId];
-                    Vector3 to   = graphNodePositions[toId];
+                    Vector3 to = graphNodePositions[toId];
 
                     AddGraphEdgeLines(from, to, layerName, stageColor, lineRendererGo.transform);
                 }
@@ -157,15 +158,15 @@ namespace ARCeye
         {
             Dictionary<string, Vector3> graphNodeItems = new Dictionary<string, Vector3>();
 
-            foreach(JObject item in items)
+            foreach (JObject item in items)
             {
-                string type = (string) item["type"];
+                string type = (string)item["type"];
 
-                if(type == "GraphNodeItem")
+                if (type == "GraphNodeItem")
                 {
-                    string uuid = (string) item["uuid"];
-                    JArray positionArr = (JArray) item["position"];
-                    Vector3 position = new Vector3((float) positionArr[0], (float) positionArr[1], (float) positionArr[2]);
+                    string uuid = (string)item["uuid"];
+                    JArray positionArr = (JArray)item["position"];
+                    Vector3 position = new Vector3((float)positionArr[0], (float)positionArr[1], (float)positionArr[2]);
 
                     graphNodeItems.Add(uuid, position);
                 }
@@ -176,26 +177,26 @@ namespace ARCeye
 
         private void AddGeometryItemLines(JObject item, string layerName, string itemName, Color color, Transform parent)
         {
-            JArray vertices = (JArray) item["vertices"];
-            if(vertices == null)
+            JArray vertices = (JArray)item["vertices"];
+            if (vertices == null)
             {
                 return;
             }
 
             string lineName = $"{layerName} {itemName}";
-            JArray segments = (JArray) item["segments"];
+            JArray segments = (JArray)item["segments"];
 
-            if(segments == null)
+            if (segments == null)
             {
                 AddGeometryItemLineSegment(lineName, color, parent, vertices, 0, vertices.Count);
             }
             else
             {
-                for(int i=0 ; i<segments.Count ; i++)
+                for (int i = 0; i < segments.Count; i++)
                 {
-                    JObject segment = (JObject) segments[i];
-                    int offset = (int) segment["offset"];
-                    int count = (int) segment["count"];
+                    JObject segment = (JObject)segments[i];
+                    int offset = (int)segment["offset"];
+                    int count = (int)segment["count"];
 
                     AddGeometryItemLineSegment(lineName, color, parent, vertices, offset, count);
                 }
@@ -207,13 +208,13 @@ namespace ARCeye
             LineRenderer lineRenderer = CreateLineRenderer(itemName, stageColor, parent);
             lineRenderer.positionCount = count;
 
-            for(int i=0 ; i<count ; i++)
+            for (int i = 0; i < count; i++)
             {
-                JArray vertex = (JArray) vertices[offset + i];
+                JArray vertex = (JArray)vertices[offset + i];
 
-                float x = (float) vertex[0];
-                float y = (float) vertex[1];
-                float z = (float) vertex[2];
+                float x = (float)vertex[0];
+                float y = (float)vertex[1];
+                float z = (float)vertex[2];
 
                 lineRenderer.SetPosition(i, new Vector3(-x, y, z));
             }

@@ -19,7 +19,7 @@ namespace ARCeye
             var mapLayerMask = LayerMask.NameToLayer("Map");
 
             var children = gameObject.GetComponentsInChildren<Transform>();
-            foreach(var child in children)
+            foreach (var child in children)
             {
                 child.gameObject.layer = mapLayerMask;
             }
@@ -33,17 +33,18 @@ namespace ARCeye
             float scaledFontSize = fontSize * 2;
 
             // 앞으로 생성될 MapPOI들을 위해 저장.
-            m_FontSize = (int) scaledFontSize;
-            
+            m_FontSize = (int)scaledFontSize;
+
             // 기존에 추가 되어 있던 MapPOI들의 fontSize를 변경.
-            foreach(var mapPOI in m_MapPOILists) {
+            foreach (var mapPOI in m_MapPOILists)
+            {
                 mapPOI.SetFontSize(m_FontSize);
             }
         }
 
         public void SetOutlineThickness(float thickness)
         {
-            
+
         }
 
         public void InsertPOIEntity(UnityMapPOI mapPOI, int id, int dpCode, string label, Vector3 position, int visibility, int display)
@@ -53,11 +54,11 @@ namespace ARCeye
             //   Map - 1
             //   AR - 2
             //   Map and AR - 3
-            if(visibility == 0 || visibility == 2)
+            if (visibility == 0 || visibility == 2)
             {
                 return;
             }
-            
+
             // MapPOIPool을 MapPOI들의 root로 설정.
             mapPOI.transform.parent = transform;
 
@@ -73,7 +74,8 @@ namespace ARCeye
 
         public void RemoveAllMapPOIs()
         {
-            foreach(var mapPOI in m_MapPOILists) {
+            foreach (var mapPOI in m_MapPOILists)
+            {
                 Destroy(mapPOI.gameObject);
             }
             m_MapPOILists.Clear();
@@ -86,7 +88,7 @@ namespace ARCeye
 
         public void ActivateFullmapMode()
         {
-            foreach(var mapPOI in m_MapPOILists)
+            foreach (var mapPOI in m_MapPOILists)
             {
                 mapPOI.ActivateFullmapMode();
             }
@@ -94,7 +96,7 @@ namespace ARCeye
 
         public void ActivateMinimapMode()
         {
-            foreach(var mapPOI in m_MapPOILists)
+            foreach (var mapPOI in m_MapPOILists)
             {
                 mapPOI.ActivateMinimapMode();
             }

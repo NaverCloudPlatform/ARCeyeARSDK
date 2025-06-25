@@ -1,17 +1,17 @@
 {
-    "name": "com.naverlabs.arsdk",
-    "version": "1.6.1-preview.6",
-    "displayName": "ARSDK",
-    "description": "ARPG project",
-    "unity": "2021.3",
-    "dependencies": {
-      "com.unity.nuget.newtonsoft-json": "3.2.1",
-      "com.unity.cloud.gltfast": "6.9.0",
-      "com.unity.cloud.draco": "5.1.8",
-      "com.unity.textmeshpro": "3.0.6"
-    },
-    "author": {
-      "name": "NAVER LABS"
-    }
+  "name": "com.naverlabs.arsdk",
+  "version": "1.7.1",
+  "displayName": "ARSDK",
+  "description": "ARPG project",
+  "unity": "2021.3",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.cloud.gltfast": "6.9.0",
+    "com.unity.cloud.draco": "5.1.8",
+    "com.unity.textmeshpro": "3.0.6",
+    "com.unity.2d.sprite": "1.0.0"
+  },
+  "author": {
+    "name": "NAVER LABS"
   }
-  
+}

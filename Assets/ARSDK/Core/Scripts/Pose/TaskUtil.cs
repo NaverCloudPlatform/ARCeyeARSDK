@@ -9,7 +9,7 @@ namespace ARCeye
     {
         public static async Task WaitUntil(System.Func<bool> action)
         {
-            while(!action.Invoke())
+            while (!action.Invoke())
             {
                 await Task.Delay(50);
             }

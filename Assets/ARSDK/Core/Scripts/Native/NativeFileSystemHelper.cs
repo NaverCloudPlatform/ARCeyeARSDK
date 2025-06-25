@@ -127,8 +127,10 @@ namespace ARCeye
             s_IsReadingComplete = true;
         }
 #else
-        public bool isReadingComplete {
-            get {
+        public bool isReadingComplete
+        {
+            get
+            {
                 return true;
             }
         }

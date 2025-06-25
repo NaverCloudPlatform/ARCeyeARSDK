@@ -8,19 +8,20 @@ using AOT;
 
 namespace ARCeye
 {
-    public enum GestureType {
+    public enum GestureType
+    {
         TAPPED = 0,
         UNTAPPED = 1,
     }
-    
+
     public class ItemGenerator : MonoBehaviour
-    {   
+    {
         /* -- Native plugin -- */
-        #if UNITY_IOS && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
-        #else
-            const string dll = "ARPG-plugin";
-        #endif
+#else
+        const string dll = "ARPG-plugin";
+#endif
 
         [DllImport(dll)] private static extern void SetCreateFuncNative(CreateFuncDelegate func);
         [DllImport(dll)] private static extern void SetLoadModelFuncNative(LoadModelFuncDelegate func);
@@ -105,14 +106,14 @@ namespace ARCeye
         public delegate void VFFFFBBB_Func(IntPtr vp, float f1, float f2, float f3, float f4, bool b1, bool b2, bool b3);
 
         public delegate bool HasCodeFunc(int i);
-        public delegate int  GetDefaultIconCodeFunc(IntPtr vp);
+        public delegate int GetDefaultIconCodeFunc(IntPtr vp);
         public delegate void SetIconCodeFunc(IntPtr vp, int i);
         public delegate void SetLabelFunc(IntPtr vp, IntPtr str);
         public delegate void SetAutoRotateModeFunc(IntPtr vp, int i);
 
 
         private static ItemGenerator s_Instance;
-        public  static ItemGenerator Instance => s_Instance;
+        public static ItemGenerator Instance => s_Instance;
 
         private static POIGenerator s_POIGenerator;
         private static InfoPanelGenerator s_InfoPanelGenerator;
@@ -127,7 +128,7 @@ namespace ARCeye
         [Header("Style")]
         [SerializeField]
         private Font m_Font;
-        public  Font font => m_Font;
+        public Font font => m_Font;
         [SerializeField]
         private Material m_PathMaterial;
         [SerializeField]
@@ -135,15 +136,23 @@ namespace ARCeye
         [SerializeField]
         private GameObject m_MapPathBulletEnd;
 
+        [Header("Advanced")]
+        [SerializeField]
+        private bool m_UseDeferAgent = true;
+
+        [Range(0.01f, 5)]
+        [SerializeField]
+        private float m_FrameBudget = 0.1f;
+
         private Camera m_MainCamera;
         private UnityCartoMap m_CartoMap;
         private UnityMapPOIPool m_MapPOIPool;
         private UnityMapPathIndicator m_MapPOIPathIndicator;
-        
+
         private Material m_InfoPanelTextMaterial;
-        public  Material infoPanelTextMaterial => m_InfoPanelTextMaterial;
+        public Material infoPanelTextMaterial => m_InfoPanelTextMaterial;
         private Material m_TurnSpotTextMaterial;
-        public  Material turnSpotTextMaterial => m_TurnSpotTextMaterial;
+        public Material turnSpotTextMaterial => m_TurnSpotTextMaterial;
 
 
         void Awake()
@@ -153,7 +162,8 @@ namespace ARCeye
             s_InfoPanelGenerator = GetComponent<InfoPanelGenerator>();
             s_MultiMediaGenerator = GetComponent<MultiMediaGenerator>();
 
-            s_MainThreadLoadingHandler = new MainThreadLoadingHandler();
+            s_MainThreadLoadingHandler = new MainThreadLoadingHandler(m_UseDeferAgent);
+            s_MainThreadLoadingHandler.FrameBudget = m_FrameBudget;
 
             InitScene();
 
@@ -211,7 +221,7 @@ namespace ARCeye
 
         private void InitScene()
         {
-            if(m_Scene != null)
+            if (m_Scene != null)
             {
                 m_Scene.position = Vector3.zero;
                 m_Scene.rotation = Quaternion.identity;
@@ -254,15 +264,15 @@ namespace ARCeye
             scenePosition.y = -floorHeight;
             m_Scene.position = scenePosition;
 
-            if(m_CartoMap != null) 
+            if (m_CartoMap != null)
             {
                 m_CartoMap.transform.position = Vector3.zero;
             }
-            if(m_MapPOIPool != null) 
+            if (m_MapPOIPool != null)
             {
                 m_MapPOIPool.transform.position = Vector3.zero;
             }
-            if(m_MapPOIPathIndicator != null)
+            if (m_MapPOIPathIndicator != null)
             {
                 m_MapPOIPathIndicator.transform.position = Vector3.zero;
             }
@@ -274,54 +284,68 @@ namespace ARCeye
             // className과 일치하는 컴포넌트를 추가
             string ns = "ARCeye";
             string className = Marshal.PtrToStringAnsi(classNamePtr);
-            
+
             GameObject go;
             Type modelType = Type.GetType($"{ns}.{className}");
 
-            if(modelType == typeof(UnitySignPOI)) {
+            if (modelType == typeof(UnitySignPOI))
+            {
                 go = s_POIGenerator.GenerateSignPOI();
-            } else if(modelType == typeof(UnityInfoPanel)) {
+            }
+            else if (modelType == typeof(UnityInfoPanel))
+            {
                 GameObject empty = new GameObject("ItemInfoPanel");
 
                 go = s_InfoPanelGenerator.GenerateInfoPanel();
                 go.transform.parent = empty.transform;
 
                 SetParentToModel(empty, modelType);
-            } else if(modelType == typeof(UnityMapPOIPool)) {
+            }
+            else if (modelType == typeof(UnityMapPOIPool))
+            {
                 var prev = GameObject.Find("UnityMapPOIPool");
                 Destroy(prev);
-                
+
                 go = new GameObject();
-            } else if(modelType == typeof(UnityVideo)) {
+            }
+            else if (modelType == typeof(UnityVideo))
+            {
                 go = s_MultiMediaGenerator.GenerateVideo();
-            } else {
+            }
+            else
+            {
                 go = new GameObject();
             }
             go.name = className;
-            
+
             // 각 Item별 적당한 root로 이동.
-            if(modelType != typeof(UnityInfoPanel))
+            if (modelType != typeof(UnityInfoPanel))
             {
                 SetParentToModel(go, modelType);
             }
 
             // 각 Item들을 초기화.
             var model = go.GetComponent(modelType);
-            if(model == null) {
+            if (model == null)
+            {
                 model = go.AddComponent(modelType);
             }
 
-            if(modelType == typeof(UnityMapPathIndicator)) {
+            if (modelType == typeof(UnityMapPathIndicator))
+            {
                 var mapPathIndicator = model as UnityMapPathIndicator;
                 s_Instance.m_MapPOIPathIndicator = mapPathIndicator;
                 mapPathIndicator.SetMaterial(s_Instance.m_PathMaterial);
-            } else if(modelType == typeof(UnityMapPOIPool)) {
+            }
+            else if (modelType == typeof(UnityMapPOIPool))
+            {
                 s_Instance.m_MapPOIPool = model.GetComponent<UnityMapPOIPool>();
             }
 
             var unityModel = model as UnityModel;
             unityModel.SetNativePtr(nativeModelPtr);
-            unityModel.RunCoroutine(()=>{
+            unityModel.RunCoroutine(() =>
+            {
                 OnLoadingCompleteNative(nativeModelPtr);
             }, 0.1f);
 
@@ -339,15 +363,17 @@ namespace ARCeye
             filePath = PathUtil.Validate(filePath);
 
             bool useNextStep = FindObjectOfType<NextStep>() != null;
-            if(className == nameof(UnityNextStepDot) || className == nameof(UnityNextStepArrow) || className == nameof(UnityNextStepText)) {
-                if(!useNextStep) {
+            if (className == nameof(UnityNextStepDot) || className == nameof(UnityNextStepArrow) || className == nameof(UnityNextStepText))
+            {
+                if (!useNextStep)
+                {
                     return IntPtr.Zero;
                 }
             }
 
             GameObject go = new GameObject(filePath);
             Type modelType = Type.GetType($"{ns}.{className}");
-            
+
             go.AddComponent(modelType);
             go.AddComponent<PostEventGltfAsset>();
 
@@ -356,22 +382,25 @@ namespace ARCeye
 
             // Set native pointer
             UnityModel model = go.GetComponent(modelType) as UnityModel;
-            if(model) {
+            if (model)
+            {
                 model.SetNativePtr(nativeModelPtr);
             }
 
-            if(modelType == typeof(UnityCartoMap)) {
+            if (modelType == typeof(UnityCartoMap))
+            {
                 s_Instance.m_CartoMap = go.GetComponent<UnityCartoMap>();
-            } 
+            }
 
             // glb 파일이 없는 Item인지 확인. filesystem을 사용하지 않는 Android 환경에서 호출된다.
-            if(NativeFileSystemHelper.IsGLBNotAssigned(filePath))
+            if (NativeFileSystemHelper.IsGLBNotAssigned(filePath))
             {
                 NativeLogger.Print(LogLevel.WARNING, $"glb model file is not assigned to an instance of {className}");
             }
             else
             {
-                s_MainThreadLoadingHandler.Enqueue(go, filePath, ()=>{
+                s_MainThreadLoadingHandler.Load(go, filePath, () =>
+                {
                     OnLoadingCompleteNative(nativeModelPtr);
                 });
             }
@@ -381,42 +410,52 @@ namespace ARCeye
 
         static public void SetParentToModel(GameObject modelGo, Type modelType)
         {
-            if(s_Instance.m_Scene != null) {
-                if(modelType == typeof(UnityNextStepArrow) || modelType == typeof(UnityNextStepText)) {
+            if (s_Instance.m_Scene != null)
+            {
+                if (modelType == typeof(UnityNextStepArrow) || modelType == typeof(UnityNextStepText))
+                {
                     modelGo.transform.parent = s_Instance.m_Scene.parent;
-                } else {
+                }
+                else
+                {
                     modelGo.transform.parent = s_Instance.m_Scene.transform;
                 }
             }
         }
 
-        static public void OnGestureReceived(GestureType gestureType, GameObject receiver) 
+        static public void OnGestureReceived(GestureType gestureType, GameObject receiver)
         {
             var panel = receiver.GetComponent<UnityInfoPanel>();
-            if(panel != null) {
+            if (panel != null)
+            {
                 IntPtr nativeModelPtr = (panel as UnityModel).GetNativePtr();
 
-                if (nativeModelPtr != IntPtr.Zero) {
+                if (nativeModelPtr != IntPtr.Zero)
+                {
                     OnGestureReceivedNative(nativeModelPtr, (int)gestureType);
                 }
                 return;
             }
 
             var video = receiver.GetComponent<UnityVideo>();
-            if(video != null) {
+            if (video != null)
+            {
                 IntPtr nativeModelPtr = (video as UnityModel).GetNativePtr();
 
-                if (nativeModelPtr != IntPtr.Zero) {
+                if (nativeModelPtr != IntPtr.Zero)
+                {
                     OnGestureReceivedNative(nativeModelPtr, (int)gestureType);
                 }
                 return;
             }
 
             UnityModel model = receiver.GetComponent<UnityModel>() as UnityModel;
-            if(model) {
+            if (model)
+            {
                 IntPtr nativeModelPtr = model.GetNativePtr();
 
-                if (nativeModelPtr != IntPtr.Zero) {
+                if (nativeModelPtr != IntPtr.Zero)
+                {
                     OnGestureReceivedNative(nativeModelPtr, (int)gestureType);
                 }
                 return;
@@ -428,17 +467,20 @@ namespace ARCeye
         {
             // 이미 GameObject가 Destroy 된 상태에서
             // native의 background thread가 UnloadModel을 호출해서 발생하는 문제 방지.
-            try {
+            try
+            {
                 GCHandle.FromIntPtr(itemPtr);
                 GameObject item = Unwrap<GameObject>(itemPtr);
 
-                if(item.GetComponent<UnityModel>().GetType() == typeof(UnityInfoPanel))
+                if (item.GetComponent<UnityModel>().GetType() == typeof(UnityInfoPanel))
                 {
                     Destroy(item.transform.parent.gameObject);
                 }
 
                 Destroy(item);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 // NativeLogger.Print(LogLevel.WARNING, e.ToString());
             }
         }
@@ -446,12 +488,16 @@ namespace ARCeye
         [MonoPInvokeCallback(typeof(SetNameFuncDelegate))]
         static public void SetName(IntPtr itemPtr, IntPtr namePtr)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
-                try {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
+                try
+                {
                     GameObject item = Unwrap<GameObject>(itemPtr);
                     string name = Marshal.PtrToStringAnsi(namePtr);
                     item.name = name;
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     NativeLogger.Print(LogLevel.WARNING, e.ToString());
                     return;
                 }
@@ -462,45 +508,52 @@ namespace ARCeye
         [MonoPInvokeCallback(typeof(SetActiveFuncDelegate))]
         static public void SetActive(IntPtr itemPtr, bool active)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
 
                 var panel = item.GetComponent<UnityInfoPanel>();
-                if(panel != null) {
+                if (panel != null)
+                {
                     (panel as UnityModel).SetActive(active);
                     return;
                 }
 
                 var video = item.GetComponent<UnityVideo>();
-                if(video != null) {
+                if (video != null)
+                {
                     (video as UnityModel).SetActive(active);
                     return;
                 }
 
-                item.GetComponent<UnityModel>().SetActive(active); 
+                item.GetComponent<UnityModel>().SetActive(active);
             });
         }
 
         [MonoPInvokeCallback(typeof(SetSetPickableFuncDelegate))]
         static public void SetPickable(IntPtr itemPtr, bool pickable)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
-                
+
                 var infoPanel = item.GetComponent<UnityInfoPanel>();
-                if(infoPanel != null) {
+                if (infoPanel != null)
+                {
                     infoPanel.SetPickable(pickable);
                     return;
                 }
 
                 var video = item.GetComponent<UnityVideo>();
-                if(video != null) {
+                if (video != null)
+                {
                     (video as UnityModel).SetPickable(pickable);
                     return;
                 }
 
                 var unityModel = item.GetComponent<UnityModel>();
-                if(unityModel != null) {
+                if (unityModel != null)
+                {
                     unityModel.SetPickable(pickable);
                     return;
                 }
@@ -526,9 +579,10 @@ namespace ARCeye
 
         // Background thread에서 실행
         [MonoPInvokeCallback(typeof(SetPlayAnimationFuncDelegate))]
-        static public void PlayAnimation(IntPtr itemPtr, IntPtr animNamePtr, IntPtr playModePtr) 
+        static public void PlayAnimation(IntPtr itemPtr, IntPtr animNamePtr, IntPtr playModePtr)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
 
                 string animName = Marshal.PtrToStringAnsi(animNamePtr);
@@ -539,10 +593,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(SetHasAnimationFuncDelegate))]
-        static public bool HasAnimation(IntPtr itemPtr, IntPtr animNamePtr) 
+        static public bool HasAnimation(IntPtr itemPtr, IntPtr animNamePtr)
         {
             bool value = true;
-            
+
             GameObject item = Unwrap<GameObject>(itemPtr);
             string animName = Marshal.PtrToStringAnsi(animNamePtr);
             value = item.GetComponent<UnityModel>().HasAnimation(animName);
@@ -554,14 +608,16 @@ namespace ARCeye
         static public float AnimationDuration(IntPtr itemPtr, IntPtr animNamePtr)
         {
             GameObject item = Unwrap<GameObject>(itemPtr);
-            if(item == null) {
+            if (item == null)
+            {
                 return 0.0f;
             }
 
             string animName = Marshal.PtrToStringAnsi(animNamePtr);
             UnityModel unityModel = item.GetComponent<UnityModel>();
 
-            if(unityModel == null) {
+            if (unityModel == null)
+            {
                 return 0.0f;
             }
             float value = unityModel.AnimationDuration(animName);
@@ -569,44 +625,53 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(SetFadeFuncDelegate))]
-        static public void Fade(IntPtr itemPtr, float duration, bool fadeIn) 
+        static public void Fade(IntPtr itemPtr, float duration, bool fadeIn)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
-                
+
                 var infoPanel = item.GetComponent<UnityInfoPanel>();
-                if(infoPanel != null) {
+                if (infoPanel != null)
+                {
                     infoPanel.Fade(duration, fadeIn);
                     return;
                 }
 
                 var video = item.GetComponent<UnityVideo>();
-                if(video != null) {
+                if (video != null)
+                {
                     video.Fade(duration, fadeIn);
                     return;
                 }
 
                 var unityModel = item.GetComponent<UnityModel>();
-                if(unityModel != null) {
+                if (unityModel != null)
+                {
                     unityModel.Fade(duration, fadeIn);
                     return;
                 }
-                
+
                 NativeLogger.Print(LogLevel.WARNING, $"[ItemGenerator] Fade - {item.name} doesn't have a UnityModel component");
             });
         }
 
         [MonoPInvokeCallback(typeof(SetFadeCallbackFuncDelegate))]
-        static public void FadeCallback(IntPtr itemPtr, IntPtr nativeModelPtr, float duration, bool fadeIn) 
+        static public void FadeCallback(IntPtr itemPtr, IntPtr nativeModelPtr, float duration, bool fadeIn)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityTurnSpot model = item.GetComponent<UnityTurnSpot>();
-                if(model != null) {
-                    model.Fade(duration, fadeIn, ()=>{
+                if (model != null)
+                {
+                    model.Fade(duration, fadeIn, () =>
+                    {
                         OnFadingCompleteNative(nativeModelPtr);
                     });
-                } else {
+                }
+                else
+                {
                     NativeLogger.Print(LogLevel.WARNING, $"[ItemGenerator] Fade - {item.name} doesn't have a UnityModel component");
                 }
             });
@@ -615,21 +680,26 @@ namespace ARCeye
 
         // Background thread에서 실행
         [MonoPInvokeCallback(typeof(SetSetOpacityFuncDelegate))]
-        static public void SetOpacity(IntPtr itemPtr, float opacity) 
+        static public void SetOpacity(IntPtr itemPtr, float opacity)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
 
                 var infoPanel = item.GetComponent<UnityInfoPanel>();
-                if(infoPanel != null) {
+                if (infoPanel != null)
+                {
                     infoPanel.SetOpacity(opacity);
                     return;
                 }
 
                 UnityModel unityModel = item.GetComponent<UnityModel>();
-                if(unityModel != null) {
+                if (unityModel != null)
+                {
                     unityModel.SetOpacity(opacity);
-                } else {
+                }
+                else
+                {
                     NativeLogger.Print(LogLevel.WARNING, $"[ItemGenerator] SetOpacity - {item.name} doesn't have a UnityModel component");
                 }
             });
@@ -641,23 +711,26 @@ namespace ARCeye
         [MonoPInvokeCallback(typeof(VB_Func))]
         static public void SetBillboard(IntPtr itemPtr, bool active)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
 
                 UnityModel model = item.GetComponent<UnityModel>();
-                if(model != null) {
+                if (model != null)
+                {
                     model.SetBillboard(active);
                     return;
                 }
-                    
+
                 NativeLogger.Print(LogLevel.WARNING, $"[ItemGenerator] SetBillboard - {item.name} doesn't have a UnityTurnSpot component");
             });
         }
 
         [MonoPInvokeCallback(typeof(SetNameFuncDelegate))]
-        static public void SetTurnSpotLabel(IntPtr itemPtr, IntPtr labelPtr) 
+        static public void SetTurnSpotLabel(IntPtr itemPtr, IntPtr labelPtr)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityTurnSpot turnSpot = item.GetComponent<UnityTurnSpot>();
 
@@ -671,7 +744,8 @@ namespace ARCeye
         [MonoPInvokeCallback(typeof(VFpI_Func))]
         static public void SetRoute(IntPtr ptr, IntPtr buffer, int count)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 int length = count * 3;
                 float[] pathBuffer = new float[length];
                 Marshal.Copy(buffer, pathBuffer, 0, length);
@@ -687,9 +761,12 @@ namespace ARCeye
         [MonoPInvokeCallback(typeof(V_Func))]
         static public void UnloadPath(IntPtr ptr)
         {
-            try {
+            try
+            {
                 GCHandle.FromIntPtr(ptr);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 NativeLogger.Print(LogLevel.WARNING, e.ToString());
                 return;
             }
@@ -701,8 +778,10 @@ namespace ARCeye
 
         //// UnityMapPOIPool
         [MonoPInvokeCallback(typeof(VF_Func))]
-        static public void SetFontSize(IntPtr itemPtr, float fontSize) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetFontSize(IntPtr itemPtr, float fontSize)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityMapPOIPool model = item.GetComponent<UnityMapPOIPool>();
                 model.SetFontSize(fontSize);
@@ -710,8 +789,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(VF_Func))]
-        static public void SetOutlineThickness(IntPtr itemPtr, float fontSize) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetOutlineThickness(IntPtr itemPtr, float fontSize)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityMapPOIPool model = item.GetComponent<UnityMapPOIPool>();
                 model.SetOutlineThickness(fontSize);
@@ -719,8 +800,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(VIISFFFII_Func))]
-        static public void InsertPOIEntity(IntPtr itemPtr, int id, int dpCode, IntPtr labelRaw, float px, float py, float pz, int visibility, int display) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void InsertPOIEntity(IntPtr itemPtr, int id, int dpCode, IntPtr labelRaw, float px, float py, float pz, int visibility, int display)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityMapPOIPool mapPOIPool = item.GetComponent<UnityMapPOIPool>();
 
@@ -735,12 +818,14 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]
-        static public void RemoveNode(IntPtr itemPtr) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void RemoveNode(IntPtr itemPtr)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
 
                 // Scene을 변경하는 경우에는 item이 null이 되는 경우가 발생.
-                if(item != null)
+                if (item != null)
                 {
                     UnityMapPOIPool model = item.GetComponent<UnityMapPOIPool>();
                     model.RemoveAllMapPOIs();
@@ -749,8 +834,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(S_Func))]
-        static public void SetConfigFullpath(IntPtr atlasFullpathRaw) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetConfigFullpath(IntPtr atlasFullpathRaw)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 // GameObject item = Unwrap<GameObject>(itemPtr);
                 // UnityMapPOIPool model = item.GetComponent<UnityMapPOIPool>();
 
@@ -763,8 +850,10 @@ namespace ARCeye
 
         //// UnitySignPOI
         [MonoPInvokeCallback(typeof(VI_Func))]
-        static public void SetType(IntPtr itemPtr, int type) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetType(IntPtr itemPtr, int type)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnitySignPOI model = item.GetComponent<UnitySignPOI>();
                 model.SetType(type);
@@ -772,18 +861,22 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(HasCodeFunc))]
-        static public bool HasCode(int dpCode) {
+        static public bool HasCode(int dpCode)
+        {
             return true;
         }
 
         [MonoPInvokeCallback(typeof(GetDefaultIconCodeFunc))]
-        static public int GetDefaultIconCode(IntPtr itemPtr) {
+        static public int GetDefaultIconCode(IntPtr itemPtr)
+        {
             return 0;
         }
 
         [MonoPInvokeCallback(typeof(SetIconCodeFunc))]
-        static public void SetIconCode(IntPtr itemPtr, int type) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetIconCode(IntPtr itemPtr, int type)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnitySignPOI model = item.GetComponent<UnitySignPOI>();
                 s_POIGenerator.SetIconCodeToSignPOI(model, type);
@@ -791,8 +884,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(SetLabelFunc))]
-        static public void SetLabel(IntPtr itemPtr, IntPtr rawStr) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetLabel(IntPtr itemPtr, IntPtr rawStr)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnitySignPOI model = item.GetComponent<UnitySignPOI>();
 
@@ -803,8 +898,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(SetAutoRotateModeFunc))]
-        static public void SetAutoRotateMode(IntPtr itemPtr, int rotateMode) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetAutoRotateMode(IntPtr itemPtr, int rotateMode)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnitySignPOI model = item.GetComponent<UnitySignPOI>();
 
@@ -819,8 +916,10 @@ namespace ARCeye
 
         /// UnityInfoPanel
         [MonoPInvokeCallback(typeof(VI_Func))]
-        static public void SetInfoPanelType(IntPtr itemPtr, int type) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetInfoPanelType(IntPtr itemPtr, int type)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
                 model.SetInfoPanelType(type);
@@ -828,8 +927,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(VB_Func))]
-        static public void UseFrame(IntPtr itemPtr, bool value) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void UseFrame(IntPtr itemPtr, bool value)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
                 model.UseFrame(value);
@@ -837,8 +938,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(VB_Func))]
-        static public void UseRoundedCorner(IntPtr itemPtr, bool value) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void UseRoundedCorner(IntPtr itemPtr, bool value)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
                 model.UseRoundedCorner(value);
@@ -846,8 +949,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(VS_Func))]
-        static public void SetInfoPanelText(IntPtr itemPtr, IntPtr strPtr) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetInfoPanelText(IntPtr itemPtr, IntPtr strPtr)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
 
@@ -857,8 +962,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(VS_Func))]
-        static public void SetInfoPanelHeader(IntPtr itemPtr, IntPtr strPtr) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetInfoPanelHeader(IntPtr itemPtr, IntPtr strPtr)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
 
@@ -868,8 +975,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(VS_Func))]
-        static public void SetInfoPanelFrame(IntPtr itemPtr, IntPtr strPtr) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetInfoPanelFrame(IntPtr itemPtr, IntPtr strPtr)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
 
@@ -879,8 +988,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(VS_Func))]
-        static public void SetInfoPanelImage(IntPtr itemPtr, IntPtr imagePathPtr) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void SetInfoPanelImage(IntPtr itemPtr, IntPtr imagePathPtr)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
 
@@ -890,8 +1001,10 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(VFFFFBBB_Func))]
-        static public void BuildVideo(IntPtr itemPtr, float width, float height, float pivotX, float pivotY, bool hasAlphaMask, bool hasBackface, bool isBillboard) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
+        static public void BuildVideo(IntPtr itemPtr, float width, float height, float pivotX, float pivotY, bool hasAlphaMask, bool hasBackface, bool isBillboard)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityVideo video = item.GetComponent<UnityVideo>();
 
@@ -901,22 +1014,29 @@ namespace ARCeye
 
         public void OnVideoLoaded(UnityMediaInfo info)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
-                if (m_Scene != null) {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
+                if (m_Scene != null)
+                {
                     Transform item = m_Scene.Find(info.uuid);
 
-                    if (item != null) {
+                    if (item != null)
+                    {
                         // If main player, override current main.
-                        if (info.playerType == 1) {
+                        if (info.playerType == 1)
+                        {
                             var MainPlayers = UnityVideo.s_MainPlayers;
 
-                            if (MainPlayers.Count > 0) {
+                            if (MainPlayers.Count > 0)
+                            {
                                 GameObject[] arr = new GameObject[MainPlayers.Count];
                                 MainPlayers.Values.CopyTo(arr, 0);
-                                GameObject lastPlayer = arr[MainPlayers.Count-1];
-                                if (lastPlayer != null) {
+                                GameObject lastPlayer = arr[MainPlayers.Count - 1];
+                                if (lastPlayer != null)
+                                {
                                     UnityVideo lastVideo = lastPlayer.GetComponent<UnityVideo>();
-                                    if (lastVideo != null) {
+                                    if (lastVideo != null)
+                                    {
                                         lastVideo.Mute(true);
                                     }
                                 }
@@ -926,7 +1046,8 @@ namespace ARCeye
                         }
 
                         UnityVideo video = item.gameObject.GetComponent<UnityVideo>();
-                        if (video != null) {
+                        if (video != null)
+                        {
                             video.Play(info);
                         }
                     }
@@ -934,14 +1055,19 @@ namespace ARCeye
             });
         }
 
-        public void OnVideoPlaying(string uuid, int playerType, float distance) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
-                if (m_Scene != null) {
+        public void OnVideoPlaying(string uuid, int playerType, float distance)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
+                if (m_Scene != null)
+                {
                     Transform item = m_Scene.Find(uuid);
 
-                    if (item != null) {
+                    if (item != null)
+                    {
                         UnityVideo video = item.gameObject.GetComponent<UnityVideo>();
-                        if (video != null && video.IsPlaying()) {
+                        if (video != null && video.IsPlaying())
+                        {
                             video.AttenuateVolume(distance);
                         }
                     }
@@ -951,26 +1077,35 @@ namespace ARCeye
 
         public void OnVideoUnloaded(string uuid, int playerType, bool ignoreFade)
         {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
-                if (m_Scene != null) {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
+                if (m_Scene != null)
+                {
                     // Remove main player
-                    if (playerType == 1) {
+                    if (playerType == 1)
+                    {
                         var MainPlayers = UnityVideo.s_MainPlayers;
 
                         GameObject item = MainPlayers[uuid] as GameObject;
 
-                        if (item != null) {
+                        if (item != null)
+                        {
                             UnityVideo video = item.GetComponent<UnityVideo>();
-                            if (video != null) {
+                            if (video != null)
+                            {
                                 // Unpause previous main player if present.
-                                if (video.IsPlaying() && MainPlayers.Count > 1) {
-                                    if (MainPlayers.Count > 1) {
+                                if (video.IsPlaying() && MainPlayers.Count > 1)
+                                {
+                                    if (MainPlayers.Count > 1)
+                                    {
                                         GameObject[] arr = new GameObject[MainPlayers.Count];
                                         MainPlayers.Values.CopyTo(arr, 0);
-                                        var prevPlayer = arr[MainPlayers.Count-2];
-                                        if (prevPlayer != null) {
+                                        var prevPlayer = arr[MainPlayers.Count - 2];
+                                        if (prevPlayer != null)
+                                        {
                                             UnityVideo prevVideo = prevPlayer.GetComponent<UnityVideo>();
-                                            if (prevVideo != null) {
+                                            if (prevVideo != null)
+                                            {
                                                 prevVideo.Mute(false);
                                             }
                                         }
@@ -983,12 +1118,15 @@ namespace ARCeye
                         }
                     }
 
-                    else {
+                    else
+                    {
                         Transform item = m_Scene.Find(uuid);
 
-                        if (item != null) {
+                        if (item != null)
+                        {
                             UnityVideo video = item.gameObject.GetComponent<UnityVideo>();
-                            if (video != null) {
+                            if (video != null)
+                            {
                                 video.Stop(ignoreFade, video.Unload);
                             }
                         }
@@ -997,23 +1135,30 @@ namespace ARCeye
             });
         }
 
-        public void OnAudioLoaded(UnityMediaInfo info) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
-                if (m_Scene != null) {
+        public void OnAudioLoaded(UnityMediaInfo info)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
+                if (m_Scene != null)
+                {
                     GameObject item = s_MultiMediaGenerator.GenerateAudio();
                     item.transform.SetParent(m_Scene);
 
                     // If main player, override current main.
-                    if (info.playerType == 1) {
+                    if (info.playerType == 1)
+                    {
                         var MainPlayers = UnityAudio.s_MainPlayers;
 
-                        if (MainPlayers.Count > 0) {
+                        if (MainPlayers.Count > 0)
+                        {
                             GameObject[] arr = new GameObject[MainPlayers.Count];
                             MainPlayers.Values.CopyTo(arr, 0);
-                            GameObject lastPlayer = arr[MainPlayers.Count-1];
-                            if (lastPlayer != null) {
+                            GameObject lastPlayer = arr[MainPlayers.Count - 1];
+                            if (lastPlayer != null)
+                            {
                                 UnityAudio lastAudio = lastPlayer.GetComponent<UnityAudio>();
-                                if (lastAudio != null) {
+                                if (lastAudio != null)
+                                {
                                     lastAudio.Mute(true);
                                 }
                             }
@@ -1023,21 +1168,27 @@ namespace ARCeye
                     }
 
                     UnityAudio audio = item.GetComponent<UnityAudio>();
-                    if (audio != null) {
+                    if (audio != null)
+                    {
                         audio.Play(info);
                     }
                 }
             });
         }
 
-        public void OnAudioPlaying(string uuid, int playerType, float distance) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
-                if (m_Scene != null) {
+        public void OnAudioPlaying(string uuid, int playerType, float distance)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
+                if (m_Scene != null)
+                {
                     Transform item = m_Scene.Find(uuid);
 
-                    if (item != null) {
+                    if (item != null)
+                    {
                         UnityAudio audio = item.gameObject.GetComponent<UnityAudio>();
-                        if (audio != null && audio.IsPlaying()) {
+                        if (audio != null && audio.IsPlaying())
+                        {
                             audio.AttenuateVolume(distance);
                         }
                     }
@@ -1045,27 +1196,37 @@ namespace ARCeye
             });
         }
 
-        public void OnAudioUnloaded(string uuid, int playerType, bool ignoreFade) {
-            MainThreadDispatcher.Instance()?.Enqueue(()=>{
-                if (m_Scene != null) {
+        public void OnAudioUnloaded(string uuid, int playerType, bool ignoreFade)
+        {
+            MainThreadDispatcher.Instance()?.Enqueue(() =>
+            {
+                if (m_Scene != null)
+                {
                     // Remove main player
-                    if (playerType == 1) {
+                    if (playerType == 1)
+                    {
                         var MainPlayers = UnityAudio.s_MainPlayers;
 
                         GameObject item = MainPlayers[uuid] as GameObject;
 
-                        if (item != null) {
+                        if (item != null)
+                        {
                             UnityAudio audio = item.GetComponent<UnityAudio>();
-                            if (audio != null) {
+                            if (audio != null)
+                            {
                                 // Unpause previous main player if present.
-                                if (audio.IsPlaying() && MainPlayers.Count > 1) {
-                                    if (MainPlayers.Count > 1) {
+                                if (audio.IsPlaying() && MainPlayers.Count > 1)
+                                {
+                                    if (MainPlayers.Count > 1)
+                                    {
                                         GameObject[] arr = new GameObject[MainPlayers.Count];
                                         MainPlayers.Values.CopyTo(arr, 0);
-                                        var prevPlayer = arr[MainPlayers.Count-2];
-                                        if (prevPlayer != null) {
+                                        var prevPlayer = arr[MainPlayers.Count - 2];
+                                        if (prevPlayer != null)
+                                        {
                                             UnityAudio prevAudio = prevPlayer.GetComponent<UnityAudio>();
-                                            if (prevAudio != null) {
+                                            if (prevAudio != null)
+                                            {
                                                 prevAudio.Mute(false);
                                             }
                                         }
@@ -1078,12 +1239,15 @@ namespace ARCeye
                         }
                     }
 
-                    else {
+                    else
+                    {
                         Transform item = m_Scene.Find(uuid);
 
-                        if (item != null) {
+                        if (item != null)
+                        {
                             UnityAudio audio = item.gameObject.GetComponent<UnityAudio>();
-                            if (audio != null) {
+                            if (audio != null)
+                            {
                                 audio.Stop(ignoreFade, audio.Unload);
                             }
                         }
@@ -1094,13 +1258,15 @@ namespace ARCeye
 
         //// 
 
-        static private T Unwrap<T>(IntPtr ptr) {
+        static private T Unwrap<T>(IntPtr ptr)
+        {
             object itemObj = GCHandle.FromIntPtr(ptr).Target;
-            T original = (T) itemObj;
+            T original = (T)itemObj;
             return original;
         }
 
-        static private IntPtr Wrap(UnityEngine.Object obj) {
+        static private IntPtr Wrap(UnityEngine.Object obj)
+        {
             GCHandle handle = GCHandle.Alloc(obj, GCHandleType.Weak);
             return GCHandle.ToIntPtr(handle);
         }

@@ -18,11 +18,11 @@ namespace ARCeye
 
 
         /* -- Native plugin -- */
-        #if UNITY_IOS && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
-        #else
-            const string dll = "ARPG-plugin";
-        #endif
+#else
+        const string dll = "ARPG-plugin";
+#endif
 
         public delegate void B_Func(bool b);
         public delegate bool I_BFunc(int i);
@@ -36,49 +36,55 @@ namespace ARCeye
         {
             s_Instance = this;
 
-            SetActivateScreenFuncNative( ActivateScreen );
-            SetIsScreenActivatedFuncNative( IsScreenActivated );
+            SetActivateScreenFuncNative(ActivateScreen);
+            SetIsScreenActivatedFuncNative(IsScreenActivated);
         }
 
 
         [MonoPInvokeCallback(typeof(IB_Func))]
         unsafe private static void ActivateScreen(int screenTypeIdx, bool active)
         {
-            RendererScreen screenType = (RendererScreen) screenTypeIdx;
+            RendererScreen screenType = (RendererScreen)screenTypeIdx;
 
-            switch(screenType)
+            switch (screenType)
             {
-                case RendererScreen.Map : {
-                    
-                    break;
-                }
-                case RendererScreen.Indicator : {
+                case RendererScreen.Map:
+                    {
 
-                    break;
-                }
-                default : {
-                    
-                    break;
-                }
+                        break;
+                    }
+                case RendererScreen.Indicator:
+                    {
+
+                        break;
+                    }
+                default:
+                    {
+
+                        break;
+                    }
             }
         }
 
         [MonoPInvokeCallback(typeof(I_BFunc))]
         private static bool IsScreenActivated(int screenTypeIdx)
         {
-            RendererScreen screenType = (RendererScreen) screenTypeIdx;
+            RendererScreen screenType = (RendererScreen)screenTypeIdx;
 
-            switch(screenType)
+            switch (screenType)
             {
-                case RendererScreen.Map : {
-                    return true;
-                }
-                case RendererScreen.Indicator : {
-                    return false;
-                }
-                default : {
-                    return false;
-                }
+                case RendererScreen.Map:
+                    {
+                        return true;
+                    }
+                case RendererScreen.Indicator:
+                    {
+                        return false;
+                    }
+                default:
+                    {
+                        return false;
+                    }
             }
         }
     }

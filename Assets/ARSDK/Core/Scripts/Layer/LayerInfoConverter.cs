@@ -15,7 +15,7 @@ namespace ARCeye
 
         protected virtual void Awake()
         {
-            
+
         }
 
         public void Load()
@@ -27,7 +27,7 @@ namespace ARCeye
         {
             m_StageNameByLayerName.Clear();
             m_LayerInfoSetting = layerInfoSetting;
-            
+
             Layer rootLayer = m_LayerInfoSetting.layer;
             rootLayer.parent = null;
 
@@ -42,19 +42,19 @@ namespace ARCeye
         /// </summary>
         protected virtual void FindStageName(Layer layer)
         {
-            if(layer.parent == null)
+            if (layer.parent == null)
             {
-                layer.layerInfoCode = layer.layerName;    
+                layer.layerInfoCode = layer.layerName;
             }
             else
             {
                 layer.layerInfoCode = layer.parent.layerInfoCode + "_" + layer.layerName;
             }
 
-            if(layer.linkToStage)
+            if (layer.linkToStage)
             {
                 string stageName = layer.stageName.Trim();
-                if(string.IsNullOrEmpty(stageName))
+                if (string.IsNullOrEmpty(stageName))
                 {
                     NativeLogger.Print(LogLevel.WARNING, $"No stage name is assigned at LayerInfo({layer.layerInfoCode})");
                 }
@@ -63,9 +63,9 @@ namespace ARCeye
                     m_StageNameByLayerName.Add(layer.layerInfoCode, stageName);
                 }
             }
-            else if(layer.subLayers != null && layer.subLayers.Count > 0)
+            else if (layer.subLayers != null && layer.subLayers.Count > 0)
             {
-                foreach(var elem in layer.subLayers)
+                foreach (var elem in layer.subLayers)
                 {
                     elem.parent = layer;
                     FindStageName(elem);
@@ -81,9 +81,9 @@ namespace ARCeye
             string layerInfoSub = "";
             string result = "";
 
-            for(int i=0 ; i<layerElem.Length ; i++)
+            for (int i = 0; i < layerElem.Length; i++)
             {
-                if(i == 0)
+                if (i == 0)
                 {
                     layerInfoSub = layerElem[i];
                 }
@@ -93,14 +93,14 @@ namespace ARCeye
                 }
 
                 string stageName = registerLayerInfos.Find(e => e == layerInfoSub);
-                if(!string.IsNullOrEmpty(stageName))
+                if (!string.IsNullOrEmpty(stageName))
                 {
                     result = m_StageNameByLayerName[stageName];
                     break;
                 }
             }
 
-            if(string.IsNullOrEmpty(result))
+            if (string.IsNullOrEmpty(result))
             {
                 NativeLogger.Print(LogLevel.ERROR, $"Failed to find stage name matching to {layerInfo}");
             }
@@ -112,7 +112,7 @@ namespace ARCeye
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach(var elem in m_StageNameByLayerName)
+            foreach (var elem in m_StageNameByLayerName)
             {
                 sb.Append($"stage : {elem.Value} -- layer : {elem.Key}\n");
             }
@@ -122,15 +122,15 @@ namespace ARCeye
 
         protected virtual void CheckError()
         {
-            if(m_StageNameByLayerName.Count == 0)
+            if (m_StageNameByLayerName.Count == 0)
             {
                 NativeLogger.Print(LogLevel.ERROR, "[ARSDK] LayerInfoSetting is not set properyly.");
             }
 
             List<string> emptyStageNameLayers = new List<string>();
-            foreach(var elem in m_StageNameByLayerName)
+            foreach (var elem in m_StageNameByLayerName)
             {
-                if(string.IsNullOrEmpty(elem.Value))
+                if (string.IsNullOrEmpty(elem.Value))
                 {
                     emptyStageNameLayers.Add(elem.Key);
                 }

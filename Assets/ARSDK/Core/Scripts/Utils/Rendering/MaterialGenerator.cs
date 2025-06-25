@@ -28,7 +28,7 @@ namespace ARCeye
         public static void SetRenderPipeline(Material material)
         {
             // 현재는 Built-in과 URP만 지원.
-            if(GraphicsSettings.currentRenderPipeline != null)
+            if (GraphicsSettings.currentRenderPipeline != null)
             {
                 material.SetOverrideTag(RenderPipelineTag, UniversalPipelineType);
             }
@@ -39,7 +39,7 @@ namespace ARCeye
         /// </summary>
         public static void SetFadeModeBlend(Material material)
         {
-            if(GraphicsSettings.currentRenderPipeline != null)
+            if (GraphicsSettings.currentRenderPipeline != null)
             {
                 URPMaterialGenerator.SetFadeModeBlend(material);
             }

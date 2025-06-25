@@ -13,24 +13,25 @@ namespace ARCeye
         // Start is called before the first frame update
         void Start()
         {
-            
+
         }
 
         // Update is called once per frame
         void Update()
-        {            
-            if (m_PickUpdated == true) {
+        {
+            if (m_PickUpdated == true)
+            {
                 m_PickUpdated = false;
 
                 ItemGenerator.OnGestureReceived(GestureType.TAPPED, m_CurrentPick);
             }
 
             bool dirty = false;
-            
+
             // MOBILE
             if (Application.isMobilePlatform)
             {
-                foreach(Touch touch in Input.touches)
+                foreach (Touch touch in Input.touches)
                 {
                     if (touch.phase == TouchPhase.Began)
                     {
@@ -42,18 +43,19 @@ namespace ARCeye
 
             // DESKTOP
             else if (Application.platform == RuntimePlatform.WindowsPlayer ||
-                     Application.platform == RuntimePlatform.OSXPlayer     ||
-                     Application.platform == RuntimePlatform.LinuxPlayer   ||
+                     Application.platform == RuntimePlatform.OSXPlayer ||
+                     Application.platform == RuntimePlatform.LinuxPlayer ||
                      Application.platform == RuntimePlatform.WindowsEditor ||
-                     Application.platform == RuntimePlatform.OSXEditor) 
+                     Application.platform == RuntimePlatform.OSXEditor)
             {
-                if(Input.GetMouseButtonDown(0)) {
+                if (Input.GetMouseButtonDown(0))
+                {
                     m_TouchPos = Input.mousePosition;
                     dirty = true;
                 }
             }
 
-            if (dirty) 
+            if (dirty)
             {
                 Ray ray = Camera.main.ScreenPointToRay(m_TouchPos);
                 RaycastHit hit;
@@ -66,22 +68,24 @@ namespace ARCeye
                         Transform tapped = hit.collider.transform;
 
                         if (tapped.parent)
-                        {                
+                        {
                             // Replace current pick
-                            if(m_CurrentPick != null && m_CurrentPick.name != tapped.parent.gameObject.name) {
+                            if (m_CurrentPick != null && m_CurrentPick.name != tapped.parent.gameObject.name)
+                            {
                                 ItemGenerator.OnGestureReceived(GestureType.UNTAPPED, m_CurrentPick);
                             }
 
                             m_CurrentPick = tapped.parent.gameObject;
                             m_PickUpdated = true;
                         }
-                    } 
+                    }
 
                     // Hit non-pickable
-                    else 
+                    else
                     {
                         // Cancel current pick
-                        if(m_CurrentPick != null) {
+                        if (m_CurrentPick != null)
+                        {
                             ItemGenerator.OnGestureReceived(GestureType.UNTAPPED, m_CurrentPick);
                             m_CurrentPick = null;
                         }
@@ -89,14 +93,15 @@ namespace ARCeye
                 }
 
                 // Hit nothing
-                else 
+                else
                 {
                     // Cancel current pick
-                    if(m_CurrentPick != null) {
+                    if (m_CurrentPick != null)
+                    {
                         ItemGenerator.OnGestureReceived(GestureType.UNTAPPED, m_CurrentPick);
                         m_CurrentPick = null;
                     }
-                }   
+                }
             }
         }
     }

@@ -10,7 +10,7 @@ namespace ARCeye
         {
             base.Initialize(model);
         }
-        
+
         public override void SetActive(bool value)
         {
             SetOpacity(value ? 1 : 0);

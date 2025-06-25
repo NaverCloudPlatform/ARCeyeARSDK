@@ -6,6 +6,6 @@ namespace ARCeye
 {
     public class TranslationRig : MonoBehaviour
     {
-        
+
     }
 }

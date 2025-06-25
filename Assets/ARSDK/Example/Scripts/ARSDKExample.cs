@@ -34,7 +34,7 @@ namespace ARCeye
 
         [SerializeField]
         private Text m_StageLabel;
-        
+
 
         [Header("Map")]
         // Map Example.
@@ -44,7 +44,7 @@ namespace ARCeye
         private MapScreen m_MapScreenMinimap;
         [SerializeField]
         private MapScreen m_MapScreenFullMap;
-        
+
 
         [Header("POI")]
         // POI Example
@@ -87,9 +87,10 @@ namespace ARCeye
 
         private void Awake()
         {
-            Application.targetFrameRate = 60;
+            Application.targetFrameRate = 30;
 
-            m_AMProjStageReader.Load(m_ARPlayGround.amprojFilePath, stages => {
+            m_AMProjStageReader.Load(m_ARPlayGround.amprojFilePath, stages =>
+            {
                 GenerateStagesDropdown(stages.Keys.ToList());
             });
 
@@ -104,12 +105,12 @@ namespace ARCeye
 
 
         /// Stage ///
-        
+
         public void ResetARPlayGround()
         {
             m_ARPlayGround.Reset();
         }
-        
+
         public void OnStageChanged(string name, string label)
         {
             Debug.Log($"Stage Changed: {name} - {label}");
@@ -143,7 +144,7 @@ namespace ARCeye
 
 
         /// Map ///
-        
+
         public void ShowMinimap()
         {
             UnityMapPOIPool mapPOIPool = FindObjectOfType<UnityMapPOIPool>();
@@ -178,7 +179,7 @@ namespace ARCeye
 
             // Filter POI Items
             var filterdPOIItems = poiItems.FindAll(
-            e => 
+            e =>
                 // Cafe
                 e.dpcode == 110700 ||
 
@@ -210,7 +211,7 @@ namespace ARCeye
 
 
         /// Navigation ///
-        
+
         public void LoadNavigtionEvent()
         {
             m_ARPlayGround.LoadNavigation(m_SelectedPOIItem, m_PathFindingType);
@@ -281,7 +282,7 @@ namespace ARCeye
 
 
         /// misc. ///
-        
+
         public void OnCustomRangeEntered(string uuid, string name)
         {
             Debug.Log($"Custom Range Entered: {uuid}, {name}");
@@ -298,7 +299,7 @@ namespace ARCeye
         {
             string text = m_ShowNextStepButton.GetComponentInChildren<Text>().text;
 
-            if(text == "Show NextStep")
+            if (text == "Show NextStep")
             {
                 m_ARPlayGround.ActivateNextStep(true);
                 m_ShowNextStepButton.GetComponentInChildren<Text>().text = "Hide NextStep";
@@ -314,7 +315,7 @@ namespace ARCeye
         {
             string text = m_ShowARItemButton.GetComponentInChildren<Text>().text;
 
-            if(text == "Show ARItem")
+            if (text == "Show ARItem")
             {
                 m_ARPlayGround.ShowARItems();
                 m_ShowARItemButton.GetComponentInChildren<Text>().text = "Hide ARItem";
@@ -328,7 +329,7 @@ namespace ARCeye
 
 
         /// Button Actions ///
-        
+
         public void ShowStageArea()
         {
             m_StageArea.SetActive(true);

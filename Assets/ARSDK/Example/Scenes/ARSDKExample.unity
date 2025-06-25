@@ -3052,6 +3052,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 98984093a226d4f9eb90ddbb387d940c, type: 2}
     - target: {fileID: 3216815866985024129, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
+      propertyPath: m_UseDeferAgent
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3216815866985024129, guid: 5d30a8d21bcba47e89512cb39bcb1dcc, type: 3}
       propertyPath: m_MapPathBulletEnd
       value: 
       objectReference: {fileID: 3733958914910401034, guid: 5fdf160728199469b940a92e13553649, type: 3}

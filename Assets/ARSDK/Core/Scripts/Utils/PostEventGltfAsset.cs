@@ -7,18 +7,20 @@ using UnityEngine.Events;
 public class PostEventGltfAsset : GLTFast.GltfAsset
 {
     private UnityAction<bool> m_PostEvent;
-    public  UnityAction<bool> PostEvent 
+    public UnityAction<bool> PostEvent
     {
         get => m_PostEvent;
         set => m_PostEvent = value;
     }
 
-    protected void Awake() {
+    protected void Awake()
+    {
         ImportSettings = new ImportSettings();
-        ImportSettings.NodeNameMethod = NameImportMethod.OriginalUnique; 
+        ImportSettings.NodeNameMethod = NameImportMethod.OriginalUnique;
     }
 
-    protected override void PostInstantiation(IInstantiator instantiator, bool success) {
+    protected override void PostInstantiation(IInstantiator instantiator, bool success)
+    {
         base.PostInstantiation(instantiator, success);
         m_PostEvent?.Invoke(success);
     }

@@ -22,7 +22,7 @@ namespace ARCeye
 
         public void Activate(bool value)
         {
-            if(value)
+            if (value)
             {
                 AttachRenderTextureToCamera<MapCamera>();
                 AttachRenderTextureToCamera<MapPOICamera>();
@@ -36,12 +36,14 @@ namespace ARCeye
         {
             RawImage image = GetComponentInChildren<RawImage>();
 
-            if(image == null) {
+            if (image == null)
+            {
                 Debug.LogError("[MapScreen] Failed to find RawImage under MapScreen");
                 return;
             }
 
-            if(image.mainTexture != null && image.mainTexture is RenderTexture) {
+            if (image.mainTexture != null && image.mainTexture is RenderTexture)
+            {
                 (image.mainTexture as RenderTexture).Release();
             }
 
@@ -57,7 +59,8 @@ namespace ARCeye
         {
             T mapCamera = FindObjectOfType<T>();
             Camera camera = mapCamera.GetComponent<Camera>();
-            if(camera != null) {
+            if (camera != null)
+            {
                 camera.targetTexture = m_RenderTexture;
             }
         }
@@ -76,25 +79,30 @@ namespace ARCeye
             float height = bounds.size.y;
 
 
-            if(width > maxWidth) {
+            if (width > maxWidth)
+            {
                 float ratio = maxWidth / width;
                 width *= ratio;
                 height *= ratio;
-            } else if(height > maxHeight) {
+            }
+            else if (height > maxHeight)
+            {
                 float ratio = maxHeight / height;
                 width *= ratio;
                 height *= ratio;
             }
 
-            return new Vector2Int((int) width, (int) height);
+            return new Vector2Int((int)width, (int)height);
         }
 
-        public void OnPointerDown(PointerEventData eventData) {
-            
+        public void OnPointerDown(PointerEventData eventData)
+        {
+
         }
 
-        public void OnPointerUp(PointerEventData eventData) {
-            
+        public void OnPointerUp(PointerEventData eventData)
+        {
+
         }
     }
 }

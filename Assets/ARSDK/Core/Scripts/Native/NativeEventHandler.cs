@@ -65,11 +65,11 @@ namespace ARCeye
 
         /* -- Plugin connections --*/
 
-        #if UNITY_IOS && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
-        #else
-            const string dll = "ARPG-plugin";
-        #endif
+#else
+        const string dll = "ARPG-plugin";
+#endif
 
         public delegate void V_Func();
         public delegate void B_Func(bool b);
@@ -116,7 +116,8 @@ namespace ARCeye
         [DllImport(dll)] private static extern void SetOnAudioPlayingFuncNative(SIS_Func func);
         [DllImport(dll)] private static extern void SetOnAudioUnloadedFuncNative(SIB_Func func);
 
-        private void Awake() {
+        private void Awake()
+        {
             s_Instance = this;
 
             SetOnAppConfigFuncNative(OnAppConfig);
@@ -157,7 +158,8 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(SSFpFpFp_Func))]
-        unsafe private static void OnAppConfig(string iconName, string fontStyle, IntPtr foregroundColorPtr, IntPtr strokeColorPtr, IntPtr backgroundColorPtr) {
+        unsafe private static void OnAppConfig(string iconName, string fontStyle, IntPtr foregroundColorPtr, IntPtr strokeColorPtr, IntPtr backgroundColorPtr)
+        {
             float[] foregroundColor = new float[16];
             float[] strokeColor = new float[16];
             float[] backgroundColor = new float[16];
@@ -168,12 +170,14 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(UILayerInfo_Func))]
-        private static void OnUIChanged(UnityUILayerInfo layerInfo) {
+        private static void OnUIChanged(UnityUILayerInfo layerInfo)
+        {
             s_Instance.m_OnUIChanged.Invoke(layerInfo);
         }
 
         [MonoPInvokeCallback(typeof(LayerPOIItem_Func))]
-        private unsafe static void OnPOIList(IntPtr itemsPtr, int count) {
+        private unsafe static void OnPOIList(IntPtr itemsPtr, int count)
+        {
             // 구조체 포인터의 배열을 가리키는 포인터를 구조체 포인터의 배열로 변환.
             IntPtr[] layerPOIsPtr = new IntPtr[count];
             Marshal.Copy(itemsPtr, layerPOIsPtr, 0, count);
@@ -183,7 +187,7 @@ namespace ARCeye
 
             List<LayerPOIItem> layerPOIs = new List<LayerPOIItem>();
 
-            for(int i=0 ; i<count ; i++)
+            for (int i = 0; i < count; i++)
             {
                 // entrace 요소가 아직 native 메모리에 배치된 상태.
                 UnityLayerPOIItem nativeItem = Marshal.PtrToStructure<UnityLayerPOIItem>(layerPOIsPtr[i]);
@@ -206,8 +210,9 @@ namespace ARCeye
                 float[] entrance = new float[nativeItem.coord_count];
                 Marshal.Copy(nativeItem.enterance, entrance, 0, nativeItem.coord_count);
 
-                int entranceCount = nativeItem.coord_count/3;
-                for(int j=0 ; j < entranceCount ; j++) {
+                int entranceCount = nativeItem.coord_count / 3;
+                for (int j = 0; j < entranceCount; j++)
+                {
                     float x = entrance[j * 3 + 0];
                     float y = entrance[j * 3 + 1];
                     float z = entrance[j * 3 + 2];
@@ -221,78 +226,93 @@ namespace ARCeye
         }
 
         [MonoPInvokeCallback(typeof(SS_Func))]
-        private static void OnStageChanged(string name, string label) {
+        private static void OnStageChanged(string name, string label)
+        {
             label = label == string.Empty ? name : label;
             s_Instance.m_OnStageChanged.Invoke(name, label);
         }
 
         [MonoPInvokeCallback(typeof(SSS_Func))]
-        private static void OnSceneLoaded(string keyname, string crscode, string locale) {
+        private static void OnSceneLoaded(string keyname, string crscode, string locale)
+        {
             s_Instance.m_OnSceneLoaded.Invoke(keyname, crscode, locale);
         }
 
         [MonoPInvokeCallback(typeof(S_Func))]
-        private static void OnSceneUnloaded(string keyname) {
+        private static void OnSceneUnloaded(string keyname)
+        {
             s_Instance.m_OnSceneUnloaded.Invoke(keyname);
         }
 
         [MonoPInvokeCallback(typeof(B_Func))]
-        private static void OnResourceUpdated(bool isSuccess) {
-            s_Instance.m_OnResourceUpdated.Invoke(isSuccess);   
+        private static void OnResourceUpdated(bool isSuccess)
+        {
+            s_Instance.m_OnResourceUpdated.Invoke(isSuccess);
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]
-        private static void OnNavigationStarted() {
+        private static void OnNavigationStarted()
+        {
             s_Instance.m_OnNavigationStarted.Invoke();
         }
 
         [MonoPInvokeCallback(typeof(F_Func))]
-        private static void OnRemainDistance(float distance) {
+        private static void OnRemainDistance(float distance)
+        {
             s_Instance.m_OnDistanceUpdated.Invoke(distance);
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]
-        private static void OnDestinationArrived() {
+        private static void OnDestinationArrived()
+        {
             s_Instance.m_OnDestinationArrived.Invoke();
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]
-        private static void OnNavigationEnded() {
+        private static void OnNavigationEnded()
+        {
             s_Instance.m_OnNavigationEnded.Invoke();
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]
-        private static void OnNavigationFailed() {
+        private static void OnNavigationFailed()
+        {
             s_Instance.m_OnNavigationFailed.Invoke();
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]
-        private static void OnNavigationRerouted() {
+        private static void OnNavigationRerouted()
+        {
             s_Instance.m_OnNavigationRerouted.Invoke();
         }
 
         [MonoPInvokeCallback(typeof(ISS_Func))]
-        private static void OnTransitMovingStarted(int transitType, string destFloor, string destFloorLabel) {
-            s_Instance.m_OnTransitMovingStarted.Invoke((ConnectionType) transitType, destFloor, destFloorLabel);
+        private static void OnTransitMovingStarted(int transitType, string destFloor, string destFloorLabel)
+        {
+            s_Instance.m_OnTransitMovingStarted.Invoke((ConnectionType)transitType, destFloor, destFloorLabel);
         }
 
         [MonoPInvokeCallback(typeof(V_Func))]
-        private static void OnTransitMovingEnded() {
+        private static void OnTransitMovingEnded()
+        {
             s_Instance.m_OnTransitMovingEnded.Invoke();
         }
 
         [MonoPInvokeCallback(typeof(IS_Func))]
-        private static void OnCustomRangeEntered(string uuid, string name) {
+        private static void OnCustomRangeEntered(string uuid, string name)
+        {
             s_Instance.m_OnCustomRangeEntered.Invoke(uuid, name);
         }
 
         [MonoPInvokeCallback(typeof(IS_Func))]
-        private static void OnCustomRangeExited(string uuid, string name) {
+        private static void OnCustomRangeExited(string uuid, string name)
+        {
             s_Instance.m_OnCustomRangeExited.Invoke(uuid, name);
         }
 
         [MonoPInvokeCallback(typeof(FFFFFFF_Func))]
-        private static void OnUpdatePose(float tx, float ty, float tz, float qw, float qx, float qy, float qz) {
+        private static void OnUpdatePose(float tx, float ty, float tz, float qw, float qx, float qy, float qz)
+        {
             Vector3 glPosition = new Vector3(tx, ty, tz);
             Quaternion glRotation = new Quaternion(qx, qy, qz, qw);
 
@@ -318,40 +338,47 @@ namespace ARCeye
             Matrix4x4 unityMatrix = flipX * openGLMatrix * flipZ.inverse;
             return unityMatrix;
         }
-        
+
         [MonoPInvokeCallback(typeof(MediaInfo_Func))]
-        private static void OnVideoLoaded(UnityMediaInfo mediaInfo) {
+        private static void OnVideoLoaded(UnityMediaInfo mediaInfo)
+        {
             s_Instance.m_OnVideoLoaded.Invoke(mediaInfo);
         }
 
         [MonoPInvokeCallback(typeof(SIS_Func))]
-        private static void OnVideoPlaying(string tag, int playerType, float distance) {
+        private static void OnVideoPlaying(string tag, int playerType, float distance)
+        {
             s_Instance.m_OnVideoPlaying.Invoke(tag, playerType, distance);
         }
 
         [MonoPInvokeCallback(typeof(I_Func))]
-        private static void OnVideoUnloaded(string tag, int playerType, bool ignoreFade) {
+        private static void OnVideoUnloaded(string tag, int playerType, bool ignoreFade)
+        {
             s_Instance.m_OnVideoUnloaded.Invoke(tag, playerType, ignoreFade);
         }
 
         [MonoPInvokeCallback(typeof(MediaInfo_Func))]
-        private static void OnAudioLoaded(UnityMediaInfo mediaInfo) {
+        private static void OnAudioLoaded(UnityMediaInfo mediaInfo)
+        {
             s_Instance.m_OnAudioLoaded.Invoke(mediaInfo);
         }
 
         [MonoPInvokeCallback(typeof(SIS_Func))]
-        private static void OnAudioPlaying(string tag, int playerType, float distance) {
+        private static void OnAudioPlaying(string tag, int playerType, float distance)
+        {
             s_Instance.m_OnAudioPlaying.Invoke(tag, playerType, distance);
         }
 
         [MonoPInvokeCallback(typeof(SIB_Func))]
-        private static void OnAudioUnloaded(string tag, int playerType, bool ignoreFade) {
+        private static void OnAudioUnloaded(string tag, int playerType, bool ignoreFade)
+        {
             s_Instance.m_OnAudioUnloaded.Invoke(tag, playerType, ignoreFade);
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct UnityUILayerInfo {
+    public struct UnityUILayerInfo
+    {
         [MarshalAs(UnmanagedType.U1)]
         public bool isSplashView;
         [MarshalAs(UnmanagedType.U1)]
@@ -391,7 +418,8 @@ namespace ARCeye
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    struct UnityLayerPOIItem {
+    struct UnityLayerPOIItem
+    {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string uuid;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
@@ -402,56 +430,58 @@ namespace ARCeye
         public string stage_name;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string stage_label;
-        
+
         [MarshalAs(UnmanagedType.I4)]
-        public int    display;
+        public int display;
         [MarshalAs(UnmanagedType.I4)]
-        public int    category;
+        public int category;
         [MarshalAs(UnmanagedType.I4)]
-        public int    dpcode;
+        public int dpcode;
 
         public IntPtr enterance;
 
         [MarshalAs(UnmanagedType.I4)]
-        public int    coord_count;
-        public int    usage;
+        public int coord_count;
+        public int usage;
     }
 
-    public struct LayerPOIItem {
+    public struct LayerPOIItem
+    {
         public string uuid;
         public string name;
         public string fullName;
         public string stageName;
         public string stageLabel;
-        
-        public int    display;
-        public int    category;
-        public int    dpcode;
+
+        public int display;
+        public int category;
+        public int dpcode;
 
         public List<Vector3> entrance;
-        public int    usage;
+        public int usage;
 
         public override string ToString()
         {
             return $"{name}, {stageName}, {category}, {entrance[0]}";
         }
     }
-    
+
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct UnityMediaInfo {
+    public struct UnityMediaInfo
+    {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string uuid;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string fullpath;
-        
+
         [MarshalAs(UnmanagedType.I4)]
-        public int    playerType;
+        public int playerType;
 
         [MarshalAs(UnmanagedType.U1)]
-        public bool   isLoop;
+        public bool isLoop;
 
         [MarshalAs(UnmanagedType.U1)]
-        public bool   isSpatial;
+        public bool isSpatial;
 
         public float fadeIn;
         public float fadeOut;
@@ -459,6 +489,6 @@ namespace ARCeye
         public float distance;
 
         [MarshalAs(UnmanagedType.I4)]
-        public int    spatialCurve;
+        public int spatialCurve;
     }
 }

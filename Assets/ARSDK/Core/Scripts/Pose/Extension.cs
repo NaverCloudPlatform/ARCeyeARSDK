@@ -10,7 +10,7 @@ public static class Extension
         t.localRotation = mat.rotation;
         t.localScale = mat.lossyScale;
     }
-    
+
     public static float[] ToData(this Matrix4x4 m)
     {
         float[] res = {

@@ -28,13 +28,14 @@ namespace ARCeye
 
             SetOpacity(0);
 
-            if(ItemGenerator.Instance.font != null) {
+            if (ItemGenerator.Instance.font != null)
+            {
                 m_TextMesh.font = ItemGenerator.Instance.font;
             }
 
             // ZTest가 비활성화 된 Text shader가 추가 된 material 생성.
             m_MeshRenderer = gameObject.GetComponent<MeshRenderer>();
-            
+
             Texture fontTexture = m_TextMesh.font.material.mainTexture;
             m_MeshRenderer.material = ItemGenerator.Instance.turnSpotTextMaterial;
             m_MeshRenderer.material.SetFloat("_CullMode", 2.0f);

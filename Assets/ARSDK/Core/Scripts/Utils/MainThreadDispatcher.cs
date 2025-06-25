@@ -26,18 +26,22 @@ using System.Threading.Tasks;
 /// things such as UI Manipulation in Unity. It was developed for use in combination with the Firebase Unity plugin, which uses separate threads for event handling
 /// </summary>
 [DefaultExecutionOrder(-1500)]
-public class MainThreadDispatcher : MonoBehaviour {
+public class MainThreadDispatcher : MonoBehaviour
+{
 
 	private static Queue<Action> _executionQueue = new Queue<Action>();
 
-	public void Update() {
-		if(_executionQueue == null)
+	public void Update()
+	{
+		if (_executionQueue == null)
 		{
 			_executionQueue = new Queue<Action>();
 		}
 
-		lock(_executionQueue) {
-			while (_executionQueue.Count > 0) {
+		lock (_executionQueue)
+		{
+			while (_executionQueue.Count > 0)
+			{
 				_executionQueue.Dequeue().Invoke();
 			}
 		}
@@ -47,28 +51,31 @@ public class MainThreadDispatcher : MonoBehaviour {
 	/// Locks the queue and adds the IEnumerator to the queue
 	/// </summary>
 	/// <param name="action">IEnumerator function that will be executed from the main thread.</param>
-	public void Enqueue(IEnumerator action) {
-		if(_executionQueue == null)
+	public void Enqueue(IEnumerator action)
+	{
+		if (_executionQueue == null)
 		{
 			_executionQueue = new Queue<Action>();
 		}
-		
-		lock (_executionQueue) {
-			_executionQueue.Enqueue (() => {
-				StartCoroutine (action);
+
+		lock (_executionQueue)
+		{
+			_executionQueue.Enqueue(() =>
+			{
+				StartCoroutine(action);
 			});
 		}
 	}
 
-        /// <summary>
-        /// Locks the queue and adds the Action to the queue
+	/// <summary>
+	/// Locks the queue and adds the Action to the queue
 	/// </summary>
 	/// <param name="action">function that will be executed from the main thread.</param>
 	public void Enqueue(Action action)
 	{
 		Enqueue(ActionWrapper(action));
 	}
-	
+
 	/// <summary>
 	/// Locks the queue and adds the Action to the queue, returning a Task which is completed when the action completes
 	/// </summary>
@@ -78,12 +85,14 @@ public class MainThreadDispatcher : MonoBehaviour {
 	{
 		var tcs = new TaskCompletionSource<bool>();
 
-		void WrappedAction() {
-			try 
+		void WrappedAction()
+		{
+			try
 			{
 				action();
 				tcs.TrySetResult(true);
-			} catch (Exception ex) 
+			}
+			catch (Exception ex)
 			{
 				tcs.TrySetException(ex);
 			}
@@ -93,7 +102,7 @@ public class MainThreadDispatcher : MonoBehaviour {
 		return tcs.Task;
 	}
 
-	
+
 	IEnumerator ActionWrapper(Action a)
 	{
 		a();
@@ -103,28 +112,34 @@ public class MainThreadDispatcher : MonoBehaviour {
 
 	private static MainThreadDispatcher _instance = null;
 
-	public static bool Exists() {
+	public static bool Exists()
+	{
 		return _instance != null;
 	}
 
-	public static MainThreadDispatcher Instance() {
-		if (!Exists ()) {
+	public static MainThreadDispatcher Instance()
+	{
+		if (!Exists())
+		{
 			// throw new Exception ("MainThreadDispatcher could not find the MainThreadDispatcher object. Please ensure you have added the MainThreadExecutor Prefab to your scene.");
 		}
 		return _instance;
 	}
 
 
-	void Awake() {
-		if (_instance == null) {
+	void Awake()
+	{
+		if (_instance == null)
+		{
 			_instance = this;
 			// DontDestroyOnLoad(this.gameObject);
 		}
 	}
 
-	void OnDestroy() {
+	void OnDestroy()
+	{
 		_instance = null;
-		_executionQueue= null;
+		_executionQueue = null;
 	}
 
 

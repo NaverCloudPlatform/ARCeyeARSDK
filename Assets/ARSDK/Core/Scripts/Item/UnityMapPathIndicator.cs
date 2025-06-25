@@ -38,20 +38,21 @@ namespace ARCeye
         {
             m_PathMaterial = material;
 
-            foreach(var pathRenderer in m_PathRenderers)
+            foreach (var pathRenderer in m_PathRenderers)
             {
                 pathRenderer.material = m_PathMaterial;
             }
         }
 
-        public void SetPath(int pathIndex, float[] path, GameObject beginBulletPrefab, GameObject endBulletPrefab) {
-            if(pathIndex < 0 || m_PathRenderers.Count <= pathIndex)
+        public void SetPath(int pathIndex, float[] path, GameObject beginBulletPrefab, GameObject endBulletPrefab)
+        {
+            if (pathIndex < 0 || m_PathRenderers.Count <= pathIndex)
             {
                 Debug.LogError($"PathRenderer index is out of bound! (PathRenderers Count {m_PathRenderers.Count}, pathIndex {pathIndex})");
                 return;
             }
 
-            if(beginBulletPrefab == null || endBulletPrefab == null)
+            if (beginBulletPrefab == null || endBulletPrefab == null)
             {
                 Debug.LogWarning("Bullet prefab is null");
                 return;
@@ -59,14 +60,15 @@ namespace ARCeye
 
             var beginBulletGo = Instantiate(beginBulletPrefab, transform);
             var endBulletGo = Instantiate(endBulletPrefab, transform);
-            
+
             List<Vector3> positions = new List<Vector3>();
 
-            for(int i=0 ; i<path.Length / 3 ; i++)
+            for (int i = 0; i < path.Length / 3; i++)
             {
                 Vector3 currPosition = GetPosition(path, i);
 
-                if(i == 0) {
+                if (i == 0)
+                {
                     positions.Add(currPosition);
                     continue;
                 }
@@ -74,7 +76,8 @@ namespace ARCeye
                 Vector3 prevPosition = GetPosition(path, i - 1);
                 float dist = (currPosition - prevPosition).magnitude;
 
-                if(dist < 1.5f) {
+                if (dist < 1.5f)
+                {
                     continue;
                 }
 
@@ -91,7 +94,8 @@ namespace ARCeye
             endBulletGo.transform.position = pathRenderer.GetPosition(pathRenderer.positionCount - 1) + margin;
         }
 
-        private Vector3 GetPosition(float[] path, int index) {
+        private Vector3 GetPosition(float[] path, int index)
+        {
             return new Vector3(-path[index * 3 + 0], path[index * 3 + 1] + 0.05f, path[index * 3 + 2]);
         }
     }

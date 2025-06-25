@@ -14,13 +14,13 @@ namespace ARCeye
         private static NetworkController s_Instance;
 
         /* -- Native plugin -- */
-        #if UNITY_IOS && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
-        #else
-            const string dll = "ARPG-plugin";
-        #endif
+#else
+        const string dll = "ARPG-plugin";
+#endif
 
-        
+
         [DllImport(dll)] private static extern void SetGetFuncNative(GetFuncDelegate func);
         [DllImport(dll)] private static extern void SetPostFuncNative(PostFuncDelegate func);
 
@@ -41,8 +41,8 @@ namespace ARCeye
             m_IsFinished = false;
             s_Instance = this;
 
-            SetGetFuncNative( Get );
-            SetPostFuncNative( Post );
+            SetGetFuncNative(Get);
+            SetPostFuncNative(Post);
         }
 
         [MonoPInvokeCallback(typeof(GetFuncDelegate))]
@@ -50,15 +50,16 @@ namespace ARCeye
         {
             m_IsFinished = false;
 
-            MainThreadDispatcher.Instance().Enqueue(()=>{
+            MainThreadDispatcher.Instance().Enqueue(() =>
+            {
                 RequestParams requestParam = new RequestParams();
                 requestParam.url = url;
                 requestParam.method = 0;
-                
-                s_Instance.UploadGet(requestParam);     
+
+                s_Instance.UploadGet(requestParam);
             });
 
-            while(!m_IsFinished){}
+            while (!m_IsFinished) { }
 
             // 기존에 할당 되어있던 응답이 있을 경우 삭제.
             Marshal.FreeHGlobal(m_GetResponsePtr);
@@ -75,12 +76,13 @@ namespace ARCeye
         unsafe private static IntPtr Post(RequestParams requestParam)
         {
             m_IsFinished = false;
-            
-            MainThreadDispatcher.Instance().Enqueue(()=>{
+
+            MainThreadDispatcher.Instance().Enqueue(() =>
+            {
                 s_Instance.UploadPost(requestParam);
             });
 
-            while(!m_IsFinished){}
+            while (!m_IsFinished) { }
 
             // 기존에 할당 되어있던 응답이 있을 경우 삭제.
             Marshal.FreeHGlobal(m_PostResponsePtr);
@@ -94,12 +96,12 @@ namespace ARCeye
 
         private void UploadGet(RequestParams requestParam)
         {
-            StartCoroutine( UploadGetInternal(requestParam) );
+            StartCoroutine(UploadGetInternal(requestParam));
         }
 
         private void UploadPost(RequestParams requestParam)
         {
-            StartCoroutine( UploadPostInternal(requestParam) );
+            StartCoroutine(UploadPostInternal(requestParam));
         }
 
         IEnumerator UploadGetInternal(RequestParams requestParam)
@@ -118,12 +120,12 @@ namespace ARCeye
 
             m_GetResponse.data = m_BytePtr;
             m_GetResponse.length = bytesLength;
-            m_GetResponse.status_code = (int) m_WebRequest.responseCode;
-            
-            yield return new WaitUntil(()=>m_WebRequest.isDone);
+            m_GetResponse.status_code = (int)m_WebRequest.responseCode;
+
+            yield return new WaitUntil(() => m_WebRequest.isDone);
 
             m_WebRequest.Dispose();
-            
+
             m_IsFinished = true;
         }
 
@@ -131,13 +133,13 @@ namespace ARCeye
         {
             yield return Request(requestParam);
 
-            m_PostResponse.status_code = (int) m_WebRequest.responseCode;
+            m_PostResponse.status_code = (int)m_WebRequest.responseCode;
             m_PostResponse.text = m_WebRequest.downloadHandler.text;
 
-            yield return new WaitUntil(()=>m_WebRequest.isDone);
+            yield return new WaitUntil(() => m_WebRequest.isDone);
 
             m_WebRequest.Dispose();
-            
+
             m_IsFinished = true;
         }
 
@@ -147,11 +149,13 @@ namespace ARCeye
 
             yield return m_WebRequest.SendWebRequest();
 
-            if(m_WebRequest.result == UnityWebRequest.Result.ConnectionError) {
+            if (m_WebRequest.result == UnityWebRequest.Result.ConnectionError)
+            {
                 NativeLogger.Print(LogLevel.ERROR, "[NetworkController] ConnectionError - " + m_WebRequest.error);
             }
 
-            if(m_WebRequest.result == UnityWebRequest.Result.ProtocolError) {
+            if (m_WebRequest.result == UnityWebRequest.Result.ProtocolError)
+            {
                 NativeLogger.Print(LogLevel.ERROR, "[NetworkController] ProtocolError - " + m_WebRequest.error);
             }
         }
@@ -161,19 +165,23 @@ namespace ARCeye
                 GET, POST, PUT, DELETE
             )
         */
-        private UnityWebRequest CreateRequest(RequestParams requestParam) {
+        private UnityWebRequest CreateRequest(RequestParams requestParam)
+        {
             m_WebRequest = new UnityWebRequest();
             m_WebRequest.url = requestParam.url;
             m_WebRequest.redirectLimit = 0;
             m_WebRequest.timeout = requestParam.timeout_milliseconds;
 
-            if(requestParam.method == 0) {
+            if (requestParam.method == 0)
+            {
                 m_WebRequest.method = "GET";
-            } else {
+            }
+            else
+            {
                 m_WebRequest.method = "POST";
                 m_WebRequest.SetRequestHeader("Content-Type", "application/json");
                 m_WebRequest.uploadHandler = GenerateUploadHandler(requestParam);
-            }        
+            }
 
             m_WebRequest.downloadHandler = GenerateDownloadHandler();
 
@@ -192,9 +200,10 @@ namespace ARCeye
         }
     }
 
-    
+
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public class RequestParams {
+    public class RequestParams
+    {
         public string url;
         public string body;
         [MarshalAs(UnmanagedType.I4)]
@@ -205,7 +214,8 @@ namespace ARCeye
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public class Response {
+    public class Response
+    {
         [MarshalAs(UnmanagedType.I4)]
         public int status_code;
         [MarshalAs(UnmanagedType.LPStr)]
@@ -213,7 +223,8 @@ namespace ARCeye
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public class GetResponse {
+    public class GetResponse
+    {
         [MarshalAs(UnmanagedType.I4)]
         public int status_code;
         [MarshalAs(UnmanagedType.LPStr)]

@@ -13,7 +13,7 @@ namespace ARCeye
         {
             return EditorGUI.GetPropertyHeight(property, label, true);
         }
-        
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             float lineHeight = EditorGUIUtility.singleLineHeight + 2;
@@ -21,9 +21,9 @@ namespace ARCeye
             EditorGUI.BeginProperty(position, label, property);
 
             var layerNameProp = property.FindPropertyRelative("layerName");
-            var linkToStageProp = property.FindPropertyRelative("linkToStage");                                                       
+            var linkToStageProp = property.FindPropertyRelative("linkToStage");
             var stageNameProp = property.FindPropertyRelative("stageName");
-            var subLayerProp  = property.FindPropertyRelative("subLayers");
+            var subLayerProp = property.FindPropertyRelative("subLayers");
 
             string layerName = layerNameProp.stringValue;
             bool linkToStage = linkToStageProp.boolValue;
@@ -45,7 +45,7 @@ namespace ARCeye
                 EditorGUI.PropertyField(layerNameRect, layerNameProp, new GUIContent("Layer Name"));
                 EditorGUI.PropertyField(linkToStageRect, linkToStageProp, new GUIContent("Link to Stage"));
 
-                if(linkToStage)
+                if (linkToStage)
                 {
                     Rect stageNameRect = new Rect(position.x, position.y, fullWidth, EditorGUIUtility.singleLineHeight);
                     position.y += lineHeight;
@@ -54,13 +54,13 @@ namespace ARCeye
                 }
                 else
                 {
-                    Rect subLayerRect  = new Rect(position.x, position.y, fullWidth, EditorGUIUtility.singleLineHeight);
+                    Rect subLayerRect = new Rect(position.x, position.y, fullWidth, EditorGUIUtility.singleLineHeight);
                     position.y += lineHeight;
 
                     EditorGUI.PropertyField(subLayerRect, subLayerProp, new GUIContent("Sub Layer"));
                     EditorUtility.SetDirty(subLayerProp.serializedObject.targetObject);
                 }
-                
+
                 EditorGUI.indentLevel--;
             }
 

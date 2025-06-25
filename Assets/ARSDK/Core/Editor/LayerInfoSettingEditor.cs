@@ -20,7 +20,7 @@ namespace ARCeye
 
         void OnEnable()
         {
-            m_LayerInfoSetting = (LayerInfoSetting) target;
+            m_LayerInfoSetting = (LayerInfoSetting)target;
             m_LayerTreeProp = serializedObject.FindProperty("m_LayerTree");
         }
 
@@ -60,13 +60,13 @@ namespace ARCeye
 
         private void DrawLayer(Layer layer, int depth)
         {
-            if(layer == null) return;
-            if(depth == kMAX_DEPTH) return;
+            if (layer == null) return;
+            if (depth == kMAX_DEPTH) return;
 
             m_OriginalContentColor = GUI.contentColor;
             m_OriginalBackgroundColor = GUI.backgroundColor;
 
-            
+
             EditorGUI.indentLevel = depth;
 
             EditorGUILayout.BeginHorizontal();
@@ -84,7 +84,7 @@ namespace ARCeye
 
 
             // Foldout 컨텐츠.
-            if(layer.foldout)
+            if (layer.foldout)
             {
                 DrawFoldOutContents(layer, depth);
             }
@@ -94,7 +94,7 @@ namespace ARCeye
         {
             string foldoutLabel;
 
-            if(layer.linkToStage)
+            if (layer.linkToStage)
             {
                 GUI.contentColor = Color.yellow;
                 foldoutLabel = $"Layer {depth + 1}  {layer.layerName} → {layer.stageName}";
@@ -114,9 +114,10 @@ namespace ARCeye
             GUILayout.FlexibleSpace();
 
             GUI.backgroundColor = Color.green;
-            if(layer.foldout && !layer.linkToStage && layer.depth < 6)
+            if (layer.foldout && !layer.linkToStage && layer.depth < 6)
             {
-                if(GUILayout.Button($"Add New Layer {depth + 2}")) {
+                if (GUILayout.Button($"Add New Layer {depth + 2}"))
+                {
                     layer.subLayers.Add(new Layer(depth + 1));
                 }
             }
@@ -126,7 +127,7 @@ namespace ARCeye
         private void DrawRemoveLayerButton(Layer layer)
         {
             GUI.backgroundColor = Color.red;
-            if(GUILayout.Button($"-"))
+            if (GUILayout.Button($"-"))
             {
                 layer.isRemoved = true;
             }
@@ -140,7 +141,7 @@ namespace ARCeye
             layer.layerName = EditorGUILayout.TextField("Layer Name", layer.layerName);
             layer.linkToStage = EditorGUILayout.Toggle("Link to Stage", layer.linkToStage);
 
-            if(layer.linkToStage)
+            if (layer.linkToStage)
             {
                 layer.stageName = EditorGUILayout.TextField("Stage Name", layer.stageName);
             }
@@ -148,17 +149,18 @@ namespace ARCeye
             {
                 List<Layer> subLayers = layer.subLayers;
                 Layer removedLayer = null;
-                foreach(var child in subLayers)
+                foreach (var child in subLayers)
                 {
-                    if(child.data == null) continue;
+                    if (child.data == null) continue;
                     DrawLayer(child, depth + 1);
 
-                    if(child.isRemoved) {
+                    if (child.isRemoved)
+                    {
                         removedLayer = child;
                     }
                 }
 
-                if(removedLayer != null)
+                if (removedLayer != null)
                 {
                     subLayers.Remove(removedLayer);
                 }

@@ -2,106 +2,57 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using GLTFast;
 using UnityEngine;
 
 namespace ARCeye
 {
-    /// <summary>
-    ///   동시에 로딩 가능한 최대 모델 개수를 제한.
-    ///   gltfast 사용 시 멀티스레딩으로 동시에 10개 가량의 모델을 로드하면 gltfast 내부에서 메모리 이슈가 발생.
-    /// </summary>
     public class MainThreadLoadingHandler
     {
-        private static Thread s_LoaderTaskThread;
-        private static Queue<Action> s_LoaderTaskQueue = new Queue<Action>();
-        private static int s_LoaderTaskCount = 0;
-        private const  int kMaxSyncTaskCount = 5;
-
-
-        public MainThreadLoadingHandler()
+        private float m_FrameBudget = 0.1f;
+        public float FrameBudget
         {
-            s_LoaderTaskThread = new Thread(()=>{
-                while(true) {
-                    if(s_LoaderTaskQueue.Count == 0) {
-                        Thread.Sleep(50);
-                        continue;
-                    }
-                    if(s_LoaderTaskCount == kMaxSyncTaskCount) {
-                        continue;
-                    }
-
-                    ++s_LoaderTaskCount;
-                    var loader = s_LoaderTaskQueue.Dequeue();
-                    loader?.Invoke();
-                }
-            });
-            s_LoaderTaskThread.Start();
-        }
-
-        public void Enqueue(GameObject itemGo, string filePath, Action completeCallback)
-        {
-            lock(s_LoaderTaskQueue)
+            get => m_FrameBudget;
+            set
             {
-                if(itemGo.GetComponent<UnityCartoMap>()
-                    || itemGo.GetComponent<UnityNextStepArrow>()
-                    || itemGo.GetComponent<UnityNextStepDot>()
-                    || itemGo.GetComponent<UnityNextStepText>()
-                    || itemGo.GetComponent<UnityTurnSpot>()) {
-                    // CartoMap의 경우 즉시 로드.
-                    LoadOnMainThread(itemGo, filePath, completeCallback, ignoreTaskCount:true);
-                } else {
-                    s_LoaderTaskQueue.Enqueue(()=>{
-                        LoadOnMainThread(itemGo, filePath, completeCallback);
-                    });
+                if (value < 0.01f)
+                {
+                    Debug.LogWarning("[MainThreadLoadingHandler] FrameBudget must be greater than 0.01");
+                    return;
                 }
+                m_FrameBudget = value;
+                m_DeferAgent?.SetFrameBudget(m_FrameBudget);
             }
         }
 
-        private void LoadOnMainThread(GameObject itemGo, string filePath, Action completeCallback, bool ignoreTaskCount = false)
+        private TimeBudgetPerFrameDeferAgent m_DeferAgent;
+
+
+        public MainThreadLoadingHandler(bool useDeferAgent = true)
         {
-            MainThreadDispatcher.Instance().Enqueue(()=>{
-                try
+            if (useDeferAgent)
+            {
+                m_DeferAgent = (new GameObject("DeferAgent")).AddComponent<TimeBudgetPerFrameDeferAgent>();
+                GltfImport.SetDefaultDeferAgent(m_DeferAgent);
+            }
+        }
+
+        public void Load(GameObject itemGo, string filePath, Action completeCallback)
+        {
+            var gltfAsset = itemGo.GetComponent<PostEventGltfAsset>();
+            var unityModel = itemGo.GetComponent<UnityModel>();
+
+            gltfAsset.PostEvent = (success) =>
+            {
+                if (unityModel == null)
                 {
-                    if(itemGo == null) {
-                        if(!ignoreTaskCount) {
-                            --s_LoaderTaskCount;
-                        }
-                        return;
-                    }
-
-                    var gltf = itemGo.GetComponent<PostEventGltfAsset>();
-                    if(gltf == null) {
-                        if(!ignoreTaskCount) {
-                            --s_LoaderTaskCount;
-                        }
-                        return;
-                    }
-
-                    gltf.PostEvent = (success) => {
-                        var item = itemGo.GetComponent<UnityModel>();
-                        if(item == null) {
-                            if(!ignoreTaskCount) {
-                                --s_LoaderTaskCount;
-                            }
-                            return;
-                        }
-
-                        item.Initialize(gltf);
-                        completeCallback.Invoke();
-                        if(!ignoreTaskCount) {
-                            --s_LoaderTaskCount;
-                        }
-                    };
-                    gltf.Load(filePath);
+                    return;
                 }
-                catch(Exception e)
-                {
-                    if(!ignoreTaskCount) {
-                        --s_LoaderTaskCount;
-                    }
-                    Debug.LogWarning("[MainThreadLoadingHandler] " + e);
-                }
-            });
+
+                unityModel.Initialize(gltfAsset);
+                completeCallback.Invoke();
+            };
+            gltfAsset.Load(filePath);
         }
     }
 }

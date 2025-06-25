@@ -39,7 +39,7 @@ namespace ARCeye
     [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.7.0";
+        const string PLUGIN_VERSION = "1.7.1";
 
 #if UNITY_IOS && !UNITY_EDITOR
         const string dll = "__Internal";
@@ -84,14 +84,16 @@ namespace ARCeye
 
         [SerializeField]
         private string m_ContentsPath;
-        public string ContentsPath {
+        public string ContentsPath
+        {
             get => m_ContentsPath;
             set => m_ContentsPath = value;
         }
 
         [SerializeField]
         private Locale m_Locale;
-        public Locale locale {
+        public Locale locale
+        {
             get => m_Locale;
             set => m_Locale = value;
         }
@@ -174,7 +176,7 @@ namespace ARCeye
         // Transit의 목적지 스테이지 이름. Navi 모드일 경우에만 할당된다.
         private string m_TransitDestStageName;
 
-        private Coroutine m_ShowARItemsCoroutine;  
+        private Coroutine m_ShowARItemsCoroutine;
 
 
         private void Awake()
@@ -194,17 +196,17 @@ namespace ARCeye
             config.languageCode = LocaleConverter.GetLanguageCode(locale);
             config.countryCode = LocaleConverter.GetCountryCode(locale);
 
-            if(stageChangeMethod == StageChangeMethod.LayerInfo)
+            if (stageChangeMethod == StageChangeMethod.LayerInfo)
             {
                 config.transitOption = 1;
             }
-            else if(stageChangeMethod == StageChangeMethod.Barometer)
+            else if (stageChangeMethod == StageChangeMethod.Barometer)
             {
                 config.transitOption = 7;
             }
-            
+
 #if !UNITY_EDITOR && UNITY_ANDROID
-            config.filesystemOption = (UInt32) (m_StreamingAssets ? 1 : 0);
+            config.filesystemOption = (UInt32) (StreamingAssets ? 1 : 0);
 #else
             config.filesystemOption = 0;
 #endif
@@ -304,7 +306,7 @@ namespace ARCeye
             }
 
             m_ItemGenerator = FindObjectOfType<ItemGenerator>();
-            if(m_ItemGenerator == null)
+            if (m_ItemGenerator == null)
             {
                 NativeLogger.Print(LogLevel.ERROR, "Failed to find ItemGenerator");
             }
@@ -331,8 +333,10 @@ namespace ARCeye
             m_NativeEventHandler.m_OnTransitMovingStarted.AddListener((type, dest, label) => OnTransitMovingStarted(type, dest, label));
             m_NativeEventHandler.m_OnTransitMovingEnded.AddListener(() => OnTransitMovingEnded());
 
-            m_NativeEventHandler.m_OnSceneLoaded.AddListener((keyname, crscode, localeStr) => {
-                switch(localeStr) {
+            m_NativeEventHandler.m_OnSceneLoaded.AddListener((keyname, crscode, localeStr) =>
+            {
+                switch (localeStr)
+                {
                     case "en_US":
                         locale = Locale.en_US;
                         break;
@@ -373,28 +377,34 @@ namespace ARCeye
             m_NativeEventHandler.m_OnSceneUnloaded = m_OnSceneUnloaded;
 
             // Assign default audio and video events.
-            m_NativeEventHandler.m_OnVideoLoaded.AddListener(info => {
+            m_NativeEventHandler.m_OnVideoLoaded.AddListener(info =>
+            {
                 m_ItemGenerator.OnVideoLoaded(info);
             });
-            m_NativeEventHandler.m_OnVideoPlaying.AddListener((uuid, playerType, distance) => {
+            m_NativeEventHandler.m_OnVideoPlaying.AddListener((uuid, playerType, distance) =>
+            {
                 m_ItemGenerator.OnVideoPlaying(uuid, playerType, distance);
             });
-            m_NativeEventHandler.m_OnVideoUnloaded.AddListener((uuid, playerType, ignoreFade) => {
+            m_NativeEventHandler.m_OnVideoUnloaded.AddListener((uuid, playerType, ignoreFade) =>
+            {
                 m_ItemGenerator.OnVideoUnloaded(uuid, playerType, ignoreFade);
             });
-            m_NativeEventHandler.m_OnAudioLoaded.AddListener(info => {
-                m_ItemGenerator.OnAudioLoaded(info);  
+            m_NativeEventHandler.m_OnAudioLoaded.AddListener(info =>
+            {
+                m_ItemGenerator.OnAudioLoaded(info);
             });
-            m_NativeEventHandler.m_OnAudioPlaying.AddListener((uuid, playerType, distance) => {
+            m_NativeEventHandler.m_OnAudioPlaying.AddListener((uuid, playerType, distance) =>
+            {
                 m_ItemGenerator.OnAudioPlaying(uuid, playerType, distance);
             });
-            m_NativeEventHandler.m_OnAudioUnloaded.AddListener((uuid, playerType, ignoreFade) => {
+            m_NativeEventHandler.m_OnAudioUnloaded.AddListener((uuid, playerType, ignoreFade) =>
+            {
                 m_ItemGenerator.OnAudioUnloaded(uuid, playerType, ignoreFade);
             });
 
             m_NativeFileSystemHelper = GetComponent<NativeFileSystemHelper>();
 #if !UNITY_EDITOR && UNITY_ANDROID
-            m_NativeFileSystemHelper.useAndroidStreamingAssets = m_StreamingAssets;
+            m_NativeFileSystemHelper.useAndroidStreamingAssets = StreamingAssets;
 #endif
         }
 
@@ -430,7 +440,8 @@ namespace ARCeye
 
         private void DetectLocale()
         {
-            switch(Application.systemLanguage) {
+            switch (Application.systemLanguage)
+            {
                 case SystemLanguage.English:
                     locale = Locale.en_US;
                     break;
@@ -643,7 +654,7 @@ namespace ARCeye
 
             string stageName = m_LayerInfoConverter.Convert(layerInfo);
 
-            if(forceUpdate)
+            if (forceUpdate)
                 ForceUpdateStage(stageName);
             else
                 TryUpdateStage(stageName);
@@ -724,7 +735,7 @@ namespace ARCeye
 
             // entrance 좌표값을 raw pointer로 변경.
             float[] entrances = new float[poiItem.entrance.Count * 3];
-            for(int i=0 ; i<poiItem.entrance.Count ; i++)
+            for (int i = 0; i < poiItem.entrance.Count; i++)
             {
                 entrances[i * 3 + 0] = poiItem.entrance[i].x;
                 entrances[i * 3 + 1] = poiItem.entrance[i].y;

@@ -13,17 +13,17 @@ namespace ARCeye
         public static void SetFadeModeBlend(Material material)
         {
             Shader alphaShader;
-            
+
             string shaderName = material.shader.name;
-            if(shaderName.Contains("pbrMetallicRoughness"))
+            if (shaderName.Contains("pbrMetallicRoughness"))
             {
                 alphaShader = Shader.Find(k_PBRMetallicRoughness);
             }
-            else if(shaderName.Contains("pbrSpecularGlossiness"))
+            else if (shaderName.Contains("pbrSpecularGlossiness"))
             {
                 alphaShader = Shader.Find(k_PBRSpecularGlossiness);
             }
-            else if(shaderName.Contains("unlit"))
+            else if (shaderName.Contains("unlit"))
             {
                 alphaShader = Shader.Find(k_PBRUnlit);
             }

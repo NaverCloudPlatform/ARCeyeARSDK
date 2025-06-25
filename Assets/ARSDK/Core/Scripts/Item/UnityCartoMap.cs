@@ -10,11 +10,11 @@ namespace ARCeye
     public class UnityCartoMap : UnityModel
     {
         /* -- Native plugin -- */
-        #if UNITY_IOS && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
-        #else
-            const string dll = "ARPG-plugin";
-        #endif
+#else
+        const string dll = "ARPG-plugin";
+#endif
 
         public delegate void AssignNativeHandleDelegate(IntPtr gameObjectHandle, IntPtr nativeHandle);
 
@@ -34,7 +34,7 @@ namespace ARCeye
 
         private void Awake()
         {
-            SetAssignNativeHandleFuncNative( AssignNativeHandle );
+            SetAssignNativeHandleFuncNative(AssignNativeHandle);
         }
 
         protected override void FindMaterials()
@@ -47,7 +47,7 @@ namespace ARCeye
         {
             // goHandle을 UnityCartoMap 인스턴스로 Unwrap
             object obj = GCHandle.FromIntPtr(gameObjectHandle).Target;
-            UnityCartoMap cartoMap = ((GameObject) obj).GetComponent<UnityCartoMap>();
+            UnityCartoMap cartoMap = ((GameObject)obj).GetComponent<UnityCartoMap>();
             cartoMap.m_NativeInstance = nativeHandle;
         }
 
@@ -57,7 +57,7 @@ namespace ARCeye
             base.Initialize(model);
 
             var children = model.gameObject.GetComponentsInChildren<Transform>();
-            foreach(var child in children)
+            foreach (var child in children)
             {
                 child.gameObject.layer = LayerMask.NameToLayer("Map");
             }

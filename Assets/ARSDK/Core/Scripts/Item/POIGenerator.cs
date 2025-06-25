@@ -10,7 +10,8 @@ namespace ARCeye
         [Header("Sign POI")]
         [SerializeField]
         private GameObject m_SignPOIPrefab;
-        public GameObject SignPOIPrefab {
+        public GameObject SignPOIPrefab
+        {
             get => m_SignPOIPrefab;
             set => m_SignPOIPrefab = value;
         }
@@ -20,7 +21,8 @@ namespace ARCeye
 
         [SerializeField]
         private GameObject m_MapPOIPrefab;
-        public GameObject MapPOIPrefab {
+        public GameObject MapPOIPrefab
+        {
             get => m_MapPOIPrefab;
             set => m_MapPOIPrefab = value;
         }
@@ -29,29 +31,34 @@ namespace ARCeye
 
         [SerializeField]
         private POIIconInfo m_ColorPOIInfo;
-        public POIIconInfo ColorPOIInfo {
+        public POIIconInfo ColorPOIInfo
+        {
             get => m_ColorPOIInfo;
             set => m_ColorPOIInfo = value;
         }
 
         [SerializeField]
         private POIIconInfo m_GrayPOIInfo;
-        public POIIconInfo GrayPOIInfo {
+        public POIIconInfo GrayPOIInfo
+        {
             get => m_GrayPOIInfo;
             set => m_GrayPOIInfo = value;
         }
 
 
-        public GameObject GenerateSignPOI() {
+        public GameObject GenerateSignPOI()
+        {
             return Instantiate(m_SignPOIPrefab);
         }
 
-        public UnityMapPOI GenerateMapPOI() {
+        public UnityMapPOI GenerateMapPOI()
+        {
             GameObject go = Instantiate(m_MapPOIPrefab);
-            
+
             UnityMapPOI mapPOI = go.GetComponent<UnityMapPOI>();
 
-            if(m_MapCamera == null) {
+            if (m_MapCamera == null)
+            {
                 GameObject mapCameraGO = GameObject.FindGameObjectWithTag("MapPOICamera");
                 m_MapCamera = mapCameraGO.GetComponent<Camera>();
             }
@@ -61,12 +68,14 @@ namespace ARCeye
             return mapPOI;
         }
 
-        public void SetIconCodeToSignPOI(UnitySignPOI signPOI, int code) {
+        public void SetIconCodeToSignPOI(UnitySignPOI signPOI, int code)
+        {
             Sprite icon = m_ColorPOIInfo.GetSprite(code);
             signPOI.SetIcon(icon);
         }
 
-        public void SetIconCodeToMapPOI(UnityMapPOI mapPOI, int code) {
+        public void SetIconCodeToMapPOI(UnityMapPOI mapPOI, int code)
+        {
             Sprite icon = m_ColorPOIInfo.GetSprite(code);
             mapPOI.SetIcon(icon);
         }

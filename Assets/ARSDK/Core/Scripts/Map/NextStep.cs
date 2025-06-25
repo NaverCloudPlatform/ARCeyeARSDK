@@ -7,12 +7,16 @@ namespace ARCeye
 {
     public class NextStep : MonoBehaviour
     {
-        void Awake() {
+        void Awake()
+        {
             RawImage image = GetComponentInChildren<RawImage>();
 
-            if(image != null) {
-                if (image.mainTexture != null) {
-                    if (image.mainTexture is RenderTexture) {
+            if (image != null)
+            {
+                if (image.mainTexture != null)
+                {
+                    if (image.mainTexture is RenderTexture)
+                    {
                         (image.mainTexture as RenderTexture).Release();
                     }
                 }
@@ -23,7 +27,8 @@ namespace ARCeye
                 image.texture = rt;
 
                 Camera camera = GetComponentInChildren<Camera>();
-                if (camera != null) {
+                if (camera != null)
+                {
                     camera.targetTexture = rt;
                 }
             }

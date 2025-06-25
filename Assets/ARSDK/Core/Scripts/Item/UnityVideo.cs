@@ -21,18 +21,22 @@ namespace ARCeye
         private SpatialCurve m_SpatialCurve = SpatialCurve.NONE;
         private Coroutine m_CurrCoroutine = null;
 
-        private void Awake() {
-            if (m_Material == null) {
+        private void Awake()
+        {
+            if (m_Material == null)
+            {
                 m_Material = new Material(Shader.Find("ARPG/VideoRenderTexture"));
                 m_Material.SetFloat("_Alpha", 0.0f);
 
                 var renderer = GetComponent<MeshRenderer>();
-                if (renderer != null) {
+                if (renderer != null)
+                {
                     renderer.material = m_Material;
                 }
             }
 
-            if (m_VideoPlayer == null) {
+            if (m_VideoPlayer == null)
+            {
                 m_VideoPlayer = gameObject.GetComponent<VideoPlayer>();
             }
         }
@@ -42,25 +46,35 @@ namespace ARCeye
             base.Initialize();
         }
 
-        public void Play(UnityMediaInfo info) {
+        public void Play(UnityMediaInfo info)
+        {
             m_MaxVolume = info.volume;
             m_FadeIn = info.fadeIn;
             m_FadeOut = info.fadeOut;
 
             m_IsSpatial = info.isSpatial;
-            if (m_IsSpatial) {
-                if (info.spatialCurve == 0) {
+            if (m_IsSpatial)
+            {
+                if (info.spatialCurve == 0)
+                {
                     m_SpatialCurve = SpatialCurve.SMOOTHSTEP;
-                } else if (info.spatialCurve == 1) {
+                }
+                else if (info.spatialCurve == 1)
+                {
                     m_SpatialCurve = SpatialCurve.LOGARITHMIC;
-                } else if (info.spatialCurve == 2) {
+                }
+                else if (info.spatialCurve == 2)
+                {
                     m_SpatialCurve = SpatialCurve.INVERSE;
-                } else {
+                }
+                else
+                {
                     m_SpatialCurve = SpatialCurve.NONE;
                 }
             }
 
-            if(m_VideoPlayer != null && m_VideoPlayer.isActiveAndEnabled) {
+            if (m_VideoPlayer != null && m_VideoPlayer.isActiveAndEnabled)
+            {
                 m_VideoPlayer.url = info.fullpath;
                 m_VideoPlayer.isLooping = info.isLoop;
                 m_VideoPlayer.Prepare();
@@ -68,26 +82,31 @@ namespace ARCeye
             }
         }
 
-        private void OnVideoReady(VideoPlayer player) {
-            if(m_Material.mainTexture != null) {
+        private void OnVideoReady(VideoPlayer player)
+        {
+            if (m_Material.mainTexture != null)
+            {
                 (m_Material.mainTexture as RenderTexture).Release();
             }
 
             RenderTexture rt = new RenderTexture((int)m_VideoPlayer.width, (int)m_VideoPlayer.height, 24, RenderTextureFormat.ARGB32);
             m_Material.mainTexture = rt;
             m_VideoPlayer.targetTexture = rt;
-            
+
             m_VideoPlayer.SetDirectAudioVolume(0, 0.0f);
 
             m_VideoPlayer.Play();
         }
 
-        public void Stop(bool ignoreFade = false, System.Action onComplete = null) {
-            if (ignoreFade || m_IsSpatial) {
-                if(m_VideoPlayer != null) {
+        public void Stop(bool ignoreFade = false, System.Action onComplete = null)
+        {
+            if (ignoreFade || m_IsSpatial)
+            {
+                if (m_VideoPlayer != null)
+                {
                     m_VideoPlayer.Stop();
                 }
-                if(onComplete != null)
+                if (onComplete != null)
                 {
                     onComplete.Invoke();
                 }
@@ -95,37 +114,45 @@ namespace ARCeye
             }
         }
 
-        public void Unload() {
-            if(m_Material.mainTexture != null) {
+        public void Unload()
+        {
+            if (m_Material.mainTexture != null)
+            {
                 (m_Material.mainTexture as RenderTexture).Release();
             }
 
             Destroy(gameObject);
         }
 
-        public void Build(float width, float height, float pivotX, float pivotY, bool hasAlphaMask, bool hasBackface, bool isBillboard) {
+        public void Build(float width, float height, float pivotX, float pivotY, bool hasAlphaMask, bool hasBackface, bool isBillboard)
+        {
             // Alpha mask is not supported yet.
-            if(hasAlphaMask) {
+            if (hasAlphaMask)
+            {
                 Stop();
                 gameObject.SetActive(false);
                 return;
             }
 
-            if(m_VideoPlayer == null || m_Material == null) {
+            if (m_VideoPlayer == null || m_Material == null)
+            {
                 return;
             }
 
-            gameObject.transform.localScale = new Vector3(width*-1, height, -1);
-            gameObject.transform.position = gameObject.transform.position + new Vector3((0.5f-pivotX)*width, (0.5f-pivotY)*height, 0);
+            gameObject.transform.localScale = new Vector3(width * -1, height, -1);
+            gameObject.transform.position = gameObject.transform.position + new Vector3((0.5f - pivotX) * width, (0.5f - pivotY) * height, 0);
 
-            if(isBillboard) {
+            if (isBillboard)
+            {
                 base.SetBillboard(true);
             }
 
-            if(hasBackface) {
+            if (hasBackface)
+            {
                 GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 MeshRenderer renderer = quad.GetComponent<MeshRenderer>();
-                if (renderer != null) {
+                if (renderer != null)
+                {
                     var material = new Material(Shader.Find("ARPG/VideoBackface"));
                     material.SetFloat("_Alpha", 0.0f);
                     renderer.material = material;
@@ -135,47 +162,60 @@ namespace ARCeye
             }
         }
 
-        public void Fade(float duration, bool fadeIn) {
-            if(!gameObject.activeSelf) {
+        public void Fade(float duration, bool fadeIn)
+        {
+            if (!gameObject.activeSelf)
+            {
                 return;
             }
 
-            if (m_CurrCoroutine != null) {
+            if (m_CurrCoroutine != null)
+            {
                 StopCoroutine(m_CurrCoroutine);
             }
 
-           m_CurrCoroutine = StartCoroutine( FadeInternal(duration, fadeIn) );
+            m_CurrCoroutine = StartCoroutine(FadeInternal(duration, fadeIn));
         }
 
-        public void Mute(bool mute) {
+        public void Mute(bool mute)
+        {
             m_VideoPlayer.SetDirectAudioMute(0, mute);
         }
 
-        public bool IsPlaying() {
+        public bool IsPlaying()
+        {
             return m_VideoPlayer.isPlaying;
         }
 
-        public void AttenuateVolume(float distance) {
-            if (m_VideoPlayer == null) {
+        public void AttenuateVolume(float distance)
+        {
+            if (m_VideoPlayer == null)
+            {
                 return;
             }
 
-            if (m_IsSpatial == false || m_SpatialCurve == SpatialCurve.NONE) {
+            if (m_IsSpatial == false || m_SpatialCurve == SpatialCurve.NONE)
+            {
                 return;
             }
 
-            if (m_SpatialCurve == SpatialCurve.SMOOTHSTEP) {
+            if (m_SpatialCurve == SpatialCurve.SMOOTHSTEP)
+            {
                 m_VideoPlayer.SetDirectAudioVolume(0, m_MaxVolume * distance);
-            } else if (m_SpatialCurve == SpatialCurve.LOGARITHMIC) {
-                m_VideoPlayer.SetDirectAudioVolume(0, ((Mathf.Log(distance)/4.0f) + 1) * m_MaxVolume);
-            } else if (m_SpatialCurve == SpatialCurve.INVERSE) {
+            }
+            else if (m_SpatialCurve == SpatialCurve.LOGARITHMIC)
+            {
+                m_VideoPlayer.SetDirectAudioVolume(0, ((Mathf.Log(distance) / 4.0f) + 1) * m_MaxVolume);
+            }
+            else if (m_SpatialCurve == SpatialCurve.INVERSE)
+            {
                 m_VideoPlayer.SetDirectAudioVolume(0, -(m_MaxVolume * distance) + m_MaxVolume);
             }
         }
 
         private IEnumerator FadeInternal(float duration, bool fadeIn, System.Action onComplete = null)
         {
-            if(m_Material == null)
+            if (m_Material == null)
             {
                 yield break;
             }
@@ -189,7 +229,7 @@ namespace ARCeye
             bool isFinished = false;
             float accumTime = 0;
 
-            while(!isFinished)
+            while (!isFinished)
             {
                 float t = accumTime / duration;
 
@@ -198,13 +238,15 @@ namespace ARCeye
 
                 m_Material.SetFloat("_Alpha", a);
 
-                Material backFace = (gameObject.transform.childCount == 0) ? null : gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material; 
-                if (backFace != null) {
+                Material backFace = (gameObject.transform.childCount == 0) ? null : gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+                if (backFace != null)
+                {
                     backFace.SetFloat("_Alpha", a);
                 }
 
                 // Volume interpolation
-                if (!m_IsSpatial) {
+                if (!m_IsSpatial)
+                {
                     float v = Mathf.Lerp(startVolume, endVolume, t);
                     m_VideoPlayer.SetDirectAudioVolume(0, v);
                 }
@@ -213,22 +255,25 @@ namespace ARCeye
 
                 accumTime += Time.deltaTime;
 
-                if(accumTime >= duration) {
+                if (accumTime >= duration)
+                {
                     isFinished = true;
                 }
             }
 
             m_Material.SetFloat("_Alpha", end);
-            Material backface = (gameObject.transform.childCount == 0) ? null : gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material; 
-            if (backface != null) {
+            Material backface = (gameObject.transform.childCount == 0) ? null : gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+            if (backface != null)
+            {
                 backface.SetFloat("_Alpha", end);
             }
 
-            if (!m_IsSpatial) {
+            if (!m_IsSpatial)
+            {
                 m_VideoPlayer.SetDirectAudioVolume(0, endVolume);
             }
 
-            if(onComplete != null)
+            if (onComplete != null)
             {
                 onComplete.Invoke();
             }
@@ -237,8 +282,9 @@ namespace ARCeye
         public override void SetOpacity(float opacity)
         {
             m_Material.SetFloat("_Alpha", opacity);
-            Material backface = (gameObject.transform.childCount == 0) ? null : gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material; 
-            if (backface != null) {
+            Material backface = (gameObject.transform.childCount == 0) ? null : gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+            if (backface != null)
+            {
                 backface.SetFloat("_Alpha", opacity);
             }
         }

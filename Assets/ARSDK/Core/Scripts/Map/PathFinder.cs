@@ -7,30 +7,33 @@ using AOT;
 
 namespace ARCeye
 {
-    public enum ConnectionType {
+    public enum ConnectionType
+    {
         Default, Escalator = 5, Elevator = 6, Stair = 7
     }
 
-    public enum PathFindingType {
+    public enum PathFindingType
+    {
         Default, EscalatorOnly, ElevatorOnly, StairOnly
     }
-    
+
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct LoadNavigationParams {
+    public struct LoadNavigationParams
+    {
         public string endStage;
         public IntPtr endPoints;
         public int count;
         public PathFindingType pathFindingType;
     }
-    
+
     public class PathFinder : MonoBehaviour
     {
         /* -- Native plugin -- */
-        #if UNITY_IOS && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR
             const string dll = "__Internal";
-        #else
-            const string dll = "ARPG-plugin";
-        #endif
+#else
+        const string dll = "ARPG-plugin";
+#endif
 
         [DllImport(dll)] private static extern void LoadNavigationNative(LoadNavigationParams param);
 

@@ -13,7 +13,7 @@ namespace ARCeye
         [SerializeField]
         private RenderTexture m_FullRenderTexture;
 
-        
+
         [Header("Distance")]
         [SerializeField]
         private float m_ShinkCameraDistance;
@@ -56,7 +56,8 @@ namespace ARCeye
             var euler = transform.rotation.eulerAngles;
             transform.rotation = Quaternion.Euler(euler.x, 180 + yaw, euler.z);
 
-            if(m_IsFullMode) {
+            if (m_IsFullMode)
+            {
                 Vector3 fullEulerAngle = m_PitchRig.rotation.eulerAngles;
                 fullEulerAngle.x = 90;
                 fullEulerAngle.y = m_InitFullYaw;
@@ -64,7 +65,9 @@ namespace ARCeye
                 m_PitchRig.rotation = Quaternion.Euler(fullEulerAngle);
 
                 m_MapArrow.position = new Vector3(x, transform.position.y, z);
-            } else {
+            }
+            else
+            {
                 m_TranslationRig.localEulerAngles = new Vector3(0, 0, 0);
 
                 transform.position = new Vector3(x, transform.position.y, z);
@@ -72,44 +75,49 @@ namespace ARCeye
             }
         }
 
-        private void FindMapCameraRigComponents() {
-            m_MapCamera      = GetComponentInChildren<MapCamera>().GetComponent<Camera>();
-            m_MapPOICamera   = GetComponentInChildren<MapPOICamera>().GetComponent<Camera>();
+        private void FindMapCameraRigComponents()
+        {
+            m_MapCamera = GetComponentInChildren<MapCamera>().GetComponent<Camera>();
+            m_MapPOICamera = GetComponentInChildren<MapPOICamera>().GetComponent<Camera>();
             m_MapArrowCamera = GetComponentInChildren<MapArrowCamera>().GetComponent<Camera>();
 
-            m_PitchRig       = GetComponentInChildren<PitchRig>().transform;
+            m_PitchRig = GetComponentInChildren<PitchRig>().transform;
             m_TranslationRig = GetComponentInChildren<TranslationRig>().transform;
-            m_MapArrow       = GetComponentInChildren<MapArrow>().transform;
+            m_MapArrow = GetComponentInChildren<MapArrow>().transform;
         }
 
         /// <summary>
         /// Map Rig 내 카메라들의 Culling Mask가 'Map', 'MapPOI', 'MapArrow'인지 확인.
         /// </summary>
-        private void CheckLayersOfMapRigCameras() {
+        private void CheckLayersOfMapRigCameras()
+        {
             CheckCameraLayer(m_MapCamera, "Map");
             CheckCameraLayer(m_MapCamera, "AMProjViz", true);
             CheckCameraLayer(m_MapPOICamera, "MapPOI");
             CheckCameraLayer(m_MapArrowCamera, "MapArrow");
         }
 
-        private void CheckCameraLayer(Camera camera, string layerName, bool append = false) {
+        private void CheckCameraLayer(Camera camera, string layerName, bool append = false)
+        {
             int layerIndex = LayerMask.NameToLayer(layerName);
-            int layerMask  = 1 << layerIndex;
+            int layerMask = 1 << layerIndex;
 
-            if(append)
+            if (append)
             {
                 camera.cullingMask |= layerMask;
             }
             else
             {
-                if(camera.cullingMask != layerMask) {
+                if (camera.cullingMask != layerMask)
+                {
                     NativeLogger.Print(LogLevel.WARNING, $"[MapCameraRig] {camera.name}의 culling mask != {layerName}");
                     camera.cullingMask = layerMask;
                 }
             }
         }
 
-        public void ChangeToFullMap(bool value) {
+        public void ChangeToFullMap(bool value)
+        {
             m_IsFullMode = value;
             m_InitFullYaw = m_MainCamera.transform.rotation.eulerAngles.y;
 
@@ -129,11 +137,13 @@ namespace ARCeye
             m_TranslationRig.localPosition = cameraPosition;
         }
 
-        private RenderTexture GetTargetTexture(bool value) {
+        private RenderTexture GetTargetTexture(bool value)
+        {
             return value ? m_FullRenderTexture : m_ShrinkRenderTexture;
         }
 
-        public void Move(Vector2 delta) {
+        public void Move(Vector2 delta)
+        {
             float camToMapDist = m_MapCamera.transform.position.y;
             Vector3 center = new Vector3(Screen.width / 2, Screen.height / 2, camToMapDist);
             Vector3 dest = new Vector3(center.x + delta.x, center.y + delta.y, camToMapDist);
@@ -146,16 +156,18 @@ namespace ARCeye
             m_TranslationRig.Translate(diff, Space.World);
         }
 
-        public void Zoom(float deltaRatio) {
+        public void Zoom(float deltaRatio)
+        {
             Vector3 cameraPosition = m_TranslationRig.localPosition;
-            
+
             cameraPosition.z *= (1.0f + deltaRatio);
             cameraPosition.z = Mathf.Clamp(cameraPosition.z, -m_FullCameraMaxDistance, -m_FullCameraMinDistance);
-            
+
             m_TranslationRig.localPosition = cameraPosition;
         }
 
-        public void Rotate(float deltaDegree) {
+        public void Rotate(float deltaDegree)
+        {
             float cameraYaw = m_TranslationRig.localEulerAngles.z;
 
             cameraYaw -= deltaDegree;

@@ -5,46 +5,55 @@ using UnityEngine;
 
 namespace ARCeye
 {
-    public class Layer {
+    public class Layer
+    {
         private LayerData m_LayerData = new LayerData();
         public LayerData data => m_LayerData;
 
-        public string layerName {
+        public string layerName
+        {
             get => m_LayerData.layerName;
             set => m_LayerData.layerName = value;
         }
 
-        public bool linkToStage {
+        public bool linkToStage
+        {
             get => m_LayerData.linkToStage;
             set => m_LayerData.linkToStage = value;
         }
 
-        public string stageName {
+        public string stageName
+        {
             get => m_LayerData.stageName;
             set => m_LayerData.stageName = value;
         }
 
-        public int depth {
+        public int depth
+        {
             get => m_LayerData.depth;
             set => m_LayerData.depth = value;
         }
 
-        public Layer parent {
+        public Layer parent
+        {
             get => m_LayerData.parent;
             set => m_LayerData.parent = value;
         }
 
-        public string layerInfoCode {
+        public string layerInfoCode
+        {
             get => m_LayerData.layerInfoCode;
             set => m_LayerData.layerInfoCode = value;
         }
 
-        public bool foldout {
+        public bool foldout
+        {
             get => m_LayerData.foldout;
             set => m_LayerData.foldout = value;
         }
 
-        public bool isRemoved {
+        public bool isRemoved
+        {
             get => m_LayerData.isRemoved;
             set => m_LayerData.isRemoved = value;
         }
@@ -75,7 +84,8 @@ namespace ARCeye
     }
 
     [Serializable]
-    public class LayerData {
+    public class LayerData
+    {
         public string layerName;
         public bool linkToStage;
         public string stageName;
@@ -133,7 +143,7 @@ namespace ARCeye
         private void SerializeAll(Layer layer)
         {
             layerList.Add(new SerializedLayer(layer));
-            foreach(var child in layer.subLayers)
+            foreach (var child in layer.subLayers)
             {
                 SerializeAll(child);
             }
@@ -141,9 +151,9 @@ namespace ARCeye
 
         public Layer Deserialize()
         {
-            if(layerList.Count == 0)
+            if (layerList.Count == 0)
                 return null;
-            
+
             int index = 0;
             Layer root = DeserializeAll(ref index);
             return root;
@@ -155,7 +165,7 @@ namespace ARCeye
             Layer current = layerList[currentIndex].Deserialize();
 
             index++;
-            for(int i=0 ; i<layerList[currentIndex].childCount ; i++)
+            for (int i = 0; i < layerList[currentIndex].childCount; i++)
             {
                 current.AddChild(DeserializeAll(ref index));
             }
@@ -172,7 +182,7 @@ namespace ARCeye
     [Serializable]
     public class LayerInfoSetting : ScriptableObject
     {
-        [field:SerializeField, Tooltip("Layer hierarchy registered in the ARC eye console")]
+        [field: SerializeField, Tooltip("Layer hierarchy registered in the ARC eye console")]
         private SerializedLayerTree m_LayerTree = new SerializedLayerTree(new Layer(0));
         public SerializedLayerTree layerTree => m_LayerTree;
 

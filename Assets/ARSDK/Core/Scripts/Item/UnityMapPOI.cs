@@ -17,11 +17,14 @@ namespace ARCeye
 
         // Billboard 효과가 적용될 카메라를 할당.
         private Camera m_TargetCamera;
-        public Camera targetCamera {
-            get {
+        public Camera targetCamera
+        {
+            get
+            {
                 return m_TargetCamera;
             }
-            set {
+            set
+            {
                 m_TargetCamera = value;
                 m_Billboard.targetCamera = value;
             }
@@ -38,7 +41,8 @@ namespace ARCeye
         private const float k_DefaultDistMinimap = 15.0f;
 
 
-        private void Awake() {
+        private void Awake()
+        {
             int layerIndex = LayerMask.NameToLayer("MapPOI");
             gameObject.layer = layerIndex;
             m_Text.gameObject.layer = layerIndex;
@@ -47,34 +51,38 @@ namespace ARCeye
             m_Billboard = GetComponent<Billboard>();
             m_Billboard.rotationMode = Billboard.RotationMode.CAMERA;
 
-            if(ItemGenerator.Instance.font != null) {
+            if (ItemGenerator.Instance.font != null)
+            {
                 // m_Text.font = ItemGenerator.Instance.font;
             }
 
             ActivateMinimapMode();
         }
 
-        private void Start() {
+        private void Start()
+        {
             MapCameraRig mapCameraRig = FindObjectOfType<MapCameraRig>();
-            if(mapCameraRig == null)
+            if (mapCameraRig == null)
             {
                 Debug.LogError("Failed to find 'MapCameraRig' component in the current scene.");
                 return;
             }
 
             m_TranslationRig = mapCameraRig.GetComponentInChildren<TranslationRig>();
-            if(m_TranslationRig == null)
+            if (m_TranslationRig == null)
             {
                 Debug.LogError("Failed to find 'TranslationRig' component under the MapCameraRig");
                 return;
             }
         }
-        
-        private void Update() {
+
+        private void Update()
+        {
             ScaleByCameraDistance();
         }
 
-        private void ScaleByCameraDistance() {
+        private void ScaleByCameraDistance()
+        {
             float dist = Mathf.Abs(m_TranslationRig.transform.localPosition.z);
             float scale = dist / m_DefaultDist;
             transform.localScale = new Vector3(scale, scale, scale);
@@ -90,16 +98,19 @@ namespace ARCeye
             m_DefaultDist = k_DefaultDistMinimap;
         }
 
-        public void SetIcon(Sprite icon) {
+        public void SetIcon(Sprite icon)
+        {
             m_IconRenderer.sprite = icon;
         }
 
-        public void SetLabel(string content) {
+        public void SetLabel(string content)
+        {
             m_Text.text = content;
         }
 
-        public void SetFontSize(float fontSize) {
-            m_Text.fontSize = (int) fontSize;
+        public void SetFontSize(float fontSize)
+        {
+            m_Text.fontSize = (int)fontSize;
         }
 
         /// <summary>
@@ -110,8 +121,9 @@ namespace ARCeye
         ///     Text - 2
         ///     Icon and Text - 3
         /// </summary>
-        public void SetDisplay(int display) {
-            switch(display)
+        public void SetDisplay(int display)
+        {
+            switch (display)
             {
                 case 0:
                     m_Text.gameObject.SetActive(false);

@@ -8,11 +8,14 @@ namespace ARCeye
     public class UnityModel : MonoBehaviour
     {
         private PostEventGltfAsset m_Model;
+        private string m_FilePath;
 
         private Animation m_Animation;
-        private Animation anim {
-            get {
-                if(m_Animation == null)
+        private Animation anim
+        {
+            get
+            {
+                if (m_Animation == null)
                 {
                     m_Animation = GetComponentInChildren<Animation>();
                 }
@@ -60,21 +63,32 @@ namespace ARCeye
             Initialize();
         }
 
+        public virtual void Initialize(PostEventGltfAsset model, string filePath)
+        {
+            m_FilePath = filePath;
+            model.Load(filePath);
+        }
+
         public virtual void SetActive(bool value)
         {
             // SetActive가 false일 경우에만 구현.
             //   본 메서드는 gameObject의 SetActive가 아닌, ARPG에서 모델이 보이는지 여부를 설정함.
             //   SetActive(true)일 경우 SetOpacity(1)를 설정하면 actionRange로 진입했을때
             //   opacity가 순간적으로 1이 되기 때문에 fade 애니메이션이 정상적으로 실행되지 않는다.
-            if(!value) {
+            if (!value)
+            {
                 SetOpacity(0);
                 BoxCollider collider = GetComponentInChildren<BoxCollider>();
-                if (collider) {
+                if (collider)
+                {
                     collider.enabled = false;
                 }
-            } else {
+            }
+            else
+            {
                 BoxCollider collider = GetComponentInChildren<BoxCollider>();
-                if (collider) {
+                if (collider)
+                {
                     collider.enabled = true;
                 }
             }
@@ -86,7 +100,7 @@ namespace ARCeye
             List<Material> allMaterials = new();
             Material zwriteMat = MaterialGenerator.GetZWriteMaterial();
 
-            foreach(var renderer in renderers)
+            foreach (var renderer in renderers)
             {
                 // 기존에 존재하던 Materials 추출.
                 List<Material> materials = new();
@@ -96,14 +110,14 @@ namespace ARCeye
                 allMaterials.AddRange(materials);
 
                 // 기존에 설정된 PBR 쉐이더를 2Pass 전용 쉐이더로 변경.
-                foreach(var material in materials)
+                foreach (var material in materials)
                 {
-                    if(IsGLTFMaterial(material))
+                    if (IsGLTFMaterial(material))
                     {
                         MaterialGenerator.SetFadeModeBlend(material);
                     }
                 }
-                
+
                 // zwrite 패스 추가.
                 materials.Insert(0, zwriteMat);
 
@@ -128,49 +142,51 @@ namespace ARCeye
             }
 
             AnimationClip clip = anim.GetClip(animName);
-            if(clip == null)
+            if (clip == null)
             {
                 return;
             }
 
-            switch(playModeStr.ToLower())
+            switch (playModeStr.ToLower())
             {
-                case "once" : 
+                case "once":
                     anim.wrapMode = WrapMode.Once;
                     m_WrapMode = "once";
                     break;
-                case "loop" : 
+                case "loop":
                     anim.wrapMode = WrapMode.Loop;
                     m_WrapMode = "loop";
                     break;
-                case "clamp" : 
+                case "clamp":
                     anim.wrapMode = WrapMode.Clamp;
                     m_WrapMode = "clamp";
                     break;
-                default : 
+                default:
                     NativeLogger.Print(LogLevel.WARNING, $"[UnityModel] Can't find wrapMode {playModeStr}. Use WrapMode.Once instead");
                     anim.wrapMode = WrapMode.Once;
                     m_WrapMode = "once";
                     break;
             }
-            
+
             anim.Play(animName);
         }
-        
+
         // 모든 UnityModel은 기본적으로 ARItem 레이어로 설정. 다른 레이어를 사용하는 아이템의 경우 자식 클래스의 Initialize 메서드에서 설정한다.
         protected void InitLayerInModel(string layerName)
         {
             var children = gameObject.GetComponentsInChildren<Transform>();
             var layer = LayerMask.NameToLayer(layerName);
-            foreach(var child in children)
+            foreach (var child in children)
             {
                 child.gameObject.layer = layer;
             }
             gameObject.layer = layer;
         }
 
-        public void StopAnimation() {
-            if (CanPlayAnimation()) {
+        public void StopAnimation()
+        {
+            if (CanPlayAnimation())
+            {
                 anim.Stop();
             }
         }
@@ -182,9 +198,9 @@ namespace ARCeye
 
         private void PrintAnimErrorLog()
         {
-            if(m_Animation == null)
+            if (m_Animation == null)
             {
-                
+
             }
         }
 
@@ -193,21 +209,21 @@ namespace ARCeye
             m_UseBillboard = value;
 
             Billboard billboard = gameObject.GetComponent<Billboard>();
-            if(value) 
+            if (value)
             {
-                if(!billboard) 
+                if (!billboard)
                 {
                     billboard = gameObject.AddComponent<Billboard>();
                     // GLB 모델이 z+ front일 경우.
                     m_BillboardRotationMode = Billboard.RotationMode.AXIS_Y_FLIP;
                 }
-                
+
                 billboard.enabled = true;
                 billboard.rotationMode = m_BillboardRotationMode;
             }
             else
             {
-                if(billboard)
+                if (billboard)
                 {
                     billboard.enabled = false;
                 }
@@ -225,13 +241,14 @@ namespace ARCeye
         {
             float value = 0.1f;
 
-            if(anim == null) {
+            if (anim == null)
+            {
                 return 0.1f;
             }
 
             AnimationClip clip = anim.GetClip(animName);
 
-            if(clip == null)
+            if (clip == null)
             {
                 return value;
             }
@@ -246,23 +263,25 @@ namespace ARCeye
         ////
         public virtual void Fade(float duration, bool fadeIn, Action onComplete = null)
         {
-            if(!gameObject.activeSelf) {
+            if (!gameObject.activeSelf)
+            {
                 return;
             }
 
-            StartCoroutine( FadeInternal(duration, fadeIn, onComplete) );
+            StartCoroutine(FadeInternal(duration, fadeIn, onComplete));
         }
 
         private IEnumerator FadeInternal(float duration, bool fadeIn, Action onComplete)
         {
-            if(fadeIn)
+            if (fadeIn)
             {
-                if(m_WrapMode != "loop") {
+                if (m_WrapMode != "loop")
+                {
                     anim?.Rewind();
                 }
             }
-            
-            if(m_Materials == null)
+
+            if (m_Materials == null)
             {
                 yield break;
             }
@@ -277,17 +296,17 @@ namespace ARCeye
             bool isFinished = false;
             float accumTime = 0;
 
-            if(fadeIn)
+            if (fadeIn)
             {
                 EnableAllRenderers(true);
             }
 
-            while(!isFinished)
+            while (!isFinished)
             {
                 float t = accumTime / duration;
 
                 float a = Mathf.Lerp(start, end, t);
-                foreach(var material in m_Materials)
+                foreach (var material in m_Materials)
                 {
                     Color color = material.color;
                     color.a = a;
@@ -298,25 +317,26 @@ namespace ARCeye
 
                 accumTime += Time.deltaTime;
 
-                if(accumTime >= duration) {
+                if (accumTime >= duration)
+                {
                     isFinished = true;
                 }
             }
 
             // 최종 투명도로 설정.
-            foreach(var material in m_Materials)
+            foreach (var material in m_Materials)
             {
                 Color color = material.color;
                 color.a = end;
                 material.color = color;
             }
 
-            if(onComplete != null)
+            if (onComplete != null)
             {
                 onComplete.Invoke();
             }
 
-            if(!fadeIn)
+            if (!fadeIn)
             {
                 EnableAllRenderers(false);
             }
@@ -324,18 +344,19 @@ namespace ARCeye
 
         public virtual void SetOpacity(float opacity)
         {
-            if(m_Materials == null) {
+            if (m_Materials == null)
+            {
                 return;
             }
 
-            foreach(var material in m_Materials)
+            foreach (var material in m_Materials)
             {
                 Color baseColor = material.color;
                 baseColor.a = opacity;
                 material.color = baseColor;
             }
 
-            if(opacity == 0.0f)
+            if (opacity == 0.0f)
             {
                 EnableAllRenderers(false);
             }
@@ -347,23 +368,28 @@ namespace ARCeye
 
         public virtual void SetPickable(bool value)
         {
-            if(!value) {
+            if (!value)
+            {
                 Transform collider = transform.Find("Collider");
-                if (collider != null) {
+                if (collider != null)
+                {
                     collider.gameObject.SetActive(false);
                 }
             }
-            else {
+            else
+            {
                 Transform collider = transform.Find("Collider");
-                if (collider != null) {
+                if (collider != null)
+                {
                     collider.gameObject.SetActive(true);
                 }
 
                 // Create collider for all children meshes.
-                else {
+                else
+                {
                     Renderer[] renderers = GetComponentsInChildren<Renderer>();
 
-                    if (renderers.Length > 0) 
+                    if (renderers.Length > 0)
                     {
                         Bounds localBounds = renderers[0].localBounds;
                         Bounds bounds = renderers[0].bounds;
@@ -388,18 +414,20 @@ namespace ARCeye
             }
         }
 
-        public void RunCoroutine(System.Action action, float delay) {
-            StartCoroutine( RunCoroutineInternal(action, delay) );
+        public void RunCoroutine(System.Action action, float delay)
+        {
+            StartCoroutine(RunCoroutineInternal(action, delay));
         }
 
-        private IEnumerator RunCoroutineInternal(System.Action action, float delay) {
+        private IEnumerator RunCoroutineInternal(System.Action action, float delay)
+        {
             yield return new WaitForSeconds(delay);
             action.Invoke();
         }
 
         private void EnableAllRenderers(bool value)
         {
-            foreach(var elem in m_Renderers)
+            foreach (var elem in m_Renderers)
             {
                 elem.enabled = value;
             }
