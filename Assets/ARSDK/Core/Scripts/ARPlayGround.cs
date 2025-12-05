@@ -39,7 +39,7 @@ namespace ARCeye
     [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.7.1";
+        const string PLUGIN_VERSION = "1.7.2";
 
 #if UNITY_IOS && !UNITY_EDITOR
         const string dll = "__Internal";

@@ -1,6 +1,6 @@
 {
   "name": "com.naverlabs.arsdk",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "displayName": "ARSDK",
   "description": "ARPG project",
   "unity": "2021.3",
