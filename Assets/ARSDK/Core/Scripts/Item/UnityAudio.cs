@@ -88,7 +88,7 @@ namespace ARCeye
 
                 if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
                 {
-                    Debug.LogError(www.error);
+                    NativeLogger.Print(LogLevel.ERROR, "[UnityAudio] Failed to load audio clip. " + www.error);
                 }
                 else
                 {

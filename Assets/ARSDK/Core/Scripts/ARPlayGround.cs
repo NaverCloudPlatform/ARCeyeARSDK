@@ -36,10 +36,39 @@ namespace ARCeye
         public UInt32 filesystemOption;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct ExternalTurnSpot
+    {
+        [MarshalAs(UnmanagedType.LPStr)]
+        public string assetRelativePath;
+        public int type;
+        [MarshalAs(UnmanagedType.LPStr)]
+        public string label;
+        [MarshalAs(UnmanagedType.LPStr)]
+        public string unit;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct ExternalNextStep
+    {
+        [MarshalAs(UnmanagedType.LPStr)]
+        public string assetRelativePath;
+        public int type;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct ResourceConfiguration
+    {
+        public IntPtr turnspots;
+        public int turnspotsCount;
+        public IntPtr nextsteps;
+        public int nextstepsCount;
+    }
+
     [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.7.2";
+        const string PLUGIN_VERSION = "1.8.0";
 
 #if UNITY_IOS && !UNITY_EDITOR
         const string dll = "__Internal";
@@ -62,6 +91,9 @@ namespace ARCeye
 
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void LoadNative(string amprojFilePath);
+
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void LoadNativeWithConfig(string amprojFilePath, ResourceConfiguration config);
 
         [DllImport(dll)]
         private static extern void ResetNative();
@@ -90,14 +122,6 @@ namespace ARCeye
             set => m_ContentsPath = value;
         }
 
-        [SerializeField]
-        private Locale m_Locale;
-        public Locale locale
-        {
-            get => m_Locale;
-            set => m_Locale = value;
-        }
-
         public string amprojFilePath
         {
             get
@@ -109,10 +133,23 @@ namespace ARCeye
         }
 
         [field: SerializeField]
-        public bool StreamingAssets { get; set; } = true;
+        public bool LoadOnAwake { get; set; } = true;
 
         [field: SerializeField]
-        public bool LoadOnAwake { get; set; } = true;
+        public bool StreamingAssets { get; set; } = true;
+
+        [SerializeField]
+        private Locale m_Locale;
+        public Locale locale
+        {
+            get => m_Locale;
+            set => m_Locale = value;
+        }
+
+        [Header("Debug")]
+        public LogLevel m_LogLevel = LogLevel.WARNING;
+        [field: SerializeField]
+        public bool VisualizeAMProj { get; set; } = true;
 
         [HideInInspector]
         public StageChangeMethod stageChangeMethod = StageChangeMethod.LayerInfo;
@@ -141,6 +178,8 @@ namespace ARCeye
         private List<GameObject> m_NextStepGameObjects = new List<GameObject>();
 
         private ItemGenerator m_ItemGenerator;
+        private NaviSpotGenerator m_NaviSpotGenerator;
+        private NextStep m_NextStep;
         private AMProjVisualizer m_Visualizer;
 
         public bool IsNaviMode { get; private set; } = false;
@@ -149,10 +188,16 @@ namespace ARCeye
         ///
         /// Events 
         ///
-        public UnityEvent<string, string> m_OnStageChanged;
+        [Header("Events")]
         public UnityEvent<string, string, string> m_OnSceneLoaded;
         public UnityEvent<string> m_OnSceneUnloaded;
+        public UnityEvent<string, string> m_OnStageChanged;
+        public UnityEvent<List<LayerPOIItem>> m_OnPOIListLoaded;
+        [HideInInspector]
+        [Obsolete("m_OnPOIList is deprecated, use m_OnPOIListLoaded instead.")]
         public UnityEvent<List<LayerPOIItem>> m_OnPOIList;
+        public UnityEvent<string, string> m_OnCustomRangeEntered;
+        public UnityEvent<string, string> m_OnCustomRangeExited;
 
         [Header("Navigation")]
         public UnityEvent m_OnNavigationStarted;
@@ -164,13 +209,6 @@ namespace ARCeye
         public UnityEvent<ConnectionType, string, string> m_OnTransitMovingStarted;
         public UnityEvent m_OnTransitMovingEnded;
         public UnityEvent<string, string> m_OnTransitMovingFailed;
-        public UnityEvent<string, string> m_OnCustomRangeEntered;
-        public UnityEvent<string, string> m_OnCustomRangeExited;
-
-        [Header("Debug")]
-        public LogLevel m_LogLevel = LogLevel.WARNING;
-        [field: SerializeField]
-        public bool VisualizeAMProj { get; set; } = true;
 
 
         // Transit의 목적지 스테이지 이름. Navi 모드일 경우에만 할당된다.
@@ -186,11 +224,11 @@ namespace ARCeye
             InitNativeLogger();
             InitComponents();
 
-#if !(UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN)
-            // 실제 기기에서만 locale 자동 업데이트.
-            // Editor에서는 테스트를 위해 자동 업데이트를 방지.
-            DetectLocale();
-#endif
+            // #if !(UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN)
+            //             // 실제 기기에서만 locale 자동 업데이트.
+            //             // Editor에서는 테스트를 위해 자동 업데이트를 방지.
+            //             DetectLocale();
+            // #endif
 
             ARPGConfiguration config = new ARPGConfiguration();
             config.languageCode = LocaleConverter.GetLanguageCode(locale);
@@ -272,21 +310,21 @@ namespace ARCeye
             var itemGenerator = FindObjectOfType<ItemGenerator>();
             if (itemGenerator == null)
             {
-                Debug.LogError("ItemGenerator가 Scene에 추가되지 않았습니다. ARPG/Core/Prefabs/ItemGenerator.prefab을 추가해주세요.");
+                NativeLogger.Print(LogLevel.ERROR, "[ARPlayGround] ItemGenerator is not added to the scene. Please add ARPG/Core/Prefabs/ItemGenerator.prefab.");
             }
 
-            // MapCameraRig 추가 여부 확인.
-            var mapCameraRig = FindObjectOfType<MapCameraRig>();
-            if (mapCameraRig == null)
+            // MapCameraController 추가 여부 확인.
+            var mapCameraController = FindObjectOfType<MapCameraController>();
+            if (mapCameraController == null)
             {
-                Debug.LogError("MapCameraRig Scene에 추가되지 않았습니다. ARPG/Core/Prefabs/MapCameraRig.prefab을 추가해주세요.");
+                NativeLogger.Print(LogLevel.ERROR, "[ARPlayGround] MapCameraController is not added to the scene. Please add ARPG/Core/Prefabs/MapCameraController.prefab.");
             }
 
             // NextStep 추가 여부 확인.
             var nextStep = FindObjectOfType<NextStep>();
             if (nextStep == null)
             {
-                Debug.LogError("NextStep Scene에 추가되지 않았습니다. ARPG/Core/Prefabs/NextStep.prefab을 추가해주세요.");
+                NativeLogger.Print(LogLevel.ERROR, "[ARPlayGround] NextStep is not added to the scene. Please add ARPG/Core/Prefabs/NextStep.prefab.");
             }
         }
 
@@ -297,22 +335,19 @@ namespace ARCeye
             m_PathFinder = GetComponent<PathFinder>();
 
             m_LayerInfoConverter = GetComponent<LayerInfoConverter>();
-
-            if (LoadOnAwake && VisualizeAMProj)
-            {
-                NativeLogger.Print(LogLevel.INFO, "Enable amproj visualizer");
-                m_Visualizer = GetComponent<AMProjVisualizer>();
-                m_Visualizer.Load(amprojFilePath);
-            }
+            m_Visualizer = GetComponent<AMProjVisualizer>();
 
             m_ItemGenerator = FindObjectOfType<ItemGenerator>();
             if (m_ItemGenerator == null)
             {
-                NativeLogger.Print(LogLevel.ERROR, "Failed to find ItemGenerator");
+                NativeLogger.Print(LogLevel.ERROR, "[ARPlayGround] Failed to find ItemGenerator.");
             }
 
+            m_NaviSpotGenerator = FindObjectOfType<NaviSpotGenerator>();
+            m_NextStep = FindObjectOfType<NextStep>();
+
             m_NativeEventHandler = GetComponent<NativeEventHandler>();
-            m_NativeEventHandler.m_OnPOIList = m_OnPOIList;
+            m_NativeEventHandler.m_OnPOIList = m_OnPOIListLoaded;
             m_NativeEventHandler.m_OnDistanceUpdated = m_OnDistanceUpdated;
             m_NativeEventHandler.m_OnStageChanged = m_OnStageChanged;
             m_NativeEventHandler.m_OnNavigationStarted = m_OnNavigationStarted;
@@ -484,7 +519,7 @@ namespace ARCeye
         {
             if (m_IsLoadingRequested)
             {
-                NativeLogger.Print(LogLevel.INFO, "이미 Load 메서드가 호출 되었습니다.");
+                NativeLogger.Print(LogLevel.WARNING, "[ARPlayGround] Load has already been called.");
                 return;
             }
             m_IsLoadingRequested = true;
@@ -502,13 +537,23 @@ namespace ARCeye
 
         private IEnumerator LoadInternal(string filePath, System.Action completeCallback)
         {
-            LoadNative(filePath);
+            var resourceConfig = BuildResourceConfiguration();
+
+            LoadNativeWithConfig(filePath, resourceConfig);
+
+            FreeResourceConfiguration(resourceConfig);
 
             yield return new WaitUntil(() => m_NativeFileSystemHelper.isReadingComplete);
 
-            NativeLogger.Print(LogLevel.DEBUG, "Load amproj file finish!");
+            NativeLogger.Print(LogLevel.INFO, "[ARPlayGround] amproj file loaded successfully.");
 
             m_LayerInfoConverter.Load();
+
+            if (LoadOnAwake && VisualizeAMProj)
+            {
+                NativeLogger.Print(LogLevel.INFO, "[ARPlayGround] amproj visualizer enabled.");
+                m_Visualizer.Load(amprojFilePath);
+            }
 
             m_IsLoaded = true;
 
@@ -528,15 +573,97 @@ namespace ARCeye
         /// </summary>
         public async Task LoadAsync(string filePath)
         {
-            LoadNative(filePath);
+            var resourceConfig = BuildResourceConfiguration();
+
+            LoadNativeWithConfig(filePath, resourceConfig);
+
+            FreeResourceConfiguration(resourceConfig);
+
+            m_LayerInfoConverter.Load();
+
+            if (LoadOnAwake && VisualizeAMProj)
+            {
+                NativeLogger.Print(LogLevel.INFO, "[ARPlayGround] amproj visualizer enabled.");
+                m_Visualizer.Load(amprojFilePath);
+            }
 
             await TaskUtil.WaitUntil(() => { return m_NativeFileSystemHelper.isReadingComplete; });
 
-            NativeLogger.Print(LogLevel.DEBUG, "Load amproj file finish!");
+            NativeLogger.Print(LogLevel.INFO, "[ARPlayGround] amproj file loaded successfully.");
 
             m_IsLoaded = true;
         }
 
+        private ResourceConfiguration BuildResourceConfiguration()
+        {
+            var config = new ResourceConfiguration();
+
+            if (m_NaviSpotGenerator == null)
+                return config;
+
+            // TurnSpot
+            var turnSpots = new ExternalTurnSpot[]
+            {
+                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.TurnSpotLeft,     type = 0 },
+                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.TurnSpotRight,    type = 1 },
+                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.TurnSpotStraight, type = 2 },
+                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.TurnSpotUp,       type = 3 },
+                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.TurnSpotDown,     type = 4 },
+                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.Destination,      type = 5 },
+            };
+
+            int turnSpotSize = Marshal.SizeOf<ExternalTurnSpot>();
+            config.turnspots = Marshal.AllocHGlobal(turnSpotSize * turnSpots.Length);
+            config.turnspotsCount = turnSpots.Length;
+            for (int i = 0; i < turnSpots.Length; i++)
+            {
+                Marshal.StructureToPtr(turnSpots[i], config.turnspots + turnSpotSize * i, false);
+            }
+
+            if (m_NextStep == null)
+                return config;
+
+            // NextStep
+            var nextSteps = new ExternalNextStep[]
+            {
+                new ExternalNextStep { assetRelativePath = m_NextStep.NextStepArrow, type = 0 },
+                new ExternalNextStep { assetRelativePath = m_NextStep.NextStepDot,   type = 1 },
+                new ExternalNextStep { assetRelativePath = m_NextStep.NextStepText,  type = 2 },
+            };
+
+            int nextStepSize = Marshal.SizeOf<ExternalNextStep>();
+            config.nextsteps = Marshal.AllocHGlobal(nextStepSize * nextSteps.Length);
+            config.nextstepsCount = nextSteps.Length;
+            for (int i = 0; i < nextSteps.Length; i++)
+            {
+                Marshal.StructureToPtr(nextSteps[i], config.nextsteps + nextStepSize * i, false);
+            }
+
+            return config;
+        }
+
+        private void FreeResourceConfiguration(ResourceConfiguration config)
+        {
+            if (config.turnspots != IntPtr.Zero)
+            {
+                int turnSpotSize = Marshal.SizeOf<ExternalTurnSpot>();
+                for (int i = 0; i < config.turnspotsCount; i++)
+                {
+                    Marshal.DestroyStructure<ExternalTurnSpot>(config.turnspots + turnSpotSize * i);
+                }
+                Marshal.FreeHGlobal(config.turnspots);
+            }
+
+            if (config.nextsteps != IntPtr.Zero)
+            {
+                int nextStepSize = Marshal.SizeOf<ExternalNextStep>();
+                for (int i = 0; i < config.nextstepsCount; i++)
+                {
+                    Marshal.DestroyStructure<ExternalNextStep>(config.nextsteps + nextStepSize * i);
+                }
+                Marshal.FreeHGlobal(config.nextsteps);
+            }
+        }
 
         public void Reset()
         {
@@ -558,7 +685,7 @@ namespace ARCeye
 
             if (m_CurrStage == null)
             {
-                NativeLogger.Print(LogLevel.WARNING, "Current stage isn't assigned. Check 'SetStage(string)' method is called");
+                NativeLogger.Print(LogLevel.WARNING, "[ARPlayGround] Current stage is not assigned. Ensure SetStage has been called.");
             }
 
             return m_CurrStage;
@@ -568,7 +695,7 @@ namespace ARCeye
         {
             if (m_CurrStageLabel == null)
             {
-                NativeLogger.Print(LogLevel.WARNING, "Current stage label isn't assigned. Check 'SetStage(string)' method is called");
+                NativeLogger.Print(LogLevel.WARNING, "[ARPlayGround] Current stage label is not assigned. Ensure SetStage has been called.");
             }
 
             return m_CurrStageLabel;
@@ -615,7 +742,7 @@ namespace ARCeye
                 yield return new WaitWhile(() =>
                 {
                     Vector3 originPosition = m_MainCamera.transform.parent.localPosition;
-                    NativeLogger.Print(LogLevel.DEBUG, "[ARPlayGround] Waiting localization");
+                    NativeLogger.Print(LogLevel.VERBOSE, "[ARPlayGround] Waiting localization");
                     return Vector3.Distance(originPosition, Vector3.zero) < 0.001f;
                 });
             }
@@ -624,7 +751,7 @@ namespace ARCeye
             {
                 CheckAMProjLoaded();
 
-                NativeLogger.Print(LogLevel.VERBOSE, "SetStage with stageName : " + stageName);
+                NativeLogger.Print(LogLevel.VERBOSE, $"[ARPlayGround] SetStage called. stageName={stageName}");
                 m_CurrStage = stageName;
 
                 TryUpdateStageNative(stageName);
@@ -637,7 +764,7 @@ namespace ARCeye
             {
                 CheckAMProjLoaded();
 
-                NativeLogger.Print(LogLevel.VERBOSE, "SetStage with stageName : " + stageName);
+                NativeLogger.Print(LogLevel.VERBOSE, $"[ARPlayGround] SetStage called. stageName={stageName}");
                 m_CurrStage = stageName;
 
                 ForceUpdateStageNative(stageName);
@@ -824,7 +951,7 @@ namespace ARCeye
         {
             if (!m_IsLoaded)
             {
-                NativeLogger.Print(LogLevel.WARNING, "amproj 파일이 로드되지 않았습니다. Load 메서드가 호출되었는지 확인해주세요");
+                NativeLogger.Print(LogLevel.WARNING, "[ARPlayGround] amproj file is not loaded. Please ensure Load has been called.");
             }
         }
         private void OnCameraPoseUpdated(Vector3 position, Quaternion rotation)

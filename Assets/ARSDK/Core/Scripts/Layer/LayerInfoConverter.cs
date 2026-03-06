@@ -56,7 +56,7 @@ namespace ARCeye
                 string stageName = layer.stageName.Trim();
                 if (string.IsNullOrEmpty(stageName))
                 {
-                    NativeLogger.Print(LogLevel.WARNING, $"No stage name is assigned at LayerInfo({layer.layerInfoCode})");
+                    NativeLogger.Print(LogLevel.WARNING, $"[LayerInfoConverter] No stage name is assigned. layerInfoCode={layer.layerInfoCode}");
                 }
                 else
                 {
@@ -102,7 +102,7 @@ namespace ARCeye
 
             if (string.IsNullOrEmpty(result))
             {
-                NativeLogger.Print(LogLevel.ERROR, $"Failed to find stage name matching to {layerInfo}");
+                NativeLogger.Print(LogLevel.ERROR, $"[LayerInfoConverter] Failed to find stage name. layerInfo={layerInfo}");
             }
 
             return result;
@@ -117,14 +117,14 @@ namespace ARCeye
                 sb.Append($"stage : {elem.Value} -- layer : {elem.Key}\n");
             }
 
-            NativeLogger.Print(LogLevel.DEBUG, "LayerInfo\n" + sb.ToString());
+            NativeLogger.Print(LogLevel.DEBUG, "[LayerInfoConverter] LayerInfo\n" + sb.ToString());
         }
 
         protected virtual void CheckError()
         {
             if (m_StageNameByLayerName.Count == 0)
             {
-                NativeLogger.Print(LogLevel.ERROR, "[ARSDK] LayerInfoSetting is not set properyly.");
+                NativeLogger.Print(LogLevel.ERROR, "[LayerInfoConverter] LayerInfoSetting is not configured properly.");
             }
 
             List<string> emptyStageNameLayers = new List<string>();

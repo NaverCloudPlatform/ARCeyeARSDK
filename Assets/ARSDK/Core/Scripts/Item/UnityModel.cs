@@ -396,7 +396,10 @@ namespace ARCeye
 
                         for (int i = 1; i < renderers.Length; i++)
                         {
-                            localBounds.Encapsulate(renderers[i].localBounds);
+                            var localBound = renderers[i].localBounds;
+                            localBound.size = Vector3.Scale(localBound.size, renderers[i].transform.localScale);
+
+                            localBounds.Encapsulate(localBound);
                             bounds.Encapsulate(renderers[i].bounds);
                         }
 
@@ -422,7 +425,13 @@ namespace ARCeye
         private IEnumerator RunCoroutineInternal(System.Action action, float delay)
         {
             yield return new WaitForSeconds(delay);
-            action.Invoke();
+
+            if (this == null || !this || m_NativePtr == IntPtr.Zero)
+            {
+                yield break;
+            }
+
+            action?.Invoke();
         }
 
         private void EnableAllRenderers(bool value)

@@ -9,8 +9,8 @@ namespace ARCeye
     {
         [Header("Sign POI")]
         [SerializeField]
-        private GameObject m_SignPOIPrefab;
-        public GameObject SignPOIPrefab
+        private UnitySignPOI m_SignPOIPrefab;
+        public UnitySignPOI SignPOIPrefab
         {
             get => m_SignPOIPrefab;
             set => m_SignPOIPrefab = value;
@@ -20,8 +20,8 @@ namespace ARCeye
         private Camera m_MapCamera;
 
         [SerializeField]
-        private GameObject m_MapPOIPrefab;
-        public GameObject MapPOIPrefab
+        private UnityMapPOI m_MapPOIPrefab;
+        public UnityMapPOI MapPOIPrefab
         {
             get => m_MapPOIPrefab;
             set => m_MapPOIPrefab = value;
@@ -30,37 +30,27 @@ namespace ARCeye
         [Header("POI Info")]
 
         [SerializeField]
-        private POIIconInfo m_ColorPOIInfo;
-        public POIIconInfo ColorPOIInfo
+        private POIIconInfo m_POIIconInfo;
+        public POIIconInfo POIIconInfo
         {
-            get => m_ColorPOIInfo;
-            set => m_ColorPOIInfo = value;
+            get => m_POIIconInfo;
+            set => m_POIIconInfo = value;
         }
-
-        [SerializeField]
-        private POIIconInfo m_GrayPOIInfo;
-        public POIIconInfo GrayPOIInfo
-        {
-            get => m_GrayPOIInfo;
-            set => m_GrayPOIInfo = value;
-        }
-
 
         public GameObject GenerateSignPOI()
         {
-            return Instantiate(m_SignPOIPrefab);
+            return Instantiate(m_SignPOIPrefab.gameObject);
         }
 
         public UnityMapPOI GenerateMapPOI()
         {
-            GameObject go = Instantiate(m_MapPOIPrefab);
+            GameObject go = Instantiate(m_MapPOIPrefab.gameObject);
 
             UnityMapPOI mapPOI = go.GetComponent<UnityMapPOI>();
 
             if (m_MapCamera == null)
             {
-                GameObject mapCameraGO = GameObject.FindGameObjectWithTag("MapPOICamera");
-                m_MapCamera = mapCameraGO.GetComponent<Camera>();
+                m_MapCamera = FindObjectOfType<MapCamera>().Camera;
             }
 
             mapPOI.targetCamera = m_MapCamera;
@@ -70,13 +60,13 @@ namespace ARCeye
 
         public void SetIconCodeToSignPOI(UnitySignPOI signPOI, int code)
         {
-            Sprite icon = m_ColorPOIInfo.GetSprite(code);
+            Sprite icon = m_POIIconInfo.GetSprite(code);
             signPOI.SetIcon(icon);
         }
 
         public void SetIconCodeToMapPOI(UnityMapPOI mapPOI, int code)
         {
-            Sprite icon = m_ColorPOIInfo.GetSprite(code);
+            Sprite icon = m_POIIconInfo.GetSprite(code);
             mapPOI.SetIcon(icon);
         }
     }

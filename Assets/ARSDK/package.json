@@ -1,8 +1,8 @@
 {
   "name": "com.naverlabs.arsdk",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "displayName": "ARSDK",
-  "description": "ARPG project",
+  "description": "ARSDK is a Unity package that helps easily augment objects placed in space using data from AMapper, a map and AR content authoring tool, and enables convenient creation of AR applications.",
   "unity": "2021.3",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "3.2.1",
@@ -13,5 +13,13 @@
   },
   "author": {
     "name": "NAVER LABS"
-  }
+  },
+  "documentationUrl": "https://ar.naverlabs.com/docs/arsdk",
+  "samples": [
+    {
+      "displayName": "ARSDK Sample",
+      "description": "A sample that demonstrates how to use ARSDK.",
+      "path": "Samples~/ARSDKSample"
+    }
+  ]
 }

@@ -82,8 +82,11 @@ namespace ARCeye
                 return;
             }
 
-            string currTime = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            string msg = string.Format("[{0}] {1}", currTime, log);
+            // string currTime = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            // string msg = string.Format("[{0}] {1}", currTime, log);
+
+            string msg = log;
+
             switch (logLevel)
             {
                 case LogLevel.VERBOSE:

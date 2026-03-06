@@ -15,18 +15,14 @@ namespace ARCeye
         {
             CreateMapViewTexture();
 
-            AttachRenderTextureToCamera<MapCamera>();
-            AttachRenderTextureToCamera<MapPOICamera>();
-            AttachRenderTextureToCamera<MapArrowCamera>();
+            AttachRenderTextureToCamera();
         }
 
         public void Activate(bool value)
         {
             if (value)
             {
-                AttachRenderTextureToCamera<MapCamera>();
-                AttachRenderTextureToCamera<MapPOICamera>();
-                AttachRenderTextureToCamera<MapArrowCamera>();
+                AttachRenderTextureToCamera();
             }
 
             gameObject.SetActive(value);
@@ -38,7 +34,7 @@ namespace ARCeye
 
             if (image == null)
             {
-                Debug.LogError("[MapScreen] Failed to find RawImage under MapScreen");
+                NativeLogger.Print(LogLevel.ERROR, "[MapScreen] Failed to find RawImage under MapScreen.");
                 return;
             }
 
@@ -55,13 +51,12 @@ namespace ARCeye
             image.texture = m_RenderTexture;
         }
 
-        private void AttachRenderTextureToCamera<T>() where T : MonoBehaviour
+        private void AttachRenderTextureToCamera()
         {
-            T mapCamera = FindObjectOfType<T>();
-            Camera camera = mapCamera.GetComponent<Camera>();
-            if (camera != null)
+            MapCamera mapCamera = FindObjectOfType<MapCamera>();
+            if (mapCamera != null)
             {
-                camera.targetTexture = m_RenderTexture;
+                mapCamera.SetTargetTexture(m_RenderTexture);
             }
         }
 

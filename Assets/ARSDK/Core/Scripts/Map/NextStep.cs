@@ -7,6 +7,11 @@ namespace ARCeye
 {
     public class NextStep : MonoBehaviour
     {
+        [Header("Model Paths")]
+        public string NextStepArrow = "/Contents/Indicator/NextStep_Arrow.glb";
+        public string NextStepDot = "/Contents/Indicator/NextStep_Dot.glb";
+        public string NextStepText = "/Contents/Indicator/NextStep_Text.glb";
+
         void Awake()
         {
             RawImage image = GetComponentInChildren<RawImage>();

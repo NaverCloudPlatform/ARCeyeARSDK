@@ -1,27 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 namespace ARCeye
 {
     public class DistanceText : MonoBehaviour
     {
-        private MeshRenderer m_MeshRenderer;
-        private TextMesh m_TextMesh;
-        public TextMesh textMesh => m_TextMesh;
+        private TextMeshPro m_TextMesh;
+        public TextMeshPro textMesh => m_TextMesh;
 
         void Awake()
         {
-            // TextMesh 생성.
-            m_TextMesh = gameObject.AddComponent<TextMesh>();
-            m_TextMesh.offsetZ = 0;
-            m_TextMesh.characterSize = 1;
-            m_TextMesh.lineSpacing = 1;
-            m_TextMesh.anchor = TextAnchor.MiddleRight;
-            m_TextMesh.alignment = TextAlignment.Center;
-            m_TextMesh.tabSize = 4;
+            m_TextMesh = gameObject.AddComponent<TextMeshPro>();
+            m_TextMesh.rectTransform.pivot = new Vector2(1, 0.5f);
+            m_TextMesh.enableWordWrapping = false;
+            m_TextMesh.alignment = TextAlignmentOptions.MidlineRight;
             m_TextMesh.fontSize = 200;
-            m_TextMesh.fontStyle = FontStyle.Bold;
+            m_TextMesh.fontStyle = FontStyles.Bold;
             m_TextMesh.richText = true;
             m_TextMesh.color = Color.white;
 
@@ -32,13 +28,9 @@ namespace ARCeye
                 m_TextMesh.font = ItemGenerator.Instance.font;
             }
 
-            // ZTest가 비활성화 된 Text shader가 추가 된 material 생성.
-            m_MeshRenderer = gameObject.GetComponent<MeshRenderer>();
-
-            Texture fontTexture = m_TextMesh.font.material.mainTexture;
-            m_MeshRenderer.material = ItemGenerator.Instance.turnSpotTextMaterial;
-            m_MeshRenderer.material.SetFloat("_CullMode", 2.0f);
-            m_MeshRenderer.sharedMaterial.mainTexture = fontTexture;
+            // ZTest Always가 하드코딩된 Overlay 셰이더로 교체.
+            Material mat = m_TextMesh.fontMaterial;
+            mat.shader = Shader.Find("TextMeshPro/Mobile/Distance Field Overlay");
         }
 
         public void SetLabel(string label)

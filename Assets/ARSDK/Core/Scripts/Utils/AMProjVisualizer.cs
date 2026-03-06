@@ -30,7 +30,7 @@ namespace ARCeye
 
         private IEnumerator ReadAMProjFile(string amprojPath)
         {
-            NativeLogger.Print(LogLevel.DEBUG, $"ReadAMProjFile at path : " + amprojPath);
+            NativeLogger.Print(LogLevel.DEBUG, "[AMProjVisualizer] Reading amproj file. path=" + amprojPath);
 
             if (amprojPath.Contains("://") || amprojPath.Contains(":///"))
             {
@@ -38,8 +38,7 @@ namespace ARCeye
                 yield return www.SendWebRequest();
                 if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
                 {
-                    NativeLogger.Print(LogLevel.ERROR, $"파일을 읽는데 문제가 발생했습니다. 다음 경로에 amproj 파일이 존재하는지 확인해주세요 : " + amprojPath);
-                    Debug.LogError("Error: " + www.error);
+                    NativeLogger.Print(LogLevel.ERROR, "[AMProjVisualizer] Failed to read amproj file. path=" + amprojPath + ", error=" + www.error);
                 }
                 else
                 {
@@ -54,18 +53,17 @@ namespace ARCeye
                 }
                 catch (Exception e)
                 {
-                    NativeLogger.Print(LogLevel.ERROR, $"파일을 읽는데 문제가 발생했습니다. 다음 경로에 amproj 파일이 존재하는지 확인해주세요 : " + amprojPath);
-                    Debug.LogError("Error: " + e);
+                    NativeLogger.Print(LogLevel.ERROR, "[AMProjVisualizer] Failed to read amproj file. path=" + amprojPath + "\n" + e);
                 }
             }
 
-            NativeLogger.Print(LogLevel.DEBUG, $"Load amproj finished");
+            NativeLogger.Print(LogLevel.DEBUG, "[AMProjVisualizer] amproj file loaded successfully.");
             m_ReadAMProjFinished = true;
         }
 
         public void Visualize(string stageName)
         {
-            NativeLogger.Print(LogLevel.DEBUG, $"Visualize amproj stage ({stageName})");
+            NativeLogger.Print(LogLevel.DEBUG, $"[AMProjVisualizer] Visualizing amproj stage. stageName={stageName}");
             StartCoroutine(VisualizeInternal(stageName));
         }
 
@@ -103,11 +101,43 @@ namespace ARCeye
 
         private JObject LoadStage(string stageName)
         {
-            var stageObjects = (JArray)m_Root["stages"];
-            JObject stageObject = stageObjects
+            var stageObjects = GetStageObjects();
+            if (stageObjects == null)
+            {
+                NativeLogger.Print(LogLevel.ERROR, "[AMProjVisualizer] No stage list found in amproj file.");
+                return null;
+            }
+
+            return stageObjects
                     .OfType<JObject>()
                     .FirstOrDefault(obj => obj["name"]?.ToString() == stageName);
-            return stageObject;
+        }
+
+        private JArray GetStageObjects()
+        {
+            int version = m_Root["version"]?.Value<int>() ?? 1;
+
+            switch (version)
+            {
+                case 1:
+                case 2:
+                    return GetStageObjectsV1();
+                case 3:
+                    return GetStageObjectsV3();
+                default:
+                    NativeLogger.Print(LogLevel.WARNING, $"[AMProjVisualizer] Unsupported amproj version: {version}. Falling back to V1 format.");
+                    return GetStageObjectsV1();
+            }
+        }
+
+        private JArray GetStageObjectsV1()
+        {
+            return (JArray)m_Root["stages"];
+        }
+
+        private JArray GetStageObjectsV3()
+        {
+            return m_Root["root"]?["children"] as JArray;
         }
 
         private JArray LoadAllLayers(JObject stageObject)

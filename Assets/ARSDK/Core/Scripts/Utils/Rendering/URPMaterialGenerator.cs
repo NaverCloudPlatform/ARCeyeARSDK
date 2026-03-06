@@ -29,7 +29,7 @@ namespace ARCeye
             }
             else
             {
-                Debug.LogError($"Alpha shader for {shaderName} isn't implemented!");
+                NativeLogger.Print(LogLevel.ERROR, $"[URPMaterialGenerator] Alpha shader is not implemented. shaderName={shaderName}");
                 return;
             }
 

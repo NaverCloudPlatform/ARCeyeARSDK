@@ -13,7 +13,7 @@ namespace ARCeye
 
             if (layer == -1)
             {
-                NativeLogger.Print(LogLevel.ERROR, $"Layer '{layerName}' not found!");
+                NativeLogger.Print(LogLevel.ERROR, $"[CameraUtil] Layer '{layerName}' not found.");
             }
             else
             {
@@ -29,7 +29,7 @@ namespace ARCeye
 
             if (layer == -1)
             {
-                NativeLogger.Print(LogLevel.ERROR, $"Layer '{layerName}' not found!");
+                NativeLogger.Print(LogLevel.ERROR, $"[CameraUtil] Layer '{layerName}' not found.");
             }
             else
             {

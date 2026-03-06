@@ -129,7 +129,6 @@ public class PackageImportPreprocess
 
 
         AddDefineSymbols();
-        CheckVLSDKDefineSymbols();
     }
 
     private static void AddPackagesToManifest()
@@ -267,14 +266,5 @@ public class PackageImportPreprocess
         var attributes = typeof(BuildTargetGroup).GetField(group.ToString())
             .GetCustomAttributes(typeof(System.ObsoleteAttribute), false);
         return attributes.Length > 0;
-    }
-
-    private static void CheckVLSDKDefineSymbols()
-    {
-        var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
-        if (!symbols.Contains("VLSDK_ARFOUNDATION") || !symbols.Contains("VLSDK_NEWTONSOFT_JSON"))
-        {
-            Debug.LogError("Failed to detect VLSDK. Please reimport VLSDK or install version 1.6.5 or higher");
-        }
     }
 }

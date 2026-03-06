@@ -1,0 +1,5 @@
+﻿<Solution>
+  <Project Path="ARCeye.ARSDK.csproj" />
+  <Project Path="ARCeye.ARPG.Editor.csproj" />
+  <Project Path="ARCeye.ARPG.Preprocess.Editor.csproj" />
+</Solution>

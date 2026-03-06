@@ -17,7 +17,7 @@ namespace ARCeye
             {
                 if (value < 0.01f)
                 {
-                    Debug.LogWarning("[MainThreadLoadingHandler] FrameBudget must be greater than 0.01");
+                    NativeLogger.Print(LogLevel.WARNING, $"[MainThreadLoadingHandler] FrameBudget must be greater than 0.01. value={value}");
                     return;
                 }
                 m_FrameBudget = value;
@@ -44,13 +44,18 @@ namespace ARCeye
 
             gltfAsset.PostEvent = (success) =>
             {
-                if (unityModel == null)
+                if (unityModel == null || !unityModel)
+                {
+                    return;
+                }
+
+                if (unityModel.GetNativePtr() == IntPtr.Zero)
                 {
                     return;
                 }
 
                 unityModel.Initialize(gltfAsset);
-                completeCallback.Invoke();
+                completeCallback?.Invoke();
             };
             gltfAsset.Load(filePath);
         }

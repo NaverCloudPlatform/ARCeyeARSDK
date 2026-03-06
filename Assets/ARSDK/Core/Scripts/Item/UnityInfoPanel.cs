@@ -1,16 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 namespace ARCeye
 {
     public class UnityInfoPanel : UnityModel
     {
         [SerializeField]
-        private TextMesh m_Text;
+        private TextMeshPro m_Text;
 
         [SerializeField]
-        private TextMesh m_TextBack;
+        private TextMeshPro m_TextBack;
 
         [SerializeField]
         private SpriteRenderer m_Header;
@@ -85,18 +86,8 @@ namespace ARCeye
             if (ItemGenerator.Instance.font != null)
             {
                 m_Text.font = ItemGenerator.Instance.font;
+                m_TextBack.font = ItemGenerator.Instance.font;
             }
-
-            var meshRenderer = m_Text.GetComponent<MeshRenderer>();
-            var meshRendererBack = m_TextBack.GetComponent<MeshRenderer>();
-
-            Texture fontTexture = m_Text.font.material.mainTexture;
-
-            meshRenderer.material = ItemGenerator.Instance.infoPanelTextMaterial;
-            meshRenderer.sharedMaterial.mainTexture = fontTexture;
-
-            meshRendererBack.material = ItemGenerator.Instance.infoPanelTextMaterial;
-            meshRendererBack.sharedMaterial.mainTexture = fontTexture;
         }
 
         //스크립트를 시작하면 처음 한 번 실행됨.
@@ -237,7 +228,7 @@ namespace ARCeye
                         Vector2 panelSize = new Vector2(System.Math.Max(textSize.x + 0.2f, panelSizeMin.x), System.Math.Max(textSize.y + 0.13f, panelSizeMin.y));
                         panelSizeProcessed = panelSize / k_TextPanelScaleOffset; // offset needed for 9-slicing size
 
-                        m_Text.transform.localPosition = new Vector3(0, 0, 0);
+                        m_Text.transform.localPosition = new Vector3(0, 0, 0.002f);
                         break;
                     }
                 case InfoPanelType.IndicatorText:
@@ -248,7 +239,7 @@ namespace ARCeye
                         Vector2 panelSize = new Vector2(System.Math.Max(textSize.x + 0.2f, panelSizeMin.x), 0.485f);
                         panelSizeProcessed = panelSize / k_TextPanelScaleOffset; // offset needed for 9-slicing size
 
-                        m_Text.transform.localPosition = new Vector3(0, 0, 0);
+                        m_Text.transform.localPosition = new Vector3(0, 0, 0.002f);
                         break;
                     }
                 case InfoPanelType.CalloutSide:
@@ -259,11 +250,11 @@ namespace ARCeye
                         Vector2 panelSize = new Vector2(System.Math.Max(textSize.x + 0.2f, panelSizeMin.x), System.Math.Max(textSize.y + 0.41f, panelSizeMin.y));
                         panelSizeProcessed = panelSize / k_TextPanelScaleOffset; // offset needed for 9-slicing size
 
-                        m_Text.transform.localPosition = new Vector3(0, 0.115f, 0);
-                        m_TextBack.transform.localPosition = new Vector3(0, 0.115f, 0);
+                        m_Text.transform.localPosition = new Vector3(0, 0.115f, 0.002f);
+                        m_TextBack.transform.localPosition = new Vector3(0, 0.115f, 0.002f);
 
                         // move entire InfoPanel object to relocate anchor at the endpoint of speech bubble
-                        gameObject.transform.localPosition += new Vector3(panelSize.x * 0.5f, panelSize.y * 0.5f, 0f);
+                        gameObject.transform.localPosition += new Vector3(panelSize.x * 0.5f, panelSize.y * 0.5f, 0.002f);
                         break;
                     }
                 case InfoPanelType.CalloutDown:
@@ -274,11 +265,11 @@ namespace ARCeye
                         Vector2 panelSize = new Vector2(System.Math.Max(textSize.x + 0.2f, panelSizeMin.x), System.Math.Max(textSize.y + 0.41f, panelSizeMin.y));
                         panelSizeProcessed = panelSize / k_TextPanelScaleOffset; // offset needed for 9-slicing size
 
-                        m_Text.transform.localPosition = new Vector3(0, 0.115f, 0);
-                        m_TextBack.transform.localPosition = new Vector3(0, 0.115f, 0);
+                        m_Text.transform.localPosition = new Vector3(0, 0.115f, 0.002f);
+                        m_TextBack.transform.localPosition = new Vector3(0, 0.115f, 0.002f);
 
                         // move entire InfoPanel object to relocate anchor at the endpoint of speech bubble
-                        gameObject.transform.localPosition += new Vector3(0f, panelSize.y * 0.5f, 0f);
+                        gameObject.transform.localPosition += new Vector3(0f, panelSize.y * 0.5f, 0.002f);
 
                         m_Panel.material.SetFloat("_Width", panelSize.x);
                         m_Panel.material.SetFloat("_Height", panelSize.y);
@@ -334,17 +325,15 @@ namespace ARCeye
         }
 
         /// TextMesh 영역의 외곽 크기를 계산.
-        /// meshRenderer.bounds를 사용할 경우 전역좌표계에서의 크기를 반환하기 때문에 회전이 적용된 상태에서의 크기를 계산하지 못한다.
-        /// localBounds와 localScale을 이용하여 TextMesh의 크기를 직접 계산.
         private Vector3 GetTextMeshBoundSize()
         {
-            var meshRenderer = m_Text.GetComponent<MeshRenderer>();
+            m_Text.ForceMeshUpdate();
 
-            var localScale = meshRenderer.transform.localScale;
-            var localBoundSize = meshRenderer.localBounds.size;
+            var textBounds = m_Text.textBounds;
+            var localScale = m_Text.transform.localScale;
 
-            float textBoundX = localBoundSize.x * localScale.x;
-            float textBoundY = localBoundSize.y * localScale.y;
+            float textBoundX = textBounds.size.x * localScale.x;
+            float textBoundY = textBounds.size.y * localScale.y;
 
             Vector3 textSize = new Vector3(textBoundX, textBoundY, 1.0f);
             return textSize;
@@ -360,7 +349,7 @@ namespace ARCeye
             }
             else
             {
-                // Text, Callout 등은 기본 디자인을 사용. 
+                // Text, Callout 등은 기본 디자인을 사용.
                 m_Panel.gameObject.SetActive(true);
             }
         }
@@ -402,7 +391,7 @@ namespace ARCeye
         {
             if (string.IsNullOrEmpty(path))
             {
-                NativeLogger.Print(LogLevel.ERROR, "[UnityInfoPanel] 이미지 경로가 비어있음");
+                NativeLogger.Print(LogLevel.ERROR, "[UnityInfoPanel] Image path is empty.");
                 yield break;
             }
 
@@ -418,7 +407,7 @@ namespace ARCeye
 
                     if (www.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
                     {
-                        NativeLogger.Print(LogLevel.ERROR, "Failed to load the file: " + www.error);
+                        NativeLogger.Print(LogLevel.ERROR, "[UnityInfoPanel] Failed to load image file. " + www.error);
                         yield break;
                     }
 
@@ -496,8 +485,10 @@ namespace ARCeye
                 // move text and image position
                 if (!System.String.IsNullOrEmpty(m_TextString))
                 {
+                    m_Text.ForceMeshUpdate();
+                    float textWidth = m_Text.textBounds.size.x * m_Text.transform.localScale.x;
                     m_Text.transform.localPosition -= new Vector3((0.1f + 0.75f) * 0.5f, 0.0f, 0.0f);
-                    m_Image.transform.localPosition += new Vector3((0.1f + m_Text.GetComponent<MeshRenderer>().bounds.size.x) * 0.5f, 0.0f, 0.0f);
+                    m_Image.transform.localPosition += new Vector3((0.1f + textWidth) * 0.5f, 0.0f, 0.0f);
                     m_Image.GetComponent<SpriteRenderer>().size = new Vector2(0.75f, 1.0f);
                 }
 
@@ -515,8 +506,10 @@ namespace ARCeye
                 {
                     m_Panel.size += new Vector2(0.0f, 0.1f / scaleOffset);
 
+                    m_Text.ForceMeshUpdate();
+                    float textHeight = m_Text.textBounds.size.y * m_Text.transform.localScale.y;
                     m_Text.transform.localPosition += new Vector3(0.0f, (0.1f + imageHeight) * 0.5f, 0.0f);
-                    m_Image.transform.localPosition -= new Vector3(0.0f, (0.1f + m_Text.GetComponent<MeshRenderer>().bounds.size.y) * 0.5f, 0.0f);
+                    m_Image.transform.localPosition -= new Vector3(0.0f, (0.1f + textHeight) * 0.5f, 0.0f);
                 }
 
                 m_Image.material.SetFloat("_Width", m_Image.GetComponent<SpriteRenderer>().size.x * 100f);
@@ -525,7 +518,7 @@ namespace ARCeye
 
             m_Image.drawMode = SpriteDrawMode.Simple;
 
-            // Panel 내의 Image가 어떤것이 들어가는지 결정이 되어야 Panel의 최종 크기를 알 수 있다. 
+            // Panel 내의 Image가 어떤것이 들어가는지 결정이 되어야 Panel의 최종 크기를 알 수 있다.
             UpdateHeaderPosition();
 
             // 변경된 Material에 대한 설정 적용.
@@ -572,9 +565,8 @@ namespace ARCeye
             m_Header.material.color = headerColor;
 
             // Text opacity 설정.
-            Color textCol = m_Text.GetComponent<MeshRenderer>().material.GetColor("_Color");
-            textCol.a = opacity;
-            m_Text.GetComponent<MeshRenderer>().material.SetColor("_Color", textCol);
+            m_Text.alpha = opacity;
+            m_TextBack.alpha = opacity;
         }
 
         // UnityModel에서 사용하는 glb fade와 다른 방식으로 동작. new 키워드로 hiding.
@@ -642,9 +634,6 @@ namespace ARCeye
 
             float end = fadeIn ? 1 : 0;
 
-            var textMat = m_Text.GetComponent<MeshRenderer>().material;
-            Color textColor = textMat.GetColor("_Color");
-
             Color currColor = new Color();
             if (!isCustomShader)
             {
@@ -678,8 +667,9 @@ namespace ARCeye
                 m_Image.material.SetFloat("_Alpha", a);
                 m_Header.material.color = currColor;
 
-                textColor.a = a;
-                textMat.SetColor("_Color", textColor);
+                // Text opacity 설정.
+                m_Text.alpha = a;
+                m_TextBack.alpha = a;
 
                 yield return null;
 
@@ -694,8 +684,8 @@ namespace ARCeye
             m_Panel.material.SetFloat("_Alpha", end);
             m_Image.material.SetFloat("_Alpha", end);
 
-            textColor.a = end;
-            textMat.SetColor("_Color", textColor);
+            m_Text.alpha = end;
+            m_TextBack.alpha = end;
 
             if (onComplete != null)
             {

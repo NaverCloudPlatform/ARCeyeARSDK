@@ -44,22 +44,13 @@ namespace ARCeye
             }
         }
 
-        public void SetPath(int pathIndex, float[] path, GameObject beginBulletPrefab, GameObject endBulletPrefab)
+        public void SetPath(int pathIndex, float[] path, GameObject beginBulletGo, GameObject endBulletGo, float pathWidth)
         {
             if (pathIndex < 0 || m_PathRenderers.Count <= pathIndex)
             {
-                Debug.LogError($"PathRenderer index is out of bound! (PathRenderers Count {m_PathRenderers.Count}, pathIndex {pathIndex})");
+                NativeLogger.Print(LogLevel.ERROR, $"[UnityMapPathIndicator] PathRenderer index out of bounds. count={m_PathRenderers.Count}, pathIndex={pathIndex}");
                 return;
             }
-
-            if (beginBulletPrefab == null || endBulletPrefab == null)
-            {
-                Debug.LogWarning("Bullet prefab is null");
-                return;
-            }
-
-            var beginBulletGo = Instantiate(beginBulletPrefab, transform);
-            var endBulletGo = Instantiate(endBulletPrefab, transform);
 
             List<Vector3> positions = new List<Vector3>();
 
@@ -91,7 +82,13 @@ namespace ARCeye
 
             Vector3 margin = new Vector3(0, 0.1f, 0);
             beginBulletGo.transform.position = pathRenderer.GetPosition(0) + margin;
+            beginBulletGo.transform.parent = transform;
+
             endBulletGo.transform.position = pathRenderer.GetPosition(pathRenderer.positionCount - 1) + margin;
+            endBulletGo.transform.parent = transform;
+
+            pathRenderer.startWidth = pathWidth;
+            pathRenderer.endWidth = pathWidth;
         }
 
         private Vector3 GetPosition(float[] path, int index)

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using TMPro;
 using AOT;
 
 namespace ARCeye
@@ -116,6 +117,8 @@ namespace ARCeye
         public static ItemGenerator Instance => s_Instance;
 
         private static POIGenerator s_POIGenerator;
+        private static PathAssetGenerator s_PathAssetGenerator;
+        private static NaviSpotGenerator s_NaviItemGenerator;
         private static InfoPanelGenerator s_InfoPanelGenerator;
         private static MultiMediaGenerator s_MultiMediaGenerator;
         private static MainThreadLoadingHandler s_MainThreadLoadingHandler;
@@ -127,14 +130,14 @@ namespace ARCeye
 
         [Header("Style")]
         [SerializeField]
-        private Font m_Font;
-        public Font font => m_Font;
-        [SerializeField]
-        private Material m_PathMaterial;
-        [SerializeField]
-        private GameObject m_MapPathBulletBegin;
-        [SerializeField]
-        private GameObject m_MapPathBulletEnd;
+        private TMP_FontAsset m_Font;
+        public TMP_FontAsset font => m_Font;
+        // [SerializeField]
+        // private Material m_PathMaterial;
+        // [SerializeField]
+        // private GameObject m_MapPathBulletBegin;
+        // [SerializeField]
+        // private GameObject m_MapPathBulletEnd;
 
         [Header("Advanced")]
         [SerializeField]
@@ -149,16 +152,14 @@ namespace ARCeye
         private UnityMapPOIPool m_MapPOIPool;
         private UnityMapPathIndicator m_MapPOIPathIndicator;
 
-        private Material m_InfoPanelTextMaterial;
-        public Material infoPanelTextMaterial => m_InfoPanelTextMaterial;
-        private Material m_TurnSpotTextMaterial;
-        public Material turnSpotTextMaterial => m_TurnSpotTextMaterial;
 
 
         void Awake()
         {
             s_Instance = this;
             s_POIGenerator = GetComponent<POIGenerator>();
+            s_PathAssetGenerator = GetComponent<PathAssetGenerator>();
+            s_NaviItemGenerator = GetComponent<NaviSpotGenerator>();
             s_InfoPanelGenerator = GetComponent<InfoPanelGenerator>();
             s_MultiMediaGenerator = GetComponent<MultiMediaGenerator>();
 
@@ -166,8 +167,6 @@ namespace ARCeye
             s_MainThreadLoadingHandler.FrameBudget = m_FrameBudget;
 
             InitScene();
-
-            CreateMaterials();
 
             SetCreateFuncNative(Create);
             SetLoadModelFuncNative(LoadModel);
@@ -221,37 +220,24 @@ namespace ARCeye
 
         private void InitScene()
         {
+            transform.position = Vector3.zero;
+            transform.rotation = Quaternion.identity;
+            transform.localScale = Vector3.one;
+
             if (m_Scene != null)
             {
                 m_Scene.position = Vector3.zero;
                 m_Scene.rotation = Quaternion.identity;
                 m_Scene.localScale = Vector3.one;
             }
+            else
+            {
+                m_Scene = transform.GetChild(0);
+            }
 
             m_MainCamera = Camera.main;
         }
 
-        private void CreateMaterials()
-        {
-            Shader infoPanelTextShader = FindShader("ARPG/InfoPanel Text");
-            Shader turnSpotTextShader = FindShader("ARPG/TurnSpot Text");
-
-            m_InfoPanelTextMaterial = new Material(infoPanelTextShader);
-            m_TurnSpotTextMaterial = new Material(turnSpotTextShader);
-        }
-
-        private Shader FindShader(string shaderName)
-        {
-            Shader shader = Shader.Find(shaderName);
-
-            if (shader == null)
-            {
-                NativeLogger.Print(LogLevel.ERROR, $"[ARPlayGround] Fail to find '{shaderName}' shader");
-                return null;
-            }
-
-            return shader;
-        }
 
         public void UpdateSceneHeight(float cameraHeight)
         {
@@ -334,8 +320,11 @@ namespace ARCeye
             if (modelType == typeof(UnityMapPathIndicator))
             {
                 var mapPathIndicator = model as UnityMapPathIndicator;
+                var pathMaterial = s_PathAssetGenerator.PathMaterial;
+
+                mapPathIndicator.SetMaterial(pathMaterial);
+
                 s_Instance.m_MapPOIPathIndicator = mapPathIndicator;
-                mapPathIndicator.SetMaterial(s_Instance.m_PathMaterial);
             }
             else if (modelType == typeof(UnityMapPOIPool))
             {
@@ -371,10 +360,24 @@ namespace ARCeye
                 }
             }
 
-            GameObject go = new GameObject(filePath);
+            GameObject go;
             Type modelType = Type.GetType($"{ns}.{className}");
 
-            go.AddComponent(modelType);
+            if (modelType == typeof(UnityTurnSpot))
+            {
+                var turnSpotItem = s_NaviItemGenerator.GenerateTurnSpot();
+                if (turnSpotItem == null)
+                {
+                    NativeLogger.Print(LogLevel.ERROR, "[ItemGenerator] Failed to generate TurnSpot. TurnSpotPrefab may not be assigned.");
+                    return IntPtr.Zero;
+                }
+                go = turnSpotItem.gameObject;
+            }
+            else
+            {
+                go = new GameObject(filePath);
+                go.AddComponent(modelType);
+            }
             go.AddComponent<PostEventGltfAsset>();
 
             // 각 Item별 적당한 root로 이동.
@@ -395,13 +398,21 @@ namespace ARCeye
             // glb 파일이 없는 Item인지 확인. filesystem을 사용하지 않는 Android 환경에서 호출된다.
             if (NativeFileSystemHelper.IsGLBNotAssigned(filePath))
             {
-                NativeLogger.Print(LogLevel.WARNING, $"glb model file is not assigned to an instance of {className}");
+                NativeLogger.Print(LogLevel.WARNING, $"[ItemGenerator] GLB model file is not assigned. className={className}");
             }
             else
             {
                 s_MainThreadLoadingHandler.Load(go, filePath, () =>
                 {
-                    OnLoadingCompleteNative(nativeModelPtr);
+                    // Safety check: verify model and native pointer are still valid before calling native
+                    if (model != null && model)
+                    {
+                        IntPtr currentNativePtr = model.GetNativePtr();
+                        if (currentNativePtr != IntPtr.Zero)
+                        {
+                            OnLoadingCompleteNative(currentNativePtr);
+                        }
+                    }
                 });
             }
 
@@ -472,14 +483,21 @@ namespace ARCeye
                 GCHandle.FromIntPtr(itemPtr);
                 GameObject item = Unwrap<GameObject>(itemPtr);
 
-                if (item.GetComponent<UnityModel>().GetType() == typeof(UnityInfoPanel))
+                // Clear native pointer to prevent async callbacks from using it after unload
+                UnityModel unityModel = item.GetComponent<UnityModel>();
+                if (unityModel != null)
+                {
+                    unityModel.SetNativePtr(IntPtr.Zero);
+                }
+
+                if (unityModel != null && unityModel.GetType() == typeof(UnityInfoPanel))
                 {
                     Destroy(item.transform.parent.gameObject);
                 }
 
                 Destroy(item);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // NativeLogger.Print(LogLevel.WARNING, e.ToString());
             }
@@ -498,7 +516,7 @@ namespace ARCeye
                 }
                 catch (Exception e)
                 {
-                    NativeLogger.Print(LogLevel.WARNING, e.ToString());
+                    NativeLogger.Print(LogLevel.ERROR, "[ItemGenerator] SetName failed. " + e.ToString());
                     return;
                 }
             });
@@ -735,7 +753,8 @@ namespace ARCeye
                 UnityTurnSpot turnSpot = item.GetComponent<UnityTurnSpot>();
 
                 string label = Marshal.PtrToStringAnsi(labelPtr);
-                turnSpot.SetLabel(label);
+                int distance = int.Parse(label);
+                turnSpot.SetDistance(distance);
             });
         }
 
@@ -754,7 +773,16 @@ namespace ARCeye
                 UnityMapPathIndicator mapPath = item.GetComponent<UnityMapPathIndicator>();
 
                 int pathIndex = mapPath.AddPath();
-                mapPath.SetPath(pathIndex, pathBuffer, s_Instance.m_MapPathBulletBegin, s_Instance.m_MapPathBulletEnd);
+
+                Texture beginBullet = s_PathAssetGenerator.BeginBullet;
+                Texture endBullet = s_PathAssetGenerator.EndBullet;
+
+                GameObject beginBulletGO = s_PathAssetGenerator.GenerateBullet("BeginBullet", beginBullet);
+                GameObject endBulletGO = s_PathAssetGenerator.GenerateBullet("EndBullet", endBullet);
+
+                float pathWidth = s_PathAssetGenerator.PathWidth;
+
+                mapPath.SetPath(pathIndex, pathBuffer, beginBulletGO, endBulletGO, pathWidth);
             });
         }
 
@@ -767,7 +795,7 @@ namespace ARCeye
             }
             catch (Exception e)
             {
-                NativeLogger.Print(LogLevel.WARNING, e.ToString());
+                NativeLogger.Print(LogLevel.ERROR, "[ItemGenerator] UnloadPath failed. " + e.ToString());
                 return;
             }
 
@@ -784,7 +812,7 @@ namespace ARCeye
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
                 UnityMapPOIPool model = item.GetComponent<UnityMapPOIPool>();
-                model.SetFontSize(fontSize);
+                // model.SetFontSize(fontSize);
             });
         }
 

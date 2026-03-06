@@ -30,6 +30,7 @@ namespace ARCeye
 
             DrawLogo();
             DrawAllLayers();
+            DrawPatterns();
         }
 
         private void DrawLogo()
@@ -47,6 +48,13 @@ namespace ARCeye
 
         private void DrawAllLayers()
         {
+            // Location 헤더
+            EditorGUILayout.Space(10);
+            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel);
+            headerStyle.fontSize = 13;
+            headerStyle.alignment = TextAnchor.MiddleLeft;
+            EditorGUILayout.LabelField("Configuration", headerStyle);
+
             SerializedLayerTree layerTree = m_LayerInfoSetting.layerTree;
             Layer layer = layerTree.Deserialize();
 
@@ -74,8 +82,7 @@ namespace ARCeye
             // FoldOut 타이틀 바.
             DrawFoldOutLabel(layer, depth);
 
-            // 새 계층 추가 버튼
-            DrawAddLayerButton(layer, depth);
+            GUILayout.FlexibleSpace();
 
             // 계층 삭제 버튼
             DrawRemoveLayerButton(layer);
@@ -92,36 +99,38 @@ namespace ARCeye
 
         private void DrawFoldOutLabel(Layer layer, int depth)
         {
-            string foldoutLabel;
+            string layerPrefix = $"Layer {depth + 1}";
 
             if (layer.linkToStage)
             {
                 GUI.contentColor = Color.yellow;
-                foldoutLabel = $"Layer {depth + 1}  {layer.layerName} → {layer.stageName}";
-            }
-            else
-            {
-                foldoutLabel = $"Layer {depth + 1}  {layer.layerName}";
             }
 
-            layer.foldout = EditorGUILayout.Foldout(layer.foldout, foldoutLabel);
+            // Foldout with minimal label
+            layer.foldout = EditorGUILayout.Foldout(layer.foldout, layerPrefix, true);
+
+            // Layer Name TextField inline with vertical alignment
+            GUIStyle textFieldStyle = new GUIStyle(EditorStyles.textField);
+            textFieldStyle.margin = new RectOffset(0, 0, 0, 0);
+            layer.layerName = EditorGUILayout.TextField(layer.layerName, textFieldStyle, GUILayout.Width(150));
 
             GUI.contentColor = m_OriginalContentColor;
         }
 
         private void DrawAddLayerButton(Layer layer, int depth)
         {
-            GUILayout.FlexibleSpace();
+            if (layer.linkToStage || layer.depth >= 6) return;
 
-            GUI.backgroundColor = Color.green;
-            if (layer.foldout && !layer.linkToStage && layer.depth < 6)
+            // depth에 따라 들여쓰기 계산 (Unity 기본 indent는 약 15픽셀)
+            float indentWidth = (depth + 1) * 15f;
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(indentWidth);
+            if (GUILayout.Button($"Add Layer {depth + 2}"))
             {
-                if (GUILayout.Button($"Add New Layer {depth + 2}"))
-                {
-                    layer.subLayers.Add(new Layer(depth + 1));
-                }
+                layer.subLayers.Add(new Layer(depth + 1));
             }
-            GUI.backgroundColor = m_OriginalBackgroundColor;
+            EditorGUILayout.EndHorizontal();
         }
 
         private void DrawRemoveLayerButton(Layer layer)
@@ -138,12 +147,19 @@ namespace ARCeye
         {
             EditorGUI.indentLevel++;
 
-            layer.layerName = EditorGUILayout.TextField("Layer Name", layer.layerName);
-            layer.linkToStage = EditorGUILayout.Toggle("Link to Stage", layer.linkToStage);
+            bool hasSubLayers = layer.subLayers != null && layer.subLayers.Count > 0;
 
-            if (layer.linkToStage)
+            // 하위 레이어가 없을 때만 Link to Stage 표시
+            if (!hasSubLayers)
             {
+                layer.linkToStage = EditorGUILayout.Toggle("Link to Stage", layer.linkToStage);
+            }
+
+            if (layer.linkToStage && !hasSubLayers)
+            {
+                GUI.contentColor = Color.yellow;
                 layer.stageName = EditorGUILayout.TextField("Stage Name", layer.stageName);
+                GUI.contentColor = m_OriginalContentColor;
             }
             else
             {
@@ -164,9 +180,89 @@ namespace ARCeye
                 {
                     subLayers.Remove(removedLayer);
                 }
+
+                // 하위 레이어 목록 아래에 Add New Layer 버튼 표시
+                DrawAddLayerButton(layer, depth);
             }
 
             EditorGUI.indentLevel--;
+        }
+
+        private void DrawPatterns()
+        {
+            SerializedLayerTree layerTree = m_LayerInfoSetting.layerTree;
+            Layer rootLayer = layerTree.Deserialize();
+
+            // LinkToStage가 true인 모든 레이어 수집
+            List<(string layerPath, string stageName)> linkedLayers = new List<(string, string)>();
+            CollectLinkedLayers(rootLayer, "", linkedLayers);
+
+            if (linkedLayers.Count == 0) return;
+
+            EditorGUILayout.Space(10);
+
+            // 사각형 영역 시작
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
+            // 내부 마진 추가
+            GUILayout.Space(5);
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(5);
+            EditorGUILayout.BeginVertical();
+
+            // 테이블 헤더
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Layer Info", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Stage Name", EditorStyles.boldLabel);
+            EditorGUILayout.EndHorizontal();
+
+            // 테이블 내용
+            foreach (var item in linkedLayers)
+            {
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(item.layerPath);
+                EditorGUILayout.LabelField(item.stageName);
+                EditorGUILayout.EndHorizontal();
+            }
+
+            EditorGUILayout.EndVertical();
+            GUILayout.Space(5);
+            EditorGUILayout.EndHorizontal();
+
+            // 하단 마진 추가
+            GUILayout.Space(5);
+
+            // 사각형 영역 끝
+            EditorGUILayout.EndVertical();
+        }
+
+        private void CollectLinkedLayers(Layer layer, string parentPath, List<(string layerPath, string stageName)> result)
+        {
+            if (layer == null) return;
+
+            // 현재 레이어의 경로 생성
+            string currentPath = string.IsNullOrEmpty(parentPath)
+                ? layer.layerName
+                : parentPath + "_" + layer.layerName;
+
+            // LinkToStage가 true이면 결과에 추가
+            if (layer.linkToStage && !string.IsNullOrEmpty(layer.stageName))
+            {
+                result.Add((currentPath, layer.stageName));
+            }
+
+            // 하위 레이어 순회
+            if (layer.subLayers != null)
+            {
+                foreach (var subLayer in layer.subLayers)
+                {
+                    if (subLayer.data != null)
+                    {
+                        CollectLinkedLayers(subLayer, currentPath, result);
+                    }
+                }
+            }
         }
     }
 }

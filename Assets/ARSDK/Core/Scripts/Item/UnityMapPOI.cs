@@ -1,19 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 namespace ARCeye
 {
     public class UnityMapPOI : UnityModel
     {
-        [SerializeField]
-        private TextMeshPro m_Text;
-
-        [SerializeField]
-        private SpriteRenderer m_IconRenderer;
-
         private Billboard m_Billboard;
+        private MapPOIRenderer m_MapPOIRenderer;
 
         // Billboard 효과가 적용될 카메라를 할당.
         private Camera m_TargetCamera;
@@ -43,40 +37,39 @@ namespace ARCeye
 
         private void Awake()
         {
-            int layerIndex = LayerMask.NameToLayer("MapPOI");
-            gameObject.layer = layerIndex;
-            m_Text.gameObject.layer = layerIndex;
-            m_IconRenderer.gameObject.layer = layerIndex;
-
-            m_Billboard = GetComponent<Billboard>();
+            m_Billboard = gameObject.AddComponent<Billboard>();
             m_Billboard.rotationMode = Billboard.RotationMode.CAMERA;
 
-            if (ItemGenerator.Instance.font != null)
+            m_MapPOIRenderer = GetComponent<MapPOIRenderer>();
+            if (m_MapPOIRenderer == null)
             {
-                // m_Text.font = ItemGenerator.Instance.font;
+                NativeLogger.Print(LogLevel.ERROR, "[UnityMapPOI] MapPOIRenderer component is missing.");
+                return;
             }
 
             ActivateMinimapMode();
+
+            InitLayerInModel("MapPOI");
         }
 
         private void Start()
         {
-            MapCameraRig mapCameraRig = FindObjectOfType<MapCameraRig>();
-            if (mapCameraRig == null)
+            MapCameraController mapCameraController = FindObjectOfType<MapCameraController>();
+            if (mapCameraController == null)
             {
-                Debug.LogError("Failed to find 'MapCameraRig' component in the current scene.");
+                NativeLogger.Print(LogLevel.ERROR, "[UnityMapPOI] Failed to find MapCameraController in the scene.");
                 return;
             }
 
-            m_TranslationRig = mapCameraRig.GetComponentInChildren<TranslationRig>();
+            m_TranslationRig = mapCameraController.GetComponentInChildren<TranslationRig>();
             if (m_TranslationRig == null)
             {
-                Debug.LogError("Failed to find 'TranslationRig' component under the MapCameraRig");
+                NativeLogger.Print(LogLevel.ERROR, "[UnityMapPOI] Failed to find TranslationRig under MapCameraController.");
                 return;
             }
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             ScaleByCameraDistance();
         }
@@ -100,17 +93,17 @@ namespace ARCeye
 
         public void SetIcon(Sprite icon)
         {
-            m_IconRenderer.sprite = icon;
+            m_MapPOIRenderer.SetIcon(icon);
         }
 
         public void SetLabel(string content)
         {
-            m_Text.text = content;
+            m_MapPOIRenderer.SetLabel(content);
         }
 
         public void SetFontSize(float fontSize)
         {
-            m_Text.fontSize = (int)fontSize;
+            m_MapPOIRenderer.SetFontSize(fontSize);
         }
 
         /// <summary>
@@ -126,23 +119,23 @@ namespace ARCeye
             switch (display)
             {
                 case 0:
-                    m_Text.gameObject.SetActive(false);
-                    m_IconRenderer.gameObject.SetActive(false);
+                    m_MapPOIRenderer.ShowText(false);
+                    m_MapPOIRenderer.ShowIcon(false);
                     break;
                 case 1:
-                    m_Text.gameObject.SetActive(false);
-                    m_IconRenderer.gameObject.SetActive(true);
+                    m_MapPOIRenderer.ShowText(false);
+                    m_MapPOIRenderer.ShowIcon(true);
                     break;
                 case 2:
-                    m_Text.gameObject.SetActive(true);
-                    m_IconRenderer.gameObject.SetActive(false);
+                    m_MapPOIRenderer.ShowText(true);
+                    m_MapPOIRenderer.ShowIcon(false);
                     break;
                 case 3:
-                    m_Text.gameObject.SetActive(true);
-                    m_IconRenderer.gameObject.SetActive(true);
+                    m_MapPOIRenderer.ShowText(true);
+                    m_MapPOIRenderer.ShowIcon(true);
                     break;
                 default:
-                    Debug.LogError($"Invalid display value ({display})");
+                    NativeLogger.Print(LogLevel.ERROR, $"[UnityMapPOI] Invalid POI display value. display={display}");
                     break;
             }
         }

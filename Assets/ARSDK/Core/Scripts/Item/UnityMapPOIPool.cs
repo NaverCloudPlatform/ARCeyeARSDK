@@ -66,7 +66,7 @@ namespace ARCeye
 
             mapPOI.transform.localPosition = unityCoord;
             mapPOI.SetLabel(label);
-            mapPOI.SetFontSize(m_FontSize);
+            // mapPOI.SetFontSize(m_FontSize);
             mapPOI.SetDisplay(display);
 
             m_MapPOILists.Add(mapPOI);
@@ -83,7 +83,7 @@ namespace ARCeye
 
         public void SetConfigFullpath(string atlasFullpath)
         {
-            NativeLogger.Print(LogLevel.DEBUG, "Set altas fullpath : " + atlasFullpath);
+            NativeLogger.Print(LogLevel.DEBUG, "[UnityMapPOIPool] Atlas config path set. path=" + atlasFullpath);
         }
 
         public void ActivateFullmapMode()
