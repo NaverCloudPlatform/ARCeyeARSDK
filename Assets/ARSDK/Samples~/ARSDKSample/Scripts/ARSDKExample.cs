@@ -160,7 +160,7 @@ namespace ARCeye
 
         public void ShowMinimap()
         {
-            UnityMapPOIPool mapPOIPool = FindObjectOfType<UnityMapPOIPool>();
+            UnityMapPOIPool mapPOIPool = FindFirstObjectByType<UnityMapPOIPool>();
             mapPOIPool.ActivateMinimapMode();
             m_MapCameraController.ChangeToFullMap(false);
             m_MapScreenMinimap.Activate(true);
@@ -169,7 +169,7 @@ namespace ARCeye
 
         public void ShowFullMap()
         {
-            UnityMapPOIPool mapPOIPool = FindObjectOfType<UnityMapPOIPool>();
+            UnityMapPOIPool mapPOIPool = FindFirstObjectByType<UnityMapPOIPool>();
             mapPOIPool.ActivateFullmapMode();
             m_MapCameraController.ChangeToFullMap(true);
             m_MapScreenMinimap.Activate(false);

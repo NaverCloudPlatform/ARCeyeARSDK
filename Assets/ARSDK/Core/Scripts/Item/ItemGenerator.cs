@@ -118,7 +118,7 @@ namespace ARCeye
 
         private static POIGenerator s_POIGenerator;
         private static PathAssetGenerator s_PathAssetGenerator;
-        private static NaviSpotGenerator s_NaviItemGenerator;
+        private static NaviItemGenerator s_NaviItemGenerator;
         private static InfoPanelGenerator s_InfoPanelGenerator;
         private static MultiMediaGenerator s_MultiMediaGenerator;
         private static MainThreadLoadingHandler s_MainThreadLoadingHandler;
@@ -159,7 +159,7 @@ namespace ARCeye
             s_Instance = this;
             s_POIGenerator = GetComponent<POIGenerator>();
             s_PathAssetGenerator = GetComponent<PathAssetGenerator>();
-            s_NaviItemGenerator = GetComponent<NaviSpotGenerator>();
+            s_NaviItemGenerator = GetComponent<NaviItemGenerator>();
             s_InfoPanelGenerator = GetComponent<InfoPanelGenerator>();
             s_MultiMediaGenerator = GetComponent<MultiMediaGenerator>();
 
@@ -351,7 +351,7 @@ namespace ARCeye
 
             filePath = PathUtil.Validate(filePath);
 
-            bool useNextStep = FindObjectOfType<NextStep>() != null;
+            bool useNextStep = FindFirstObjectByType<NextStep>() != null;
             if (className == nameof(UnityNextStepDot) || className == nameof(UnityNextStepArrow) || className == nameof(UnityNextStepText))
             {
                 if (!useNextStep)
@@ -753,8 +753,14 @@ namespace ARCeye
                 UnityTurnSpot turnSpot = item.GetComponent<UnityTurnSpot>();
 
                 string label = Marshal.PtrToStringAnsi(labelPtr);
-                int distance = int.Parse(label);
-                turnSpot.SetDistance(distance);
+                if (int.TryParse(label, out int distance))
+                {
+                    turnSpot.SetDistance(distance);
+                }
+                else
+                {
+                    // NativeLogger.Print(LogLevel.WARNING, $"[ItemGenerator] SetTurnSpotLabel - Failed to parse label: {label}");
+                }
             });
         }
 

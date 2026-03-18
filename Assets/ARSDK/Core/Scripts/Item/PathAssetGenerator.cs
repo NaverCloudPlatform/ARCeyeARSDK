@@ -79,7 +79,7 @@ namespace ARCeye
                 return;
             }
 
-            var mapArrow = GameObject.FindObjectOfType<MapArrow>();
+            var mapArrow = Object.FindFirstObjectByType<MapArrow>();
             if (mapArrow == null)
             {
                 NativeLogger.Print(LogLevel.ERROR, "[PathAssetGenerator] MapArrow not found in the scene.");

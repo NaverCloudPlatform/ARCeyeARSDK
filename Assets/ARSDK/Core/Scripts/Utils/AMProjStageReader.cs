@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.Networking;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
-using System.Linq;
-using System;
 using UnityEngine.Events;
 
 namespace ARCeye
@@ -22,7 +19,7 @@ namespace ARCeye
 
         private IEnumerator LoadInternal(string amprojFilePath, UnityAction<Dictionary<string, float>> finishCallback)
         {
-            yield return ReadAMProjFile(amprojFilePath);
+            yield return AMProjFileReader.ReadCoroutine(amprojFilePath, json => m_JsonStr = json);
 
             if (string.IsNullOrEmpty(m_JsonStr))
             {
@@ -83,36 +80,5 @@ namespace ARCeye
             return stages;
         }
 
-        private IEnumerator ReadAMProjFile(string amprojPath)
-        {
-            NativeLogger.Print(LogLevel.DEBUG, "[AMProjStageReader] Reading amproj file. path=" + amprojPath);
-
-            if (amprojPath.Contains("://") || amprojPath.Contains(":///"))
-            {
-                UnityWebRequest www = UnityWebRequest.Get(amprojPath);
-                yield return www.SendWebRequest();
-                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    NativeLogger.Print(LogLevel.ERROR, "[AMProjStageReader] Failed to read amproj file. path=" + amprojPath + ", error=" + www.error);
-                }
-                else
-                {
-                    m_JsonStr = www.downloadHandler.text;
-                }
-            }
-            else
-            {
-                try
-                {
-                    m_JsonStr = System.IO.File.ReadAllText(amprojPath);
-                }
-                catch (Exception e)
-                {
-                    NativeLogger.Print(LogLevel.ERROR, "[AMProjStageReader] Failed to read amproj file. path=" + amprojPath + "\n" + e);
-                }
-            }
-
-            NativeLogger.Print(LogLevel.INFO, "[AMProjStageReader] amproj file loaded successfully.");
-        }
     }
 }

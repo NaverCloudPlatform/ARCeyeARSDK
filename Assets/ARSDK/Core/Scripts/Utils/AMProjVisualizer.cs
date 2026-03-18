@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 using Newtonsoft.Json.Linq;
 using System.Linq;
-using System;
 
 namespace ARCeye
 {
@@ -23,42 +21,14 @@ namespace ARCeye
 
         private IEnumerator LoadInternal(string amprojFilePath)
         {
-            yield return ReadAMProjFile(amprojFilePath);
+            yield return AMProjFileReader.ReadCoroutine(amprojFilePath, json => m_JsonStr = json);
 
-            m_Root = JObject.Parse(m_JsonStr);
-        }
-
-        private IEnumerator ReadAMProjFile(string amprojPath)
-        {
-            NativeLogger.Print(LogLevel.DEBUG, "[AMProjVisualizer] Reading amproj file. path=" + amprojPath);
-
-            if (amprojPath.Contains("://") || amprojPath.Contains(":///"))
-            {
-                UnityWebRequest www = UnityWebRequest.Get(amprojPath);
-                yield return www.SendWebRequest();
-                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    NativeLogger.Print(LogLevel.ERROR, "[AMProjVisualizer] Failed to read amproj file. path=" + amprojPath + ", error=" + www.error);
-                }
-                else
-                {
-                    m_JsonStr = www.downloadHandler.text;
-                }
-            }
-            else
-            {
-                try
-                {
-                    m_JsonStr = System.IO.File.ReadAllText(amprojPath);
-                }
-                catch (Exception e)
-                {
-                    NativeLogger.Print(LogLevel.ERROR, "[AMProjVisualizer] Failed to read amproj file. path=" + amprojPath + "\n" + e);
-                }
-            }
-
-            NativeLogger.Print(LogLevel.DEBUG, "[AMProjVisualizer] amproj file loaded successfully.");
             m_ReadAMProjFinished = true;
+
+            if (!string.IsNullOrEmpty(m_JsonStr))
+            {
+                m_Root = JObject.Parse(m_JsonStr);
+            }
         }
 
         public void Visualize(string stageName)
@@ -250,6 +220,16 @@ namespace ARCeye
             }
         }
 
+        private void AddGraphEdgeLines(Vector3 from, Vector3 to, string layerName, Color color, Transform parent)
+        {
+            string lineName = $"{layerName}";
+            LineRenderer lineRenderer = CreateLineRenderer(lineName, color, parent);
+            lineRenderer.positionCount = 2;
+
+            lineRenderer.SetPosition(0, new Vector3(-from.x, from.y, from.z));
+            lineRenderer.SetPosition(1, new Vector3(-to.x, to.y, to.z));
+        }
+
         private LineRenderer CreateLineRenderer(string itemName, Color stageColor, Transform parent)
         {
             GameObject go = new GameObject(itemName);
@@ -270,18 +250,5 @@ namespace ARCeye
 
             return lineRenderer;
         }
-
-        private void AddGraphEdgeLines(Vector3 from, Vector3 to, string layerName, Color color, Transform parent)
-        {
-            string lineName = $"{layerName}";
-            LineRenderer lineRenderer = CreateLineRenderer(lineName, color, parent);
-            lineRenderer.positionCount = 2;
-
-            lineRenderer.SetPosition(0, new Vector3(-from.x, from.y, from.z));
-            lineRenderer.SetPosition(1, new Vector3(-to.x, to.y, to.z));
-        }
     }
-
-
-
 }

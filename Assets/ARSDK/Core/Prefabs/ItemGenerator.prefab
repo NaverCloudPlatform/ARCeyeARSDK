@@ -68,8 +68,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 077f2b45729314ab693423ddeb95b9f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SignPOIPrefab: {fileID: -5957693106217942760, guid: 38bd91d3028fb4a6c8ae5f0c9609399a, type: 3}
-  m_MapPOIPrefab: {fileID: 7497677953470539335, guid: 608f8a27958394b15bc0161f347703f2, type: 3}
+  m_SignPOIPrefab: {fileID: 3651434860703703720, guid: 38bd91d3028fb4a6c8ae5f0c9609399a, type: 3}
+  m_MapPOIPrefab: {fileID: 8848283026950853610, guid: 608f8a27958394b15bc0161f347703f2, type: 3}
   m_POIIconInfo: {fileID: 11400000, guid: 5dabdc84599db4f5f85a91982a776aad, type: 2}
 --- !u!114 &1729195374448463480
 MonoBehaviour:
@@ -100,13 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf85365666eca4bf3bd8f7cfdb44080f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TurnSpotPrefab: {fileID: 8388741930022957595, guid: 1e2a93203c1d14a1a85eb6bdfede46fe, type: 3}
-  TurnSpotLeft: /Contents/Indicator/TurnSpot_L.glb
-  TurnSpotRight: /Contents/Indicator/TurnSpot_R.glb
-  TurnSpotStraight: /Contents/Indicator/TurnSpot_S.glb
-  TurnSpotUp: /Contents/Indicator/TurnSpot_Up.glb
-  TurnSpotDown: /Contents/Indicator/TurnSpot_Down.glb
-  Destination: /Contents/Indicator/TurnSpot_Destination.glb
+  TurnSpotPrefab: {fileID: 1874350838505643040, guid: 1e2a93203c1d14a1a85eb6bdfede46fe, type: 3}
 --- !u!114 &5952151847712425795
 MonoBehaviour:
   m_ObjectHideFlags: 0

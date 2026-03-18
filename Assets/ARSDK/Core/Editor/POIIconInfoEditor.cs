@@ -153,7 +153,7 @@ namespace ARCeye
 
     public static class POIIconInfoGenerator
     {
-        [MenuItem("Assets/Create/ARCeye/POIIconInfo")]
+        [MenuItem("Assets/Create/ARC eye/POIIconInfo", priority = 10)]
         public static void CreateLayerInfoSetting()
         {
             POIIconInfo asset = ScriptableObject.CreateInstance<POIIconInfo>();

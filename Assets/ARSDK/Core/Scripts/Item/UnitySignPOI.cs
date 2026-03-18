@@ -6,20 +6,12 @@ namespace ARCeye
     public class UnitySignPOI : UnityModel
     {
         private Billboard m_Billboard;
-        private SignPOIRenderer m_SignPOIRenderer;
-
+        private float m_CurrentOpacity;
 
         private void Awake()
         {
             m_Billboard = gameObject.AddComponent<Billboard>();
             m_Billboard.rotationMode = Billboard.RotationMode.AXIS_Y;
-
-            m_SignPOIRenderer = GetComponent<SignPOIRenderer>();
-            if (m_SignPOIRenderer == null)
-            {
-                NativeLogger.Print(LogLevel.ERROR, "[UnitySignPOI] SignPOIRenderer component is missing.");
-                return;
-            }
 
             SetOpacity(0);
 
@@ -31,19 +23,14 @@ namespace ARCeye
 
         }
 
-        public void SetIcon(Sprite icon)
+        public virtual void SetIcon(Sprite icon)
         {
-            m_SignPOIRenderer.SetIcon(icon);
-
             // Icon을 설정한 뒤에 SetActive(false)를 통해 opacity를 0으로 설정해야 한다.
             // SetIcon을 호출하기 전까지는 POIIconRenderer가 설정되어 있지 않기 때문.
             SetActive(false);
         }
 
-        public void SetLabel(string content)
-        {
-            m_SignPOIRenderer.SetLabel(content);
-        }
+        public virtual void SetLabel(string content) { }
 
         public void SetAutoRotateMode(int rotationMode)
         {
@@ -62,7 +49,7 @@ namespace ARCeye
 
         private IEnumerator FadeInternal(float duration, bool fadeIn, System.Action onComplete)
         {
-            float start = m_SignPOIRenderer.GetOpacity();
+            float start = m_CurrentOpacity;
             float end = fadeIn ? 1 : 0;
 
             bool isFinished = false;
@@ -91,7 +78,7 @@ namespace ARCeye
 
         public override void SetOpacity(float opacity)
         {
-            m_SignPOIRenderer.SetOpacity(opacity);
+            m_CurrentOpacity = opacity;
         }
     }
 }

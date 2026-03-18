@@ -351,7 +351,7 @@ namespace ARCeye
             s_Instance.m_OnVideoPlaying.Invoke(tag, playerType, distance);
         }
 
-        [MonoPInvokeCallback(typeof(I_Func))]
+        [MonoPInvokeCallback(typeof(SIB_Func))]
         private static void OnVideoUnloaded(string tag, int playerType, bool ignoreFade)
         {
             s_Instance.m_OnVideoUnloaded.Invoke(tag, playerType, ignoreFade);

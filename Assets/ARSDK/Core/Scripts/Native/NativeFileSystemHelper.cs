@@ -80,7 +80,7 @@ namespace ARCeye
             s_IsReadingComplete = false;
 
             string fileUrl = Marshal.PtrToStringAnsi(filePathPtr);
-            s_Instance.StartCoroutine( s_Instance.ReadText(fileUrl) );
+            MainThreadDispatcher.Instance()?.Enqueue(s_Instance.ReadText(fileUrl));
         }
 
         [MonoPInvokeCallback(typeof(ReadPathFileFuncDelegate))]
@@ -88,7 +88,7 @@ namespace ARCeye
             s_IsReadingComplete = false;
 
             string fileUrl = Marshal.PtrToStringAnsi(filePathPtr);
-            s_Instance.StartCoroutine( s_Instance.ReadPathText(fileUrl) );
+            MainThreadDispatcher.Instance()?.Enqueue(s_Instance.ReadPathText(fileUrl));
         }
 
         private IEnumerator ReadText(string url) {

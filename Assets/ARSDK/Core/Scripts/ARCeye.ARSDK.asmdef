@@ -4,7 +4,7 @@
     "references": [
         "glTFast",
         "Unity.TextMeshPro",
-        "Unity.InputSystem"
+        "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [
         "Android",
@@ -24,6 +24,12 @@
     "defineConstraints": [
         "ARSDK_GLTFAST"
     ],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "",
+            "define": "ARSDK_INPUT_SYSTEM"
+        }
+    ],
     "noEngineReferences": false
 }

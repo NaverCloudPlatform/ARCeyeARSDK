@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEngine;
 using System.IO;
 using System.Collections;
@@ -12,12 +13,12 @@ public class PackageImportPreprocess
         { "com.unity.nuget.newtonsoft-json", "3.2.1" },
         { "com.unity.cloud.gltfast", "6.9.0" },
         { "com.unity.cloud.draco", "5.1.8" },
-        { "com.unity.textmeshpro", "3.0.6" },
     };
 
     private static Dictionary<string, string> packagesToDefineSymbols = new Dictionary<string, string>()
     {
-        { "com.unity.cloud.gltfast", "ARSDK_GLTFAST" }
+        { "com.unity.cloud.gltfast", "ARSDK_GLTFAST" },
+        { "com.unity.inputsystem", "ARSDK_INPUT_SYSTEM" }
     };
 
     static PackageImportPreprocess()
@@ -58,47 +59,8 @@ public class PackageImportPreprocess
             }
         }
 
-
-
-        // Always included shader 체크.
-        string[] guids = AssetDatabase.FindAssets("ARPG t:shader");
-
-        if (guids.Length == 0)
-        {
-            UnityEngine.Debug.LogWarning("Failed to find ARPG shader path. Add the ARPG shaders into Always Included Shaders directly");
-            return;
-        }
-
         SerializedObject graphicsSettings = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset")[0]);
         SerializedProperty alwaysIncludedShaders = graphicsSettings.FindProperty("m_AlwaysIncludedShaders");
-
-        int shadersCount = alwaysIncludedShaders.arraySize;
-
-        List<string> shaderNames = new List<string>();
-
-        for (int i = 0; i < shadersCount; i++)
-        {
-            SerializedProperty property = alwaysIncludedShaders.GetArrayElementAtIndex(i);
-            if (property != null && property.objectReferenceValue)
-            {
-                shaderNames.Add(property.objectReferenceValue.name);
-            }
-        }
-
-        foreach (string guid in guids)
-        {
-            string shaderPath = AssetDatabase.GUIDToAssetPath(guid);
-            Shader shader = AssetDatabase.LoadAssetAtPath<Shader>(shaderPath);
-            string shaderName = shader.name;
-
-            if (shaderNames.Contains(shaderName))
-            {
-                continue;
-            }
-
-            alwaysIncludedShaders.InsertArrayElementAtIndex(alwaysIncludedShaders.arraySize);
-            alwaysIncludedShaders.GetArrayElementAtIndex(alwaysIncludedShaders.arraySize - 1).objectReferenceValue = shader;
-        }
 
         // Unity 기본 쉐이더를 찾아서 추가.
         var unlitColorShader = Shader.Find("Unlit/Color");
@@ -228,24 +190,31 @@ public class PackageImportPreprocess
 
     private static void AddDefineSymbols()
     {
-        foreach (var packages in packagesToDefineSymbols)
+        string manifestPath = Path.Combine(Application.dataPath, "../Packages/manifest.json");
+        string manifestJson = File.Exists(manifestPath) ? File.ReadAllText(manifestPath) : "";
+
+        foreach (var package in packagesToDefineSymbols)
         {
-            string defineSymbol = packages.Value;
-            AddDefineSymbol(defineSymbol, BuildTargetGroup.Standalone);
-            AddDefineSymbol(defineSymbol, BuildTargetGroup.iOS);
-            AddDefineSymbol(defineSymbol, BuildTargetGroup.Android);
+            if (!manifestJson.Contains(package.Key))
+                continue;
+
+            string defineSymbol = package.Value;
+            AddDefineSymbol(defineSymbol, NamedBuildTarget.Standalone);
+            AddDefineSymbol(defineSymbol, NamedBuildTarget.iOS);
+            AddDefineSymbol(defineSymbol, NamedBuildTarget.Android);
         }
     }
 
-    private static void AddDefineSymbol(string defineSymbol, BuildTargetGroup group)
+    private static void AddDefineSymbol(string defineSymbol, NamedBuildTarget target)
     {
-        var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
+        PlayerSettings.GetScriptingDefineSymbols(target, out string[] symbolArray);
+        var symbols = string.Join(";", symbolArray);
 
         // Define Symbol이 이미 포함되어 있는지 확인
         if (!symbols.Contains(defineSymbol))
         {
             symbols += ";" + defineSymbol;
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, symbols);
+            PlayerSettings.SetScriptingDefineSymbols(target, symbols);
         }
     }
 

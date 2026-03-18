@@ -53,7 +53,7 @@ namespace ARCeye
 
         private void AttachRenderTextureToCamera()
         {
-            MapCamera mapCamera = FindObjectOfType<MapCamera>();
+            MapCamera mapCamera = FindFirstObjectByType<MapCamera>();
             if (mapCamera != null)
             {
                 mapCamera.SetTargetTexture(m_RenderTexture);

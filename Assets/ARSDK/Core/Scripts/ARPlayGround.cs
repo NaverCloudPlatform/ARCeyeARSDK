@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Events;
+
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 
@@ -57,18 +58,39 @@ namespace ARCeye
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public struct ExternalMap
+    {
+        [MarshalAs(UnmanagedType.LPStr)]
+        public string modelRelativePath;
+        [MarshalAs(UnmanagedType.LPStr)]
+        public string heightFieldRelativePath;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct ExternalStage
+    {
+        [MarshalAs(UnmanagedType.LPStr)]
+        public string stage;
+        [MarshalAs(UnmanagedType.LPStr)]
+        public string iblRelativePath;
+        public IntPtr externalMap;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct ResourceConfiguration
     {
         public IntPtr turnspots;
         public int turnspotsCount;
         public IntPtr nextsteps;
         public int nextstepsCount;
+        public IntPtr stages;
+        public int stagesCount;
     }
 
     [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.8.0";
+        const string PLUGIN_VERSION = "1.8.1";
 
 #if UNITY_IOS && !UNITY_EDITOR
         const string dll = "__Internal";
@@ -115,20 +137,20 @@ namespace ARCeye
 
 
         [SerializeField]
-        private string m_ContentsPath;
-        public string ContentsPath
+        private string m_ContentsFolder;
+        public string ContentsFolder
         {
-            get => m_ContentsPath;
-            set => m_ContentsPath = value;
+            get => m_ContentsFolder;
+            set => m_ContentsFolder = value;
         }
 
         public string amprojFilePath
         {
             get
             {
-                string locationName = Path.GetFileName(ContentsPath);
+                string locationName = Path.GetFileName(ContentsFolder);
                 string dataRootPath = StreamingAssets ? Application.streamingAssetsPath : Application.persistentDataPath;
-                return $"{dataRootPath}/{ContentsPath}/{locationName}.amproj";
+                return $"{dataRootPath}/{ContentsFolder}/{locationName}.amproj";
             }
         }
 
@@ -146,7 +168,6 @@ namespace ARCeye
             set => m_Locale = value;
         }
 
-        [Header("Debug")]
         public LogLevel m_LogLevel = LogLevel.WARNING;
         [field: SerializeField]
         public bool VisualizeAMProj { get; set; } = true;
@@ -178,8 +199,10 @@ namespace ARCeye
         private List<GameObject> m_NextStepGameObjects = new List<GameObject>();
 
         private ItemGenerator m_ItemGenerator;
-        private NaviSpotGenerator m_NaviSpotGenerator;
+        private NaviItemGenerator m_NaviSpotGenerator;
         private NextStep m_NextStep;
+        [SerializeField]
+        private StageConfig m_StageConfig;
         private AMProjVisualizer m_Visualizer;
 
         public bool IsNaviMode { get; private set; } = false;
@@ -188,7 +211,6 @@ namespace ARCeye
         ///
         /// Events 
         ///
-        [Header("Events")]
         public UnityEvent<string, string, string> m_OnSceneLoaded;
         public UnityEvent<string> m_OnSceneUnloaded;
         public UnityEvent<string, string> m_OnStageChanged;
@@ -199,7 +221,6 @@ namespace ARCeye
         public UnityEvent<string, string> m_OnCustomRangeEntered;
         public UnityEvent<string, string> m_OnCustomRangeExited;
 
-        [Header("Navigation")]
         public UnityEvent m_OnNavigationStarted;
         public UnityEvent m_OnNavigationEnded;
         public UnityEvent m_OnNavigationFailed;
@@ -307,21 +328,21 @@ namespace ARCeye
         private void CheckARPGCondition()
         {
             // ItemGenerator 추가 여부 확인.
-            var itemGenerator = FindObjectOfType<ItemGenerator>();
+            var itemGenerator = FindFirstObjectByType<ItemGenerator>();
             if (itemGenerator == null)
             {
                 NativeLogger.Print(LogLevel.ERROR, "[ARPlayGround] ItemGenerator is not added to the scene. Please add ARPG/Core/Prefabs/ItemGenerator.prefab.");
             }
 
             // MapCameraController 추가 여부 확인.
-            var mapCameraController = FindObjectOfType<MapCameraController>();
+            var mapCameraController = FindFirstObjectByType<MapCameraController>();
             if (mapCameraController == null)
             {
                 NativeLogger.Print(LogLevel.ERROR, "[ARPlayGround] MapCameraController is not added to the scene. Please add ARPG/Core/Prefabs/MapCameraController.prefab.");
             }
 
             // NextStep 추가 여부 확인.
-            var nextStep = FindObjectOfType<NextStep>();
+            var nextStep = FindFirstObjectByType<NextStep>();
             if (nextStep == null)
             {
                 NativeLogger.Print(LogLevel.ERROR, "[ARPlayGround] NextStep is not added to the scene. Please add ARPG/Core/Prefabs/NextStep.prefab.");
@@ -337,15 +358,14 @@ namespace ARCeye
             m_LayerInfoConverter = GetComponent<LayerInfoConverter>();
             m_Visualizer = GetComponent<AMProjVisualizer>();
 
-            m_ItemGenerator = FindObjectOfType<ItemGenerator>();
+            m_ItemGenerator = FindFirstObjectByType<ItemGenerator>();
             if (m_ItemGenerator == null)
             {
                 NativeLogger.Print(LogLevel.ERROR, "[ARPlayGround] Failed to find ItemGenerator.");
             }
 
-            m_NaviSpotGenerator = FindObjectOfType<NaviSpotGenerator>();
-            m_NextStep = FindObjectOfType<NextStep>();
-
+            m_NaviSpotGenerator = FindFirstObjectByType<NaviItemGenerator>();
+            m_NextStep = FindFirstObjectByType<NextStep>();
             m_NativeEventHandler = GetComponent<NativeEventHandler>();
             m_NativeEventHandler.m_OnPOIList = m_OnPOIListLoaded;
             m_NativeEventHandler.m_OnDistanceUpdated = m_OnDistanceUpdated;
@@ -537,17 +557,16 @@ namespace ARCeye
 
         private IEnumerator LoadInternal(string filePath, System.Action completeCallback)
         {
-            var resourceConfig = BuildResourceConfiguration();
+            int version = 1;
+            yield return AMProjFileReader.ReadVersionCoroutine(filePath, v => version = v);
 
-            LoadNativeWithConfig(filePath, resourceConfig);
-
-            FreeResourceConfiguration(resourceConfig);
+            LoadAmproj(filePath, version);
 
             yield return new WaitUntil(() => m_NativeFileSystemHelper.isReadingComplete);
 
             NativeLogger.Print(LogLevel.INFO, "[ARPlayGround] amproj file loaded successfully.");
 
-            m_LayerInfoConverter.Load();
+            LoadLayerInfo(version);
 
             if (LoadOnAwake && VisualizeAMProj)
             {
@@ -573,13 +592,10 @@ namespace ARCeye
         /// </summary>
         public async Task LoadAsync(string filePath)
         {
-            var resourceConfig = BuildResourceConfiguration();
+            int version = await AMProjFileReader.ReadVersionAsync(filePath);
+            LoadAmproj(filePath, version);
 
-            LoadNativeWithConfig(filePath, resourceConfig);
-
-            FreeResourceConfiguration(resourceConfig);
-
-            m_LayerInfoConverter.Load();
+            LoadLayerInfo(version);
 
             if (LoadOnAwake && VisualizeAMProj)
             {
@@ -594,22 +610,39 @@ namespace ARCeye
             m_IsLoaded = true;
         }
 
+        private void LoadAmproj(string filePath, int version)
+        {
+            var resourceConfig = BuildResourceConfiguration();
+
+            if (version >= 3)
+            {
+                LoadNativeWithConfig(filePath, resourceConfig);
+            }
+            else
+            {
+                LoadNative(filePath);
+            }
+
+            FreeResourceConfiguration(resourceConfig);
+        }
+
         private ResourceConfiguration BuildResourceConfiguration()
         {
             var config = new ResourceConfiguration();
 
-            if (m_NaviSpotGenerator == null)
+            if (m_NaviSpotGenerator == null || m_NaviSpotGenerator.TurnSpotPrefab == null)
                 return config;
 
             // TurnSpot
+            var prefab = m_NaviSpotGenerator.TurnSpotPrefab;
             var turnSpots = new ExternalTurnSpot[]
             {
-                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.TurnSpotLeft,     type = 0 },
-                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.TurnSpotRight,    type = 1 },
-                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.TurnSpotStraight, type = 2 },
-                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.TurnSpotUp,       type = 3 },
-                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.TurnSpotDown,     type = 4 },
-                new ExternalTurnSpot { assetRelativePath = m_NaviSpotGenerator.Destination,      type = 5 },
+                new ExternalTurnSpot { assetRelativePath = prefab.TurnSpotLeft,     type = 0 },
+                new ExternalTurnSpot { assetRelativePath = prefab.TurnSpotRight,    type = 1 },
+                new ExternalTurnSpot { assetRelativePath = prefab.TurnSpotStraight, type = 2 },
+                new ExternalTurnSpot { assetRelativePath = prefab.TurnSpotUp,       type = 3 },
+                new ExternalTurnSpot { assetRelativePath = prefab.TurnSpotDown,     type = 4 },
+                new ExternalTurnSpot { assetRelativePath = prefab.Destination,      type = 5 },
             };
 
             int turnSpotSize = Marshal.SizeOf<ExternalTurnSpot>();
@@ -639,6 +672,46 @@ namespace ARCeye
                 Marshal.StructureToPtr(nextSteps[i], config.nextsteps + nextStepSize * i, false);
             }
 
+            if (m_StageConfig == null || m_StageConfig.stages.Count == 0)
+                return config;
+
+            // Stage — 외부 리소스(ibl, mapModel, mapHeightField)가 하나라도 있는 스테이지만 전달.
+            var externalStages = m_StageConfig.stages.FindAll(s =>
+                !string.IsNullOrEmpty(s.ibl) ||
+                !string.IsNullOrEmpty(s.mapModel) ||
+                !string.IsNullOrEmpty(s.mapHeightField));
+
+            if (externalStages.Count == 0)
+                return config;
+
+            int stageSize = Marshal.SizeOf<ExternalStage>();
+            config.stages = Marshal.AllocHGlobal(stageSize * externalStages.Count);
+            config.stagesCount = externalStages.Count;
+            for (int i = 0; i < externalStages.Count; i++)
+            {
+                var src = externalStages[i];
+                var externalStage = new ExternalStage
+                {
+                    stage = src.stage,
+                    iblRelativePath = src.ibl,
+                    externalMap = IntPtr.Zero,
+                };
+
+                if (!string.IsNullOrEmpty(src.mapModel) ||
+                    !string.IsNullOrEmpty(src.mapHeightField))
+                {
+                    var map = new ExternalMap
+                    {
+                        modelRelativePath = src.mapModel,
+                        heightFieldRelativePath = src.mapHeightField,
+                    };
+                    externalStage.externalMap = Marshal.AllocHGlobal(Marshal.SizeOf<ExternalMap>());
+                    Marshal.StructureToPtr(map, externalStage.externalMap, false);
+                }
+
+                Marshal.StructureToPtr(externalStage, config.stages + stageSize * i, false);
+            }
+
             return config;
         }
 
@@ -662,6 +735,23 @@ namespace ARCeye
                     Marshal.DestroyStructure<ExternalNextStep>(config.nextsteps + nextStepSize * i);
                 }
                 Marshal.FreeHGlobal(config.nextsteps);
+            }
+
+            if (config.stages != IntPtr.Zero)
+            {
+                int stageSize = Marshal.SizeOf<ExternalStage>();
+                for (int i = 0; i < config.stagesCount; i++)
+                {
+                    var stagePtr = config.stages + stageSize * i;
+                    var stage = Marshal.PtrToStructure<ExternalStage>(stagePtr);
+                    if (stage.externalMap != IntPtr.Zero)
+                    {
+                        Marshal.DestroyStructure<ExternalMap>(stage.externalMap);
+                        Marshal.FreeHGlobal(stage.externalMap);
+                    }
+                    Marshal.DestroyStructure<ExternalStage>(stagePtr);
+                }
+                Marshal.FreeHGlobal(config.stages);
             }
         }
 
@@ -769,6 +859,18 @@ namespace ARCeye
 
                 ForceUpdateStageNative(stageName);
             });
+        }
+
+        private void LoadLayerInfo(int version)
+        {
+            if (version >= 3 && m_StageConfig != null)
+            {
+                m_LayerInfoConverter.Load(m_StageConfig);
+            }
+            else
+            {
+                m_LayerInfoConverter.Load();
+            }
         }
 
         /// <summary>
@@ -894,9 +996,9 @@ namespace ARCeye
             {
                 m_NextStepGameObjects.Clear();
 
-                UnityNextStepArrow[] arrows = FindObjectsOfType<UnityNextStepArrow>();
-                UnityNextStepDot[] dots = FindObjectsOfType<UnityNextStepDot>();
-                UnityNextStepText[] texts = FindObjectsOfType<UnityNextStepText>();
+                UnityNextStepArrow[] arrows = FindObjectsByType<UnityNextStepArrow>(FindObjectsSortMode.None);
+                UnityNextStepDot[] dots = FindObjectsByType<UnityNextStepDot>(FindObjectsSortMode.None);
+                UnityNextStepText[] texts = FindObjectsByType<UnityNextStepText>(FindObjectsSortMode.None);
 
                 foreach (var elem in arrows)
                     m_NextStepGameObjects.Add(elem.gameObject);

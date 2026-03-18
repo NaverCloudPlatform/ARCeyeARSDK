@@ -74,6 +74,19 @@ namespace ARCeye
                 error = true
             });
 
+            // Define Symbol: ARSDK_INPUT_SYSTEM (when Input System package is installed)
+            s_ValidationRules.Add(new ARSDKValidationRule
+            {
+                message = "ARSDK_INPUT_SYSTEM must be defined when Input System package is installed",
+                category = "Scripting Define Symbols",
+                checkPredicate = () => !IsPackageInstalled("com.unity.inputsystem") || IsDefineSymbolSet("ARSDK_INPUT_SYSTEM"),
+                fixIt = () => AddDefineSymbol("ARSDK_INPUT_SYSTEM"),
+                fixItMessage = "Add ARSDK_INPUT_SYSTEM to Scripting Define Symbols",
+                fixItAutomatic = false,
+                buildTargetGroup = null,
+                error = true
+            });
+
             // Scene Components Validation
             s_ValidationRules.Add(new ARSDKValidationRule
             {
@@ -149,19 +162,6 @@ namespace ARCeye
                 error = true
             });
 
-            // Input System Validation
-            s_ValidationRules.Add(new ARSDKValidationRule
-            {
-                message = "Active Input Handling should be set to 'Both' for better compatibility",
-                category = "Input System",
-                checkPredicate = () => IsInputSystemSetToBoth(),
-                fixIt = () => SetInputSystemToBoth(),
-                fixItMessage = "Set Active Input Handling to 'Both'",
-                fixItAutomatic = false,
-                buildTargetGroup = null,
-                error = false
-            });
-
             // Sprite Atlas Validation
             s_ValidationRules.Add(new ARSDKValidationRule
             {
@@ -187,19 +187,16 @@ namespace ARCeye
                 buildTargetGroup = null,
                 error = false
             });
+        }
 
-            // URP MapCamera Validation
-            s_ValidationRules.Add(new ARSDKValidationRule
-            {
-                message = "When using URP, MapCamera must have URP rendering components",
-                category = "Rendering",
-                checkPredicate = () => IsMapCameraValidForURP(),
-                fixIt = null,
-                fixItMessage = null,
-                fixItAutomatic = false,
-                buildTargetGroup = null,
-                error = true
-            });
+        private static bool IsPackageInstalled(string packageName)
+        {
+            string manifestPath = System.IO.Path.Combine(Application.dataPath, "../Packages/manifest.json");
+            if (!System.IO.File.Exists(manifestPath))
+                return false;
+
+            string manifestJson = System.IO.File.ReadAllText(manifestPath);
+            return manifestJson.Contains(packageName);
         }
 
         private static bool IsDefineSymbolSet(string symbol)
@@ -247,7 +244,7 @@ namespace ARCeye
                 return true; // Skip validation if no scene is loaded
             }
 
-            var component = UnityEngine.Object.FindObjectOfType<T>();
+            var component = UnityEngine.Object.FindFirstObjectByType<T>();
             return component != null;
         }
 
@@ -259,13 +256,13 @@ namespace ARCeye
                 return true; // Skip validation if no scene is loaded
             }
 
-            var arPlayGround = UnityEngine.Object.FindObjectOfType<ARPlayGround>();
+            var arPlayGround = UnityEngine.Object.FindFirstObjectByType<ARPlayGround>();
             if (arPlayGround == null)
             {
                 return true; // Skip if ARPlayGround is not in scene
             }
 
-            return !string.IsNullOrEmpty(arPlayGround.ContentsPath);
+            return !string.IsNullOrEmpty(arPlayGround.ContentsFolder);
         }
 
         private static bool IsStreamingAssetsValid()
@@ -276,7 +273,7 @@ namespace ARCeye
                 return true; // Skip validation if no scene is loaded
             }
 
-            var arPlayGround = UnityEngine.Object.FindObjectOfType<ARPlayGround>();
+            var arPlayGround = UnityEngine.Object.FindFirstObjectByType<ARPlayGround>();
             if (arPlayGround == null)
             {
                 return true; // Skip if ARPlayGround is not in scene
@@ -518,7 +515,7 @@ namespace ARCeye
                 return true; // Skip validation if no scene is loaded
             }
 
-            var mapCameraController = UnityEngine.Object.FindObjectOfType<MapCameraController>();
+            var mapCameraController = UnityEngine.Object.FindFirstObjectByType<MapCameraController>();
             if (mapCameraController == null)
             {
                 return true; // Skip if MapCameraController is not in scene

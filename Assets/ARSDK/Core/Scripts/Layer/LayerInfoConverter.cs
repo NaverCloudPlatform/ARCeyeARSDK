@@ -32,7 +32,21 @@ namespace ARCeye
             rootLayer.parent = null;
 
             FindStageName(rootLayer);
-            // PrintMatches();
+
+            CheckError();
+        }
+
+        public void Load(StageConfig stageConfig)
+        {
+            m_StageNameByLayerName.Clear();
+
+            foreach (var stageResource in stageConfig.stages)
+            {
+                if (!string.IsNullOrEmpty(stageResource.layerInfo) && !string.IsNullOrEmpty(stageResource.stage))
+                {
+                    m_StageNameByLayerName[stageResource.layerInfo] = stageResource.stage;
+                }
+            }
 
             CheckError();
         }
@@ -76,36 +90,17 @@ namespace ARCeye
         public string Convert(string layerInfo)
         {
             var registerLayerInfos = m_StageNameByLayerName.Keys.ToList();
+            var matchedRegisterLayerInfo = registerLayerInfos.Find(e => layerInfo.Contains(e));
 
-            string[] layerElem = layerInfo.Split("_");
-            string layerInfoSub = "";
-            string result = "";
-
-            for (int i = 0; i < layerElem.Length; i++)
+            if (!string.IsNullOrEmpty(matchedRegisterLayerInfo))
             {
-                if (i == 0)
-                {
-                    layerInfoSub = layerElem[i];
-                }
-                else
-                {
-                    layerInfoSub += "_" + layerElem[i];
-                }
-
-                string stageName = registerLayerInfos.Find(e => e == layerInfoSub);
-                if (!string.IsNullOrEmpty(stageName))
-                {
-                    result = m_StageNameByLayerName[stageName];
-                    break;
-                }
+                return m_StageNameByLayerName[matchedRegisterLayerInfo];
             }
-
-            if (string.IsNullOrEmpty(result))
+            else
             {
                 NativeLogger.Print(LogLevel.ERROR, $"[LayerInfoConverter] Failed to find stage name. layerInfo={layerInfo}");
+                return "";
             }
-
-            return result;
         }
 
         protected virtual void PrintMatches()

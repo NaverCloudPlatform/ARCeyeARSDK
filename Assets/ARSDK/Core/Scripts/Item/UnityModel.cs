@@ -214,8 +214,16 @@ namespace ARCeye
                 if (!billboard)
                 {
                     billboard = gameObject.AddComponent<Billboard>();
+
                     // GLB 모델이 z+ front일 경우.
-                    m_BillboardRotationMode = Billboard.RotationMode.AXIS_Y_FLIP;
+                    if (m_BillboardRotationMode == Billboard.RotationMode.AXIS_Y)
+                    {
+                        m_BillboardRotationMode = Billboard.RotationMode.AXIS_Y_FLIP;
+                    }
+                    else if (m_BillboardRotationMode == Billboard.RotationMode.AXIS_Y_FLIP)
+                    {
+                        m_BillboardRotationMode = Billboard.RotationMode.AXIS_Y;
+                    }
                 }
 
                 billboard.enabled = true;

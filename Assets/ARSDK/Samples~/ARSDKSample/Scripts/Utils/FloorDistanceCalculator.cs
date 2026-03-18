@@ -12,8 +12,8 @@ namespace ARCeye
 
         public FloorDistanceCalculator()
         {
-            ARPlayGround arplayground = GameObject.FindObjectOfType<ARPlayGround>();
-            m_AMProjStageReader = GameObject.FindObjectOfType<AMProjStageReader>();
+            ARPlayGround arplayground = Object.FindFirstObjectByType<ARPlayGround>();
+            m_AMProjStageReader = Object.FindFirstObjectByType<AMProjStageReader>();
             m_AMProjStageReader.Load(arplayground.amprojFilePath, stages => {
                 m_HeightByStageName = stages;
             });

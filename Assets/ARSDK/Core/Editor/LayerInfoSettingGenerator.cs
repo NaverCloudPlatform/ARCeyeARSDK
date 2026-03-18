@@ -8,7 +8,7 @@ namespace ARCeye
 {
     public class LayerInfoSettingGenerator
     {
-        [MenuItem("Assets/Create/ARCeye/LayerInfoSetting")]
+        [MenuItem("Assets/Create/ARC eye/LayerInfoSetting (Legacy)", priority = 100)]
         public static void CreateLayerInfoSetting()
         {
             LayerInfoSetting asset = ScriptableObject.CreateInstance<LayerInfoSetting>();

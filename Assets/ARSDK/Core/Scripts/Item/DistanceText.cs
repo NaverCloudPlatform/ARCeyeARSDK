@@ -14,7 +14,7 @@ namespace ARCeye
         {
             m_TextMesh = gameObject.AddComponent<TextMeshPro>();
             m_TextMesh.rectTransform.pivot = new Vector2(1, 0.5f);
-            m_TextMesh.enableWordWrapping = false;
+            m_TextMesh.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
             m_TextMesh.alignment = TextAlignmentOptions.MidlineRight;
             m_TextMesh.fontSize = 200;
             m_TextMesh.fontStyle = FontStyles.Bold;

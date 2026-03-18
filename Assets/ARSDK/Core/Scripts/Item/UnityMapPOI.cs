@@ -7,7 +7,6 @@ namespace ARCeye
     public class UnityMapPOI : UnityModel
     {
         private Billboard m_Billboard;
-        private MapPOIRenderer m_MapPOIRenderer;
 
         // Billboard 효과가 적용될 카메라를 할당.
         private Camera m_TargetCamera;
@@ -35,17 +34,17 @@ namespace ARCeye
         private const float k_DefaultDistMinimap = 15.0f;
 
 
+        public virtual void SetIcon(Sprite icon) { }
+        public virtual void SetLabel(string content) { }
+        public virtual void SetFontSize(float fontSize) { }
+        public virtual void ShowText(bool value) { }
+        public virtual void ShowIcon(bool value) { }
+
+
         private void Awake()
         {
             m_Billboard = gameObject.AddComponent<Billboard>();
             m_Billboard.rotationMode = Billboard.RotationMode.CAMERA;
-
-            m_MapPOIRenderer = GetComponent<MapPOIRenderer>();
-            if (m_MapPOIRenderer == null)
-            {
-                NativeLogger.Print(LogLevel.ERROR, "[UnityMapPOI] MapPOIRenderer component is missing.");
-                return;
-            }
 
             ActivateMinimapMode();
 
@@ -54,7 +53,7 @@ namespace ARCeye
 
         private void Start()
         {
-            MapCameraController mapCameraController = FindObjectOfType<MapCameraController>();
+            MapCameraController mapCameraController = FindFirstObjectByType<MapCameraController>();
             if (mapCameraController == null)
             {
                 NativeLogger.Print(LogLevel.ERROR, "[UnityMapPOI] Failed to find MapCameraController in the scene.");
@@ -91,21 +90,6 @@ namespace ARCeye
             m_DefaultDist = k_DefaultDistMinimap;
         }
 
-        public void SetIcon(Sprite icon)
-        {
-            m_MapPOIRenderer.SetIcon(icon);
-        }
-
-        public void SetLabel(string content)
-        {
-            m_MapPOIRenderer.SetLabel(content);
-        }
-
-        public void SetFontSize(float fontSize)
-        {
-            m_MapPOIRenderer.SetFontSize(fontSize);
-        }
-
         /// <summary>
         ///   ARPG의 POIDisplayType 값에 따라 display 컴포넌트 설정.
         ///   Display의 각 값들은 다음과 같다.
@@ -119,20 +103,20 @@ namespace ARCeye
             switch (display)
             {
                 case 0:
-                    m_MapPOIRenderer.ShowText(false);
-                    m_MapPOIRenderer.ShowIcon(false);
+                    ShowText(false);
+                    ShowIcon(false);
                     break;
                 case 1:
-                    m_MapPOIRenderer.ShowText(false);
-                    m_MapPOIRenderer.ShowIcon(true);
+                    ShowText(false);
+                    ShowIcon(true);
                     break;
                 case 2:
-                    m_MapPOIRenderer.ShowText(true);
-                    m_MapPOIRenderer.ShowIcon(false);
+                    ShowText(true);
+                    ShowIcon(false);
                     break;
                 case 3:
-                    m_MapPOIRenderer.ShowText(true);
-                    m_MapPOIRenderer.ShowIcon(true);
+                    ShowText(true);
+                    ShowIcon(true);
                     break;
                 default:
                     NativeLogger.Print(LogLevel.ERROR, $"[UnityMapPOI] Invalid POI display value. display={display}");

@@ -50,7 +50,7 @@ namespace ARCeye
 
             if (m_MapCamera == null)
             {
-                m_MapCamera = FindObjectOfType<MapCamera>().Camera;
+                m_MapCamera = FindFirstObjectByType<MapCamera>().Camera;
             }
 
             mapPOI.targetCamera = m_MapCamera;

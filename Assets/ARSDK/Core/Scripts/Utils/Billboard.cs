@@ -26,6 +26,14 @@ namespace ARCeye
         }
 
 
+        void Start()
+        {
+            if (m_TargetCamera == null)
+            {
+                m_TargetCamera = Camera.main;
+            }
+        }
+
         void LateUpdate()
         {
             ApplyBillboard();
@@ -33,10 +41,6 @@ namespace ARCeye
 
         private void ApplyBillboard()
         {
-            if (m_TargetCamera == null)
-            {
-                m_TargetCamera = Camera.main;
-            }
 
             if (m_RotationMode == RotationMode.NONE)
             {
