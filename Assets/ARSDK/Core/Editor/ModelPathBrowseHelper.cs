@@ -43,7 +43,7 @@ namespace ARCeye
             }
         }
 
-        private static void BrowseAndAssign(SerializedObject serializedObject, SerializedProperty prop, string label)
+        public static void BrowseAndAssign(SerializedObject serializedObject, SerializedProperty prop, string label)
         {
             ARPlayGround arPlayGround = Object.FindFirstObjectByType<ARPlayGround>();
             if (arPlayGround == null)

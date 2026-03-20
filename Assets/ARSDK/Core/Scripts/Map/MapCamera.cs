@@ -22,7 +22,6 @@ namespace ARCeye
             int mapArrowLayer = LayerMask.NameToLayer("MapArrow");
 
             m_Camera.cullingMask = (1 << mapLayer) | (1 << amprojVizLayer);
-            m_Camera.enabled = false;
 
             Camera poiCamera = CreateOverlayCamera("MapPOICamera", 1 << mapPOILayer);
             Camera arrowCamera = CreateOverlayCamera("MapArrowCamera", 1 << mapArrowLayer);
@@ -44,8 +43,7 @@ namespace ARCeye
             cam.cullingMask = cullingMask;
             cam.clearFlags = CameraClearFlags.Depth;
             cam.depth = m_Camera.depth + 1;
-            cam.targetTexture = null;
-            cam.enabled = false;
+            cam.targetTexture = m_Camera.targetTexture;
 
             return cam;
         }

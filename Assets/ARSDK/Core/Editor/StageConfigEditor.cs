@@ -224,7 +224,7 @@ namespace ARCeye
             Texture2D folderIcon = EditorGUIUtility.FindTexture("FolderOpened Icon");
             if (GUI.Button(buttonRect, new GUIContent(folderIcon)))
             {
-                ModelPathBrowseHelper.DrawModelPathField(serializedObject, prop, label);
+                ModelPathBrowseHelper.BrowseAndAssign(serializedObject, prop, label);
             }
         }
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.Overlays;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -51,6 +52,7 @@ namespace ARCeye
             SceneView.duringSceneGui += m_Renderer.OnSceneGUI;
             OnLoadAMProjRequested += HandleLoadAMProjRequested;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            EditorSceneManager.sceneOpened += OnSceneOpened;
 
             // 이전 세션 상태 복원
             RestoreState();
@@ -62,6 +64,7 @@ namespace ARCeye
             SceneView.duringSceneGui -= m_Renderer.OnSceneGUI;
             OnLoadAMProjRequested -= HandleLoadAMProjRequested;
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            EditorSceneManager.sceneOpened -= OnSceneOpened;
             base.OnWillBeDestroyed();
         }
 
@@ -212,6 +215,34 @@ namespace ARCeye
             m_Renderer.POIVisible = m_POIVisible;
             EditorPrefs.SetBool(PrefKeyPOIVisible, m_POIVisible);
             UpdateToggleOpacity(m_POIToggle, m_POIVisible);
+            SceneView.RepaintAll();
+        }
+
+        // Scene이 변경되었을 때 amproj 정보 갱신
+        private void OnSceneOpened(UnityEngine.SceneManagement.Scene scene, OpenSceneMode mode)
+        {
+            // 기존 렌더링 데이터 초기화
+            m_Renderer.SetLayers(null);
+
+            // 새 Scene에 ARPlayGround가 있으면 amproj 복원, 없으면 UI 초기화
+            if (Object.FindFirstObjectByType<ARPlayGround>() != null)
+            {
+                string savedPath = EditorPrefs.GetString(PrefKeyAmprojPath, "");
+                if (!string.IsNullOrEmpty(savedPath) && File.Exists(savedPath))
+                {
+                    LoadAMProj(savedPath);
+                }
+            }
+            else
+            {
+                if (m_StageDropdown != null)
+                {
+                    m_StageDropdown.choices = new List<string>();
+                    m_StageDropdown.SetValueWithoutNotify(null);
+                    m_StageDropdown.SetEnabled(false);
+                }
+            }
+
             SceneView.RepaintAll();
         }
 
