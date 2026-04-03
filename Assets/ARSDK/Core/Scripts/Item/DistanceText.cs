@@ -15,7 +15,7 @@ namespace ARCeye
             m_TextMesh = gameObject.AddComponent<TextMeshPro>();
             m_TextMesh.rectTransform.pivot = new Vector2(1, 0.5f);
             m_TextMesh.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
-            m_TextMesh.alignment = TextAlignmentOptions.MidlineRight;
+            m_TextMesh.alignment = TextAlignmentOptions.Center;
             m_TextMesh.fontSize = 200;
             m_TextMesh.fontStyle = FontStyles.Bold;
             m_TextMesh.richText = true;
@@ -28,9 +28,7 @@ namespace ARCeye
                 m_TextMesh.font = ItemGenerator.Instance.font;
             }
 
-            // ZTest Always가 하드코딩된 Overlay 셰이더로 교체.
-            Material mat = m_TextMesh.fontMaterial;
-            mat.shader = Shader.Find("TextMeshPro/Mobile/Distance Field Overlay");
+            m_TextMesh.fontMaterial.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent + 1;
         }
 
         public void SetLabel(string label)
@@ -49,7 +47,7 @@ namespace ARCeye
         {
             // TurnSpot 모델의 Distance_Root 위치로 인해 TextMesh가 정상적으로 렌더링 되지 않음.
             // 아래와 같이 직접 설정.
-            transform.localPosition = new Vector3(0, 0, 0);
+            transform.localPosition = new Vector3(0.02f, 0, 0);
             transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
             transform.localScale = new Vector3(0.035f, 0.035f, 0.035f);
         }

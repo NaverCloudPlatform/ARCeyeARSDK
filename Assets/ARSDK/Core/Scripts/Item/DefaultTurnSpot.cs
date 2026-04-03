@@ -61,6 +61,17 @@ namespace ARCeye
             m_DistanceText.SetLabel(label);
         }
 
+        public override void PlayAnimation(string animName, string playMode)
+        {
+            base.PlayAnimation(animName, playMode);
+
+            if (animName == "A_Looping")
+            {
+                m_MeterText.gameObject.SetActive(false);
+                m_DistanceText.gameObject.SetActive(false);
+            }
+        }
+
         public override void SetOpacity(float opacity)
         {
             base.SetOpacity(opacity);

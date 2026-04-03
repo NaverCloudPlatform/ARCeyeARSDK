@@ -55,6 +55,11 @@ namespace ARCeye
             base.SetOpacity(opacity);
         }
 
+        public override void PlayAnimation(string animName, string playMode)
+        {
+            base.PlayAnimation(animName, playMode);
+        }
+
         public virtual void SetDistance(int distance) { }
     }
 }

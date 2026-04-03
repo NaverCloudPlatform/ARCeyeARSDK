@@ -26,5 +26,5 @@ MonoBehaviour:
   - stage: GND
     layerInfo: ground
     ibl: 
-    mapModel: 
+    mapModel: /Map/ground.glb
     mapHeightField: 

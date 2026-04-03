@@ -29,9 +29,7 @@ namespace ARCeye
                 m_TextMesh.font = ItemGenerator.Instance.font;
             }
 
-            // ZTest Always가 하드코딩된 Overlay 셰이더로 교체.
-            Material mat = m_TextMesh.fontMaterial;
-            mat.shader = Shader.Find("TextMeshPro/Mobile/Distance Field Overlay");
+            m_TextMesh.fontMaterial.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent + 1;
         }
 
         public void SetOpacity(float opacity)

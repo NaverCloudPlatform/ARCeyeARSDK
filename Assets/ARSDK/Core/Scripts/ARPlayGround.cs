@@ -90,7 +90,7 @@ namespace ARCeye
     [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.8.2";
+        const string PLUGIN_VERSION = "1.8.3";
 
 #if UNITY_IOS && !UNITY_EDITOR
         const string dll = "__Internal";
@@ -287,7 +287,7 @@ namespace ARCeye
             }
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             // Camera의 view matrix와 pose matrix를 계산해서 ARPlayGround를 갱신.
             Matrix4x4 poseMatrix = Matrix4x4.TRS(m_MainCamera.transform.position, m_MainCamera.transform.rotation, Vector3.one);

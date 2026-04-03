@@ -508,17 +508,11 @@ namespace ARCeye
         {
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
-                try
-                {
-                    GameObject item = Unwrap<GameObject>(itemPtr);
-                    string name = Marshal.PtrToStringAnsi(namePtr);
-                    item.name = name;
-                }
-                catch (Exception e)
-                {
-                    NativeLogger.Print(LogLevel.ERROR, "[ItemGenerator] SetName failed. " + e.ToString());
-                    return;
-                }
+                GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
+                string name = Marshal.PtrToStringAnsi(namePtr);
+                item.name = name;
             });
         }
 
@@ -529,6 +523,7 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
 
                 var panel = item.GetComponent<UnityInfoPanel>();
                 if (panel != null)
@@ -544,7 +539,7 @@ namespace ARCeye
                     return;
                 }
 
-                item.GetComponent<UnityModel>().SetActive(active);
+                item.GetComponent<UnityModel>()?.SetActive(active);
             });
         }
 
@@ -554,6 +549,7 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
 
                 var infoPanel = item.GetComponent<UnityInfoPanel>();
                 if (infoPanel != null)
@@ -587,6 +583,7 @@ namespace ARCeye
             Matrix4x4 modelMatrix = lhm;
 
             GameObject item = Unwrap<GameObject>(itemPtr);
+            if (item == null) return;
 
             item.transform.localPosition = modelMatrix.GetPosition();
             item.transform.localRotation = modelMatrix.rotation;
@@ -602,11 +599,12 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
 
                 string animName = Marshal.PtrToStringAnsi(animNamePtr);
                 string playMode = Marshal.PtrToStringAnsi(playModePtr);
 
-                item.GetComponent<UnityModel>().PlayAnimation(animName, playMode);
+                item.GetComponent<UnityModel>()?.PlayAnimation(animName, playMode);
             });
         }
 
@@ -648,6 +646,7 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
 
                 var infoPanel = item.GetComponent<UnityInfoPanel>();
                 if (infoPanel != null)
@@ -680,6 +679,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityTurnSpot model = item.GetComponent<UnityTurnSpot>();
                 if (model != null)
                 {
@@ -703,6 +704,7 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
 
                 var infoPanel = item.GetComponent<UnityInfoPanel>();
                 if (infoPanel != null)
@@ -732,6 +734,7 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
 
                 UnityModel model = item.GetComponent<UnityModel>();
                 if (model != null)
@@ -750,7 +753,10 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityTurnSpot turnSpot = item.GetComponent<UnityTurnSpot>();
+                if (turnSpot == null) return;
 
                 string label = Marshal.PtrToStringAnsi(labelPtr);
                 if (int.TryParse(label, out int distance))
@@ -776,6 +782,8 @@ namespace ARCeye
                 Marshal.Copy(buffer, pathBuffer, 0, length);
 
                 GameObject item = Unwrap<GameObject>(ptr);
+                if (item == null) return;
+
                 UnityMapPathIndicator mapPath = item.GetComponent<UnityMapPathIndicator>();
 
                 int pathIndex = mapPath.AddPath();
@@ -806,6 +814,7 @@ namespace ARCeye
             }
 
             GameObject item = Unwrap<GameObject>(ptr);
+            if (item == null) return;
             Destroy(item.gameObject);
         }
 
@@ -817,6 +826,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityMapPOIPool model = item.GetComponent<UnityMapPOIPool>();
                 // model.SetFontSize(fontSize);
             });
@@ -828,6 +839,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityMapPOIPool model = item.GetComponent<UnityMapPOIPool>();
                 model.SetOutlineThickness(fontSize);
             });
@@ -839,6 +852,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityMapPOIPool mapPOIPool = item.GetComponent<UnityMapPOIPool>();
 
                 UnityMapPOI mapPOI = s_POIGenerator.GenerateMapPOI();
@@ -889,6 +904,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnitySignPOI model = item.GetComponent<UnitySignPOI>();
                 model.SetType(type);
             });
@@ -912,6 +929,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnitySignPOI model = item.GetComponent<UnitySignPOI>();
                 s_POIGenerator.SetIconCodeToSignPOI(model, type);
             });
@@ -923,6 +942,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnitySignPOI model = item.GetComponent<UnitySignPOI>();
 
                 string content = Marshal.PtrToStringAnsi(rawStr);
@@ -937,12 +958,14 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnitySignPOI model = item.GetComponent<UnitySignPOI>();
 
                 ///
                 /// Auto Rotate Type
                 /// 0:None, 1:AxisY, 2:AxisZ, 3:Camera
-                /// 
+                ///
                 model.SetAutoRotateMode(rotateMode);
             });
         }
@@ -955,6 +978,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
                 model.SetInfoPanelType(type);
             });
@@ -966,6 +991,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
                 model.UseFrame(value);
             });
@@ -977,6 +1004,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
                 model.UseRoundedCorner(value);
             });
@@ -988,6 +1017,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
 
                 string text = Marshal.PtrToStringAnsi(strPtr);
@@ -1001,6 +1032,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
 
                 string text = Marshal.PtrToStringAnsi(strPtr);
@@ -1014,6 +1047,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
 
                 string text = Marshal.PtrToStringAnsi(strPtr);
@@ -1027,6 +1062,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityInfoPanel model = item.GetComponent<UnityInfoPanel>();
 
                 string imagePath = Marshal.PtrToStringAnsi(imagePathPtr);
@@ -1040,6 +1077,8 @@ namespace ARCeye
             MainThreadDispatcher.Instance()?.Enqueue(() =>
             {
                 GameObject item = Unwrap<GameObject>(itemPtr);
+                if (item == null) return;
+
                 UnityVideo video = item.GetComponent<UnityVideo>();
 
                 video.Build(width, height, pivotX, pivotY, hasAlphaMask, hasBackface, isBillboard);
