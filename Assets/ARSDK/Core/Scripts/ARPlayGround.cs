@@ -90,7 +90,7 @@ namespace ARCeye
     [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.8.3";
+        const string PLUGIN_VERSION = "1.9.0";
 
 #if UNITY_IOS && !UNITY_EDITOR
         const string dll = "__Internal";
@@ -134,6 +134,9 @@ namespace ARCeye
 
         [DllImport(dll)]
         private static extern void UnloadNavigationNative();
+
+        [DllImport(dll)]
+        private static extern void SetDestinationArrivalDistanceNative(float distance);
 
 
         [SerializeField]
@@ -818,6 +821,17 @@ namespace ARCeye
         public void SetRelativeAltitude(double value)
         {
             m_CurrRelAltitude = value;
+        }
+
+        public void SetDestinationArrivalDistance(float distance)
+        {
+            if (distance <= 0.0f)
+            {
+                Debug.LogError($"[ARPlayGround] SetDestinationArrivalDistance: distance must be greater than 0. (input: {distance})");
+                return;
+            }
+
+            SetDestinationArrivalDistanceNative(distance);
         }
 
         private IEnumerator TryUpdateStageInternal(string stageName)
