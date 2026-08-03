@@ -90,7 +90,7 @@ namespace ARCeye
     [DefaultExecutionOrder(-2000)]
     public class ARPlayGround : MonoBehaviour
     {
-        const string PLUGIN_VERSION = "1.9.0";
+        const string PLUGIN_VERSION = "1.10.0";
 
 #if UNITY_IOS && !UNITY_EDITOR
         const string dll = "__Internal";
@@ -885,6 +885,16 @@ namespace ARCeye
             {
                 m_LayerInfoConverter.Load();
             }
+        }
+
+        /// <summary>
+        /// VL에서 전달 받은 LayerInfo 값과 매칭되는 Stage를 로드한다.
+        /// 인자가 하나라 UnityEvent(버튼 OnClick 등) 함수 목록에 노출되어 Inspector에서 직접 바인딩할 수 있다.
+        /// </summary>
+        /// <param name="layerInfo"></param>
+        public void SetLayerInfo(string layerInfo)
+        {
+            SetLayerInfo(layerInfo, false);
         }
 
         /// <summary>

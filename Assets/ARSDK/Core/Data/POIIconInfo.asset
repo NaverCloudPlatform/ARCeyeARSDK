@@ -289,4 +289,4 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: d679a884ee5f54998b6415b7317c91be, type: 3}
   - dpCode: 131900
     icon: {fileID: 21300000, guid: 79fbda94aa12a495a81ec2cde0c845e7, type: 3}
-  m_POIIconDirectory: {fileID: 102900000, guid: b24f39f1dada64255bc648fd24d7e7f0, type: 3}
+  m_POIIconDirectory: {fileID: 102900000, guid: c9c97793a1606466fa726b6182a67d7c, type: 3}
